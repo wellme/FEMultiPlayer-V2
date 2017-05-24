@@ -40,19 +40,19 @@ public class StatBalancer extends JFrame {
 		HashMap<String, ArrayList<BalanceData>> data = 
 				new HashMap<String, ArrayList<BalanceData>>();
 		for(Unit u: units){
-			String clazz = u.getTheClass().name;
-			if(!data.containsKey(clazz)){
+			String unitClass = u.getUnitClass().name;
+			if(!data.containsKey(unitClass)){
 				
-				data.put(clazz, new ArrayList<BalanceData>());
+				data.put(unitClass, new ArrayList<BalanceData>());
 			}
-			data.get(clazz).add(new BalanceData(u));
+			data.get(unitClass).add(new BalanceData(u));
 		}
 		
-		for(String clazz: data.keySet()){
+		for(String unitClass: data.keySet()){
 			
-			BalancerTab tab = new BalancerTab(data.get(clazz));
-			classTabs.put(clazz,tab);
-			panel.addTab(clazz, tab);
+			BalancerTab tab = new BalancerTab(data.get(unitClass));
+			classTabs.put(unitClass,tab);
+			panel.addTab(unitClass, tab);
 		}
 		
 		add(panel);
@@ -91,8 +91,8 @@ public class StatBalancer extends JFrame {
 			}
 			head += "\tGender";
 			pw.println(head);
-			for(String clazz: classTabs.keySet()){
-				pw.println(classTabs.get(clazz).exportString());
+			for(String unitClass: classTabs.keySet()){
+				pw.println(classTabs.get(unitClass).exportString());
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {

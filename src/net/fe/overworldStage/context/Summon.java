@@ -74,7 +74,7 @@ public class Summon extends OverworldContext {
 			Unit u = grid.getUnit(n.x, n.y);
 			if (u == null
 					&& grid.getTerrain(n.x, n.y).getMoveCost(
-							net.fe.unit.Class.createClass("Phantom")) <
+							net.fe.unit.UnitClass.createClass("Phantom")) <
 							unit.getStats().mov) {
 				targets.add(n);
 			}
@@ -212,7 +212,7 @@ public class Summon extends OverworldContext {
 			/* aid = */ 0
 		);
 		summonCount = summonCount + 1;
-		final Unit summon = new Unit("Phantom " + summonCount, net.fe.unit.Class.createClass("Phantom"), '-', bases, growths);
+		final Unit summon = new Unit("Phantom " + summonCount, net.fe.unit.UnitClass.createClass("Phantom"), '-', bases, growths);
 		summon.addToInventory(net.fe.unit.Item.getItem("Iron Axe"));
 		summon.initializeEquipment();
 		summon.setLevel(summoner.getLevel());

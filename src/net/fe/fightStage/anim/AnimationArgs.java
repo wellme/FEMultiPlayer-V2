@@ -43,7 +43,7 @@ public final class AnimationArgs {
 		unit = u;
 		Weapon w = u.getWeapon();
 		if(w == null){
-			Type wType = u.getTheClass().usableWeapon.get(0);
+			Type wType = u.getUnitClass().usableWeapon.get(0);
 			if(wType.isMagic()){
 				wepAnimName = "magic";
 				classification = "magic";

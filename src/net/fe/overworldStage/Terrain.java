@@ -4,7 +4,7 @@ import java.util.List;
 import static java.util.Collections.unmodifiableList;
 
 import net.fe.Player;
-import net.fe.unit.Class;
+import net.fe.unit.UnitClass;
 import net.fe.unit.Statistics;
 import net.fe.unit.Unit;
 import net.fe.unit.WeaponFactory;
@@ -114,7 +114,7 @@ public enum Terrain {
 	 * @param c the c
 	 * @return the move cost
 	 */
-	public int getMoveCost(Class c) {
+	public int getMoveCost(UnitClass c) {
 		if (c == null)
 			return baseMoveCost;
 		String name = c.name;
@@ -177,7 +177,7 @@ public enum Terrain {
 	 */
 	public int getAvoidBonus(Unit u) {
 		if(u == null) return avoidBonus;
-		if(WeaponFactory.fliers.contains(u.getTheClass().name)) return 0;
+		if(WeaponFactory.fliers.contains(u.getUnitClass().name)) return 0;
 		return avoidBonus;
 	}
 	
@@ -189,7 +189,7 @@ public enum Terrain {
 	 */
 	public Statistics getDefenseBonus(Unit u) {
 		if(u == null) return defenseBonus;
-		if(WeaponFactory.fliers.contains(u.getTheClass().name)) return new Statistics();
+		if(WeaponFactory.fliers.contains(u.getUnitClass().name)) return new Statistics();
 		return defenseBonus;
 	}
 	

@@ -86,10 +86,10 @@ public final class PartyMessage extends Message {
 						"\n\tServer: " + u3.getBase()
 					);
 				}
-				if (! u.getTheClass().equals(u3.getTheClass())) {
+				if (! u.getUnitClass().equals(u3.getUnitClass())) {
 					return Optional.of("unit's class don't match expected" +
-						"\n\tClient: " + u.getTheClass() +
-						"\n\tServer: " + u3.getTheClass()
+						"\n\tClient: " + u.getUnitClass() +
+						"\n\tServer: " + u3.getUnitClass()
 					);
 				}
 				if (! u.getTriggers().equals(u3.getTriggers())) {

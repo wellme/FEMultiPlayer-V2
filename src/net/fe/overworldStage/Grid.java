@@ -191,7 +191,7 @@ public class Grid{
 	 */
 	public boolean canSeize(Unit u) {
 		//check if lord
-		if(!u.getTheClass().name.equals("Lord"))
+		if(!u.getUnitClass().name.equals("Lord"))
 			return false;
 		Color c = u.getPartyColor();
 		if(c.equals(Party.TEAM_BLUE) 
@@ -221,7 +221,7 @@ public class Grid{
 		for (Node node : p.getAllNodes()) {
 			improved.add(node);
 			if (last != null) // The first node is the unit's current position
-				move -= terrain[node.y][node.x].getMoveCost(unit.getTheClass());
+				move -= terrain[node.y][node.x].getMoveCost(unit.getUnitClass());
 			last = node;
 			
 			// If we go somewhere that is already on the path, just cut the path.
@@ -234,7 +234,7 @@ public class Grid{
 			return getShortestPath(unit, x, y);
 
 		// Check that we can actually extend the path
-		if (move < terrain[y][x].getMoveCost(unit.getTheClass()))
+		if (move < terrain[y][x].getMoveCost(unit.getUnitClass()))
 			return getShortestPath(unit, x, y);
 		
 		improved.add(new Node(x, y));
@@ -280,7 +280,7 @@ public class Grid{
 					if(o.equals(n)) n = o;
 				}
 				int g = cur.g
-						+ terrain[n.y][n.x].getMoveCost(unit.getTheClass());
+						+ terrain[n.y][n.x].getMoveCost(unit.getUnitClass());
 				if(grid[n.y][n.x] != null && grid[n.y][n.x].getParty() != unit.getParty()) {
 					g += 128;
 				}
@@ -323,7 +323,7 @@ public class Grid{
 			set.add(curr);
 			for(Node n: curr.getNeighbors(this)){
 				if(!set.contains(n)){
-					n.d = curr.d + terrain[n.y][n.x].getMoveCost(u.getTheClass());
+					n.d = curr.d + terrain[n.y][n.x].getMoveCost(u.getUnitClass());
 					if(grid[n.y][n.x] != null && grid[n.y][n.x].getParty() != u.getParty()) {
 						n.d += 128;
 					}

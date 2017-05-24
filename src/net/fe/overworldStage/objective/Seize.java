@@ -26,7 +26,7 @@ public class Seize implements Objective {
 			boolean hasLord = false;
 			for(int i=0; i<p.getParty().size(); i++) {
 				Unit u = p.getParty().getUnit(i);
-				if(u.getTheClass().name.equals("Lord") && u.getHp() > 0) {
+				if(u.getUnitClass().name.equals("Lord") && u.getHp() > 0) {
 					hasLord = true;
 					System.out.println(p.getName()+" has a Lord!");
 				}

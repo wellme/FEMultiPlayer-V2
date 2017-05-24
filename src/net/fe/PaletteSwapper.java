@@ -61,7 +61,7 @@ public class PaletteSwapper {
 	public static ShaderArgs setup(FightUnit u) {
 		Unit unit = u.getUnit();
 		ShaderArgs args = new ShaderArgs();
-		if(unit.getTheClass().name.equals("Lord")) return args;
+		if(unit.getUnitClass().name.equals("Lord")) return args;
 		String c = unit.functionalClassName();
 		
 		Texture t = palettes.get(c);

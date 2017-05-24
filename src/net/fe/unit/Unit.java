@@ -60,8 +60,8 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	/** The hp. */
 	private int hp;
 	
-	/** The clazz. */
-	private final Class clazz;
+	/** The unitClass. */
+	private final UnitClass unitClass;
 	
 	/** The gender. */
 	public final char gender;
@@ -134,11 +134,11 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	 * @param bases the bases
 	 * @param growths the growths
 	 */
-	public Unit(String name, Class c, char gender, Statistics bases,
+	public Unit(String name, UnitClass c, char gender, Statistics bases,
 			Statistics growths) {
 		super(0, 0);
 		this.name = name;
-		this.clazz = c;
+		this.unitClass = c;
 		this.bases = bases;
 		this.growths = growths;
 		this.gender = gender;
@@ -193,7 +193,7 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	 * @return the string
 	 */
 	public String functionalClassName(){
-		String prefix = clazz.name;
+		String prefix = unitClass.name;
 		if(prefix.equals("Lord")){
 			prefix = name;
 		}
@@ -209,7 +209,7 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	 * @return the string
 	 */
 	public String noGenderName() {
-		String prefix = clazz.name;
+		String prefix = unitClass.name;
 		if(prefix.equals("Lord")){
 			prefix = name;
 		}
@@ -252,10 +252,10 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 
 	public static boolean isRider(Unit u){
 		List<String> mounts = WeaponFactory.riding;
-		return mounts.contains(u.name) || mounts.contains(u.clazz.name);
+		return mounts.contains(u.name) || mounts.contains(u.unitClass.name);
 	}
 	
-	public static boolean isRider(Class c){
+	public static boolean isRider(UnitClass c){
 		List<String> mounts = WeaponFactory.riding;
 		return mounts.contains(c.name);
 	}
@@ -380,7 +380,7 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	 * carried over to the new object. Other mutable characteristics are deep-cloned.
 	 */
 	public Unit getCopy() {
-		Unit copy = new Unit(name, clazz, gender, bases, growths);
+		Unit copy = new Unit(name, unitClass, gender, bases, growths);
 		copy.setLevel(this.level);
 		for (Item i : inventory) {
 			copy.addToInventory(i.getCopy());
@@ -570,7 +570,7 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 		if(w.pref!= null){
 			return name.equals(w.pref);
 		}
-		return clazz.usableWeapon.contains(w.type);
+		return unitClass.usableWeapon.contains(w.type);
 
 	}
 
@@ -716,8 +716,8 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	public ArrayList<CombatTrigger> getTriggers() {
 		ArrayList<CombatTrigger> triggers = new ArrayList<CombatTrigger>();
 		triggers.addAll(skills);
-		if (clazz.masterSkill != null)
-			triggers.add(clazz.masterSkill);
+		if (unitClass.masterSkill != null)
+			triggers.add(unitClass.masterSkill);
 		if(getWeapon() != null)
 			triggers.addAll(getWeapon().getTriggers());
 		return triggers;
@@ -862,7 +862,7 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	 */
 	public int crit() {
 		if(getWeapon() == null) return 0;
-		return getWeapon().crit + getStats().skl / 2 + clazz.crit
+		return getWeapon().crit + getStats().skl / 2 + unitClass.crit
 				+ (tempMods.get("Crit") != null ? tempMods.get("Crit") : 0);
 	}
 
@@ -882,8 +882,8 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	 * @return the the class
 	 */
 	// Getter/Setter
-	public Class getTheClass() {
-		return clazz;
+	public UnitClass getUnitClass() {
+		return unitClass;
 	}
 
 	/**
@@ -1183,6 +1183,6 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 			this.name.hashCode()) * 31 +
 			this.bases.hashCode()) * 31 +
 			this.growths.hashCode()) * 31 +
-			this.clazz.hashCode());
+			this.unitClass.hashCode());
 	}
 }

@@ -502,13 +502,13 @@ public class UnitBuilderStage extends Stage {
 			if(inv.getSelectedIndex() < inv.size() && inv.getSelection() != null){
 				renderItem(inv.getSelection().getItem());
 			} else {
-				Renderer.drawString("default_med", unit.getTheClass().name, INFO_X+2, INFO_Y+4, 1);
+				Renderer.drawString("default_med", unit.getUnitClass().name, INFO_X+2, INFO_Y+4, 1);
 				Renderer.drawString("default_med", 
 						"Skill: " + unit.getTriggers().get(0).getClass().getSimpleName(), 
 						INFO_X+228, INFO_Y+4, 1);
-				Renderer.drawString("default_med", unit.getTheClass().description, INFO_X+8, INFO_Y+20, 1);
+				Renderer.drawString("default_med", unit.getUnitClass().description, INFO_X+8, INFO_Y+20, 1);
 				ArrayList<String> weps = new ArrayList<String>();
-				for(Weapon.Type type: unit.getTheClass().usableWeapon){
+				for(Weapon.Type type: unit.getUnitClass().usableWeapon){
 					if(type.isMagic()){
 						weps.add(type.toString().toLowerCase() + " magic");
 					} else if (type.equals(Weapon.Type.STAFF)){

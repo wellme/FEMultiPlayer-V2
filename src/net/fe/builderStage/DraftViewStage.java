@@ -300,7 +300,7 @@ public class DraftViewStage extends Stage {
 	 * @param u the u
 	 */
 	public void selectUnit(Unit u){
-		if(u.getTheClass().name.equals("Lord")){
+		if(u.getUnitClass().name.equals("Lord")){
 			lordList.selectUnit(u);
 		} else {
 			vassalList.selectUnit(u);
@@ -601,7 +601,7 @@ public class DraftViewStage extends Stage {
 		 */
 		@Override
 		public int compare(UnitSet arg0, UnitSet arg1) {
-			return arg0.unit.getTheClass().name.compareTo(arg1.unit.getTheClass().name);
+			return arg0.unit.getUnitClass().name.compareTo(arg1.unit.getUnitClass().name);
 		}
 	}
 	

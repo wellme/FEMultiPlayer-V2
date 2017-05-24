@@ -26,7 +26,7 @@ public class UnitFactory {
 			if(line.equals("") || line.startsWith("#")) continue;
 			String[] args = line.split("\\s+");
 			String name = args[0];
-			Class clazz = Class.createClass(args[1]);
+			UnitClass unitClass = UnitClass.createClass(args[1]);
 			int lv = Integer.parseInt(args[2]);
 			int hpBase = Integer.parseInt(args[3]);
 			int strBase = Integer.parseInt(args[4]);
@@ -61,10 +61,10 @@ public class UnitFactory {
 			
 			int aid;
 			if(name.equals("Eirika") || 
-					clazz.name.equals("Valkyrie") ||
-					clazz.name.equals("Falconknight")){
+					unitClass.name.equals("Valkyrie") ||
+					unitClass.name.equals("Falconknight")){
 				aid = 20 - con;
-			} else if (Unit.isRider(clazz) || Unit.isRider(name)){
+			} else if (Unit.isRider(unitClass) || Unit.isRider(name)){
 				aid = 27 - con;
 			} else {
 				aid = con - 1;
@@ -99,10 +99,10 @@ public class UnitFactory {
 				0
 			);
 			
-			if(clazz == null){
+			if(unitClass == null){
 				System.err.println(line);
 			}
-			Unit u = new Unit(name, clazz, gender, bases, growths);
+			Unit u = new Unit(name, unitClass, gender, bases, growths);
 			if(name.equals("Roy")){
 				u.addToInventory(WeaponFactory.getWeapon("Sealed Sword"));
 			} else if (name.equals("Lyn")){
@@ -157,7 +157,7 @@ public class UnitFactory {
 	public static ArrayList<Unit> getLords(){
 		ArrayList<Unit> ans = new ArrayList<Unit>();
 		for(Unit u : units.values()) {
-			if(u.getTheClass().name.equals("Lord"))
+			if(u.getUnitClass().name.equals("Lord"))
 				ans.add(u.getCopy());
 		}
 		return ans;
@@ -171,7 +171,7 @@ public class UnitFactory {
 	public static ArrayList<Unit> getVassals(){
 		ArrayList<Unit> ans = new ArrayList<Unit>();
 		for(Unit u : units.values()) {
-			if(!u.getTheClass().name.equals("Lord"))
+			if(!u.getUnitClass().name.equals("Lord"))
 				ans.add(u.getCopy());
 		}
 		return ans;

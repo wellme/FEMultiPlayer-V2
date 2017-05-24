@@ -77,7 +77,7 @@ public class TeamBuilderStage extends Stage {
 	
 	/** The hgap. */
 	//CONFIG
-	private final static int name = 30, clazz = 100, lv = 170, hgap = 30; //xvals
+	private final static int name = 30, unitClass = 100, lv = 170, hgap = 30; //xvals
 	
 	/** The table_ystart. */
 	private final static int yStart = 40, vgap = 20, table_ystart = 10;
@@ -256,7 +256,7 @@ public class TeamBuilderStage extends Stage {
 				FightStage.NEUTRAL, FightStage.BORDER_LIGHT, FightStage.BORDER_DARK);
 		
 		Renderer.drawString("default_med", "Name", name, table_ystart, 0.5f);
-		Renderer.drawString("default_med", "Class", clazz, table_ystart, 0.5f);
+		Renderer.drawString("default_med", "Class", unitClass, table_ystart, 0.5f);
 		int x = lv;
 		for(String s: stats){
 			Renderer.drawString("default_med", s, x, table_ystart, 0.5f);
@@ -270,7 +270,7 @@ public class TeamBuilderStage extends Stage {
 		int y = yStart;
 		for(Unit u: units){
 			Renderer.drawString("default_med", u.name, name, y, 0.5f);
-			Renderer.drawString("default_med", u.getTheClass().name, clazz, y, 0.5f);
+			Renderer.drawString("default_med", u.getUnitClass().name, unitClass, y, 0.5f);
 			x = lv;
 			for(String s: stats){
 				Renderer.drawString("default_med", u.getBase(s), x, y, 0.5f);

@@ -111,7 +111,7 @@ public class UnitMoved extends MenuContext<String> {
 		} else if (selectedItem.equals("Summon")){
 			new Summon(stage, this, zone, unit).startContext();
 		} else {
-			for (FieldSkill f : unit.getTheClass().fieldSkills) {
+			for (FieldSkill f : unit.getUnitClass().fieldSkills) {
 				if (selectedItem.equals(f.getName())) {
 					f.onSelect(stage, this, zone, unit).startContext();
 				}
@@ -164,7 +164,7 @@ public class UnitMoved extends MenuContext<String> {
 					Zone.MOVE_DARK);
 			stage.addEntity(zone);
 		} else {
-			for (FieldSkill f : unit.getTheClass().fieldSkills) {
+			for (FieldSkill f : unit.getUnitClass().fieldSkills) {
 				if (menu.getSelection().equals(f.getName())) {
 					zone = f.getZone(unit, grid);
 					stage.addEntity(zone);
@@ -234,7 +234,7 @@ public class UnitMoved extends MenuContext<String> {
 			}
 			if(p == null && unit.rescuedUnit() != null && 
 					grid.getTerrain(n.x, n.y).getMoveCost(
-					unit.rescuedUnit().getTheClass()) < unit
+					unit.rescuedUnit().getUnitClass()) < unit
 					.rescuedUnit().getStats().mov){
 				drop = true;
 			}
@@ -242,9 +242,9 @@ public class UnitMoved extends MenuContext<String> {
 			//summon
 			if (p == null
 					&& grid.getTerrain(n.x, n.y).getMoveCost(
-							net.fe.unit.Class.createClass("Phantom")) <
+							net.fe.unit.UnitClass.createClass("Phantom")) <
 							unit.getStats().mov && 
-							unit.getTheClass().usableWeapon.contains(Weapon.Type.DARK)) {
+							unit.getUnitClass().usableWeapon.contains(Weapon.Type.DARK)) {
 				for (Item i : unit.getInventory()) {
 					if (i instanceof RiseTome)
 						summon = true;
@@ -265,7 +265,7 @@ public class UnitMoved extends MenuContext<String> {
 		if (summon)
 			list.add("Summon");
 		
-		for (FieldSkill f : unit.getTheClass().fieldSkills) {
+		for (FieldSkill f : unit.getUnitClass().fieldSkills) {
 			if (f.allowed(unit, this.stage.grid)) {
 				list.add(f.getName());
 			}
