@@ -1,10 +1,14 @@
 package net.fe.resources;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.util.Iterator;
 
 
 /**
@@ -20,7 +24,9 @@ import java.nio.file.Path;
  * This format doesn't respect the Java naming convention, but deal with it, it's the easiest way to do this.
  * Additionally, they must have declared a constructor that takes a {@link Path} pointing towards the file to be read.
  * </p>
- * 
+ * <p>
+ * Subclasses should obviously document their inner structure to facilitate further development of resource packs.
+ * </p>
  * <p>
  * When a new version of a resource file is available, the previous version must implement a way to update 
  * an older file to the new version by implementing the {@link #update()} and {@link #canUpdate()} methods.
@@ -68,14 +74,25 @@ public abstract class ResourceFile {
 		try {
 			@SuppressWarnings("unchecked")
 			//Java is made of magic and dreams
-			Class<ResourceFile> loadedClass = (Class<ResourceFile>) ResourceFile.class.getClassLoader().loadClass(RESOURCE_FILE_CLASS_PACKAGE_NAME + "." + className.replace('.', '_'));
-			return loadedClass.getConstructor(Path.class).newInstance(path);
+			Class<?> loadedClass = ResourceFile.class.getClassLoader().loadClass(RESOURCE_FILE_CLASS_PACKAGE_NAME + "." + className.replace('.', '_'));
+			try {
+				return (ResourceFile) loadedClass.getConstructor(Path.class).newInstance(path);
+			} catch (ClassCastException e) {
+				throw new RuntimeException(String.format("%s doesn't extend ResourceFile", loadedClass.getName()));
+			}
 		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException(String.format("%s's version is not valid (%s)", path, version));
+			throw new IllegalArgumentException(String.format("%s's version is not valid (%s)", path, version), e);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new IllegalArgumentException(String.format("Failed to load the file (Version : %s)", version), e);
-		}
+		} 
 	}
+	
+	/**
+	 * Modifies the resources declared in {@link net.fe.FEResources FEResources}.
+	 * @throws OutdatedVersionException If the version is no longer compatible with the current
+	 * version of the game. 
+	 */
+	public abstract void modifyResources() throws OutdatedVersionException;
 	
 	/**
 	 * Save this file to the path specified.
@@ -88,13 +105,33 @@ public abstract class ResourceFile {
 	 * smoothly transition to the newer version exists.
 	 * @return Returns true if the file can be updated.
 	 */
-	public abstract boolean canUpdate();
+	public boolean canUpdate() {
+		return false;
+	}
+	
+	/**
+	 * Returns true if the current version of the resource file is outdated and no longer supported
+	 * by the game.
+	 * @return True if the resource pack must be updated.
+	 */
+	public boolean mustUpdate() {
+		return false;
+	}
 	
 	/**
 	 * A method that returns a resource file containing the same information as this one, but updated
 	 * to a newer version. This method doesn't need to update the file to the <em>newest</em> version.
 	 * @return A newer version of the resource file.
+	 * @throws UnsupportedOperationException If a newer version of the file doesn't exist.
 	 */
-	public abstract ResourceFile update();
+	public ResourceFile update() throws UnsupportedOperationException {
+		throw new UnsupportedOperationException("No newer version available");
+	}
 
+	
+	public static class OutdatedVersionException extends Exception {
+
+		private static final long serialVersionUID = 4111695848664064373L;
+		
+	}
 }

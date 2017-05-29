@@ -5,9 +5,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import org.json.simple.JSONArray;
@@ -23,6 +29,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import chu.engine.AnimationData;
 import chu.engine.anim.BitmapFont;
 import net.fe.builderStage.TeamNameInput;
+import net.fe.resources.ResourceFile;
 import net.fe.unit.Item;
 import net.fe.unit.Unit;
 import net.fe.unit.Weapon;
@@ -37,6 +44,9 @@ import java.util.Properties;
  * The Class FEResources.
  */
 public class FEResources {
+	
+	
+	private static final String RESOURCE_FOLDER = "resources";
 	
 	/** The search folders. */
 	private static String[] searchFolders = 
@@ -80,10 +90,22 @@ public class FEResources {
 		return textures.containsKey(string);
 	}
 	
+	
+	
+	public static void loadResources() {
+		for(File file : new File(RESOURCE_FOLDER).listFiles()) {
+			try {
+				ResourceFile.loadFile(file.toPath()).modifyResources();
+			} catch (Throwable e) {
+				//TODO log
+			}
+		}
+	}
+	
 	/**
 	 * Load resources.
 	 */
-	public static void loadResources() {
+	public static void loadResourcesBackup() {
 		try {
 			//Load bitmap fonts
 			loadBitmapFonts();

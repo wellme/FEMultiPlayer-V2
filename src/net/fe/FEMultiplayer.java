@@ -121,7 +121,7 @@ public class FEMultiplayer extends Game{
 			e.printStackTrace();
 		}
 		Display.setIcon(new ByteBuffer[]{icon16, icon32});
-		FEResources.loadResources();
+		FEResources.loadResourcesBackup();
 		FEResources.loadBitmapFonts();
 		WeaponFactory.loadWeapons();
 		UnitFactory.loadUnits();
