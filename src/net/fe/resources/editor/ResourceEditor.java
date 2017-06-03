@@ -7,14 +7,15 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.zip.ZipException;
 
 import javax.swing.JFrame;
@@ -33,33 +34,67 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreeModel;
 
 import net.fe.resources.ZipFileIO;
+import net.fe.unit.Weapon;
 
 public class ResourceEditor extends JFrame {
 
-	private static final File WORKING_DIRECTORY;
-	
-	static {
-		try {
-			WORKING_DIRECTORY = File.createTempFile("working_directory", "/");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
 	private static final long serialVersionUID = -1299817269714345762L;
+	
+	private ZipFileIO zip = new ZipFileIO(new File("resources/H.zip"), new File("working_directory"));
+	
+	
+	private boolean hasChanges = false;
+	
+	private ArrayList<Weapon> weapons = new ArrayList<Weapon>();
+	
+	private File sourceFile;
 	
 	private JTextField txtName;
 	private JTextField txtVersion;
 	private JTextField txtAuthor;
 	
 	public static void main(String[] args) throws ZipException, IOException {
-		
+		new ResourceEditor().setVisible(true);
 	}
 	
 	
 	public ResourceEditor() throws ZipException, IOException {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent event) {
+				if(hasChanges)
+					switch (JOptionPane.showConfirmDialog(null, "Do it?")) {
+						case JOptionPane.YES_OPTION:
+							try {
+								zip.save(sourceFile);
+								//Falls through
+							} catch (IOException e) {
+								JOptionPane.showMessageDialog(null, "Failed to save : " + e +": " + e.getMessage());
+								break;
+							}
+						case JOptionPane.NO_OPTION:
+							try {
+								zip.close();
+							} catch (IOException e) {
+								JOptionPane.showMessageDialog(null, "Failed to clean up : " + e +": " + e.getMessage());
+							}
+							exit();
+							return;
+						default: //Canceling 
+							return;
+					}
+				else
+					exit();
+			}
+			
+			void exit() {
+				dispose();
+				System.exit(0);
+			}
+		});
 		setTitle("Resource file editor v0.0.0");
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((int) screenSize.getWidth()/2, (int) screenSize.getHeight()/2, 386, 284);
@@ -70,7 +105,8 @@ public class ResourceEditor extends JFrame {
 			System.err.println("Failed to set look and feel");
 		}
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//Closing operation logic handled by the event handler.
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
 		JPanel pnlInfo = new JPanel();
 		getContentPane().add(pnlInfo, BorderLayout.WEST);
@@ -214,7 +250,7 @@ public class ResourceEditor extends JFrame {
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
 		
 		JTree tree = new JTree();
-		tree.setModel(new ZipFileIO(new File("resources/H.zip")).asTree());
+		tree.setModel(getModel());
 		scrollPane.setViewportView(tree);
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent e) {
@@ -249,6 +285,11 @@ public class ResourceEditor extends JFrame {
 		menuBar.add(mnEdit);
 		
 		JMenuItem mntmAddWeapon = new JMenuItem("Add weapon");
+		mntmAddWeapon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addWeapon();
+			}
+		});
 		mnEdit.add(mntmAddWeapon);
 		
 		JMenuItem mntmAddMap = new JMenuItem("Add map");
@@ -265,13 +306,12 @@ public class ResourceEditor extends JFrame {
 	}
 
 	
-	private void cleanWorkingDirectory() {
-		try {
-			for(File file : Files.list(new File("working_directory").toPath()).toArray(File[]::new))
-				file.delete();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private void addWeapon() {
+		
 	}
-	
+
+
+	private TreeModel getModel() throws ZipException, IOException {
+		return zip.asTree();
+	}
 }

@@ -39,8 +39,6 @@ public abstract class ResourceFile {
 	
 	private static final String RESOURCE_FILE_CLASS_PACKAGE_NAME = "net.fe.resources.filetype";
 
-	private Version gameVersion;
-	
 	/**
 	 * Reminds the coder to implement a constructor taking one (and only one!) {@link Path} as parameter.
 	 * @param path The path of the file.
