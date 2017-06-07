@@ -8,6 +8,7 @@ import org.newdawn.slick.Color;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.anim.Renderer;
+import net.fe.resources.objects.FEResources;
 
 // TODO: Auto-generated Javadoc
 /**

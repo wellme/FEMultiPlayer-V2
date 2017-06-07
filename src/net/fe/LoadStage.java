@@ -10,6 +10,7 @@ import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
 
 import chu.engine.anim.Renderer;
+import net.fe.resources.objects.FEResources;
 
 // TODO: Auto-generated Javadoc
 /**

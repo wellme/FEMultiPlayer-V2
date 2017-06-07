@@ -14,7 +14,7 @@ import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.KeyboardEvent;
 import chu.engine.anim.BitmapFont;
-import net.fe.FEResources;
+import net.fe.resources.objects.FEResources;
 
 // TODO: Auto-generated Javadoc
 /**

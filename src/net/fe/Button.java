@@ -1,6 +1,7 @@
 package net.fe;
 
 import net.fe.fightStage.FightStage;
+import net.fe.resources.objects.FEResources;
 
 import org.newdawn.slick.Color;
 

@@ -7,8 +7,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import net.fe.FEResources;
 import net.fe.fightStage.FightStage;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.Unit;
 import net.fe.unit.UnitIcon;
 

@@ -3,7 +3,6 @@ package net.fe.overworldStage;
 import java.util.List;
 
 import net.fe.FEMultiplayer;
-import net.fe.FEResources;
 import net.fe.Player;
 import net.fe.RunesBg;
 import net.fe.Session;
@@ -22,6 +21,7 @@ import chu.engine.Stage;
 import chu.engine.anim.Renderer;
 
 import net.fe.network.Message;
+import net.fe.resources.objects.FEResources;
 
 // TODO: Auto-generated Javadoc
 /**

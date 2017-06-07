@@ -9,8 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
-import net.fe.FEResources;
 import net.fe.fightStage.FightStage;
+import net.fe.resources.objects.FEResources;
 
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.Color;

@@ -1,4 +1,4 @@
-package net.fe.resources;
+package net.fe.resources.files;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

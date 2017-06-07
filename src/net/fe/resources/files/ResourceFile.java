@@ -1,4 +1,4 @@
-package net.fe.resources;
+package net.fe.resources.files;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,7 +86,7 @@ public abstract class ResourceFile {
 	}
 	
 	/**
-	 * Modifies the resources declared in {@link net.fe.FEResources FEResources}.
+	 * Modifies the resources declared in {@link net.fe.resources.objects.FEResources FEResources}.
 	 * @throws OutdatedVersionException If the version is no longer compatible with the current
 	 * version of the game. 
 	 */

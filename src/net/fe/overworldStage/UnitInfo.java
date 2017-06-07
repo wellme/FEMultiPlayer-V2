@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import net.fe.FEResources;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.Item;
 import net.fe.unit.ItemDisplay;
 import net.fe.unit.Unit;
@@ -42,7 +42,7 @@ public class UnitInfo extends Entity implements DoNotDestroy{
 	 * Instantiates a new unit info.
 	 */
 	public UnitInfo() {
-		super(50, Game.getWindowHeight()/net.fe.FEResources.getWindowScale()-80);
+		super(50, Game.getWindowHeight()/net.fe.resources.objects.FEResources.getWindowScale()-80);
 		renderDepth = 0.8f;
 		dragons = FEResources.getTexture("dragon_separator");
 	}

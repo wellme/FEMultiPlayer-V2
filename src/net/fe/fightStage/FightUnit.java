@@ -1,10 +1,10 @@
 package net.fe.fightStage;
 
-import net.fe.FEResources;
 import net.fe.PaletteSwapper;
 import net.fe.fightStage.anim.AnimationArgs;
 import net.fe.fightStage.anim.AttackAnimation;
 import net.fe.fightStage.anim.DodgeAnimation;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.Unit;
 
 import static java.lang.System.out;

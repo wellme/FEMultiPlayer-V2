@@ -4,11 +4,11 @@ import static net.fe.fightStage.FightStage.*;
 
 import org.newdawn.slick.opengl.Texture;
 
-import net.fe.FEResources;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.anim.BitmapFont;
 import chu.engine.anim.Renderer;
+import net.fe.resources.objects.FEResources;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -25,7 +25,7 @@ public class TerrainInfo extends Entity implements DoNotDestroy{
 	 * @param c the c
 	 */
 	public TerrainInfo(Cursor c) {
-		super(0, Game.getWindowHeight()/net.fe.FEResources.getWindowScale()-80);
+		super(0, Game.getWindowHeight()/net.fe.resources.objects.FEResources.getWindowScale()-80);
 		renderDepth = 0.8f;
 	}
 	

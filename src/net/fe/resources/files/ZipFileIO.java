@@ -1,4 +1,4 @@
-package net.fe.resources;
+package net.fe.resources.files;
 
 import java.io.File;
 import java.io.FileInputStream;

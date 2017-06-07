@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import chu.engine.anim.Renderer;
-import net.fe.FEResources;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.ItemDisplay;
 
 // TODO: Auto-generated Javadoc

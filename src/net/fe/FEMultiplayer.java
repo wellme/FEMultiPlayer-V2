@@ -40,6 +40,8 @@ import net.fe.network.command.Command;
 import net.fe.network.message.CommandMessage;
 import net.fe.overworldStage.ClientOverworldStage;
 import net.fe.overworldStage.objective.Seize;
+import net.fe.resources.objects.FEResources;
+import net.fe.resources.objects.SoundTrack;
 import net.fe.unit.Unit;
 import net.fe.unit.UnitFactory;
 import net.fe.unit.UnitIdentifier;

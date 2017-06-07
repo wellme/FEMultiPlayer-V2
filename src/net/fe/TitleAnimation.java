@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.anim.Sprite;
+import net.fe.resources.objects.FEResources;
 
 // TODO: Auto-generated Javadoc
 /**

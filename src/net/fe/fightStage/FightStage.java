@@ -7,7 +7,6 @@ import java.util.PriorityQueue;
 import static java.lang.System.out;
 
 import net.fe.FEMultiplayer;
-import net.fe.FEResources;
 import net.fe.fightStage.anim.AnimationArgs;
 import net.fe.fightStage.anim.AttackAnimation;
 import net.fe.fightStage.anim.BackgroundEffect;
@@ -22,6 +21,7 @@ import net.fe.fightStage.anim.Platform;
 import net.fe.fightStage.anim.SkillIndicator;
 import net.fe.network.Message;
 import net.fe.overworldStage.Grid;
+import net.fe.resources.objects.FEResources;
 import net.fe.overworldStage.ClientOverworldStage;
 import net.fe.transition.FightOverworldTransition;
 import net.fe.unit.BattleStats;

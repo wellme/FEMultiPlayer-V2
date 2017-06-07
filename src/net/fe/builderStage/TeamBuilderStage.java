@@ -15,6 +15,7 @@ import net.fe.lobbystage.ClientLobbyStage;
 import net.fe.modifier.Modifier;
 import net.fe.network.message.PartyMessage;
 import net.fe.network.message.QuitMessage;
+import net.fe.resources.objects.FEResources;
 import net.fe.network.message.KickMessage;
 import net.fe.network.Message;
 import net.fe.unit.Item;

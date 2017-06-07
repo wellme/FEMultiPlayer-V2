@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.fe.fightStage.FightUnit;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.Unit;
 
 import org.lwjgl.opengl.GL13;

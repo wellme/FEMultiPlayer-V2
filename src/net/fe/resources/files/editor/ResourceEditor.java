@@ -1,4 +1,4 @@
-package net.fe.resources.editor;
+package net.fe.resources.files.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,7 +36,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeModel;
 
-import net.fe.resources.ZipFileIO;
+import net.fe.resources.files.ZipFileIO;
 import net.fe.unit.Weapon;
 
 public class ResourceEditor extends JFrame {

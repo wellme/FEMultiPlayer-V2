@@ -1,7 +1,7 @@
 package net.fe.unit;
 
-import net.fe.FEResources;
 import net.fe.Party;
+import net.fe.resources.objects.FEResources;
 
 import org.newdawn.slick.Color;
 

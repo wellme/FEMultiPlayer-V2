@@ -3,8 +3,8 @@ package net.fe.lobbystage;
 import java.util.List;
 
 import net.fe.FEMultiplayer;
-import net.fe.FEResources;
 import net.fe.network.message.ChatMessage;
+import net.fe.resources.objects.FEResources;
 
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.Color;

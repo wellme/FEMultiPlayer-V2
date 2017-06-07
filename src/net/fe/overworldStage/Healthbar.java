@@ -1,7 +1,7 @@
 package net.fe.overworldStage;
 
-import net.fe.FEResources;
 import net.fe.fightStage.FightStage;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.Unit;
 
 import org.newdawn.slick.Color;

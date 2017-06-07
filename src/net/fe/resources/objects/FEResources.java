@@ -1,4 +1,4 @@
-package net.fe;
+package net.fe.resources.objects;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,8 +28,9 @@ import org.newdawn.slick.util.ResourceLoader;
 
 import chu.engine.AnimationData;
 import chu.engine.anim.BitmapFont;
+import net.fe.LoadStage;
 import net.fe.builderStage.TeamNameInput;
-import net.fe.resources.ResourceFile;
+import net.fe.resources.files.ResourceFile;
 import net.fe.unit.Item;
 import net.fe.unit.Unit;
 import net.fe.unit.Weapon;

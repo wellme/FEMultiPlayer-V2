@@ -1,7 +1,7 @@
 package net.fe.fightStage.anim;
 
-import net.fe.FEResources;
 import net.fe.fightStage.FightStage;
+import net.fe.resources.objects.FEResources;
 import chu.engine.AnimationData;
 import chu.engine.Entity;
 import chu.engine.anim.Animation;

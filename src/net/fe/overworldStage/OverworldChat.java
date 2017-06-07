@@ -3,9 +3,9 @@ package net.fe.overworldStage;
 import java.util.List;
 
 import net.fe.FEMultiplayer;
-import net.fe.FEResources;
 import net.fe.network.Chat;
 import net.fe.network.message.ChatMessage;
+import net.fe.resources.objects.FEResources;
 
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.Color;
@@ -56,7 +56,7 @@ public class OverworldChat extends TextInputBox implements DoNotDestroy {
 		List<String> chats = chat.getLast(5);
 		for(int i=0; i<5; i++) {
 			Renderer.drawString("default_med", chats.get(i), 
-					Game.getWindowWidth()/net.fe.FEResources.getWindowScale()-2-font.getStringWidth(chats.get(i)), y-82+i*16, renderDepth);
+					Game.getWindowWidth()/net.fe.resources.objects.FEResources.getWindowScale()-2-font.getStringWidth(chats.get(i)), y-82+i*16, renderDepth);
 		}
 	}
 	

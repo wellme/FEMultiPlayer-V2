@@ -16,6 +16,7 @@ import chu.engine.anim.Sprite;
 import chu.engine.anim.Transform;
 
 import net.fe.network.Message;
+import net.fe.resources.objects.FEResources;
 
 // TODO: Auto-generated Javadoc
 /**

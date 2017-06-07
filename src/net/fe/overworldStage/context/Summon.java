@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import chu.engine.anim.AudioPlayer;
-import net.fe.FEResources;
 import net.fe.overworldStage.*;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.Statistics;
 import net.fe.unit.Unit;
 import net.fe.unit.WeaponFactory;

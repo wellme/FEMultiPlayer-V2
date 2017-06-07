@@ -2,9 +2,9 @@ package net.fe.transition;
 
 import org.newdawn.slick.Color;
 
-import net.fe.FEResources;
 import net.fe.Transition;
 import net.fe.overworldStage.EndGameStage;
+import net.fe.resources.objects.FEResources;
 import chu.engine.Game;
 import chu.engine.anim.Renderer;
 import chu.engine.anim.Transform;

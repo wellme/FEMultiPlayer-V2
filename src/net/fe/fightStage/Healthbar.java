@@ -1,6 +1,6 @@
 package net.fe.fightStage;
 
-import net.fe.FEResources;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.Unit;
 
 import org.newdawn.slick.opengl.Texture;

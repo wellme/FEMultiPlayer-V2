@@ -1,10 +1,11 @@
 package net.fe.builderStage;
 
 import java.util.Set;
-import net.fe.FEResources;
+
 import net.fe.Session;
 import net.fe.modifier.Modifier;
 import net.fe.overworldStage.ItemMenu;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.HealingItem;
 import net.fe.unit.Item;
 import net.fe.unit.ItemDisplay;

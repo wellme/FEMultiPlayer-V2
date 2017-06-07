@@ -1,8 +1,8 @@
 package net.fe.overworldStage;
 
 import net.fe.FEMultiplayer;
-import net.fe.FEResources;
 import net.fe.Party;
+import net.fe.resources.objects.FEResources;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;

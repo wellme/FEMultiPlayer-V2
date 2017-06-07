@@ -3,11 +3,11 @@ package net.fe.overworldStage;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import net.fe.FEResources;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.anim.Renderer;
 import chu.engine.anim.Tileset;
+import net.fe.resources.objects.FEResources;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -1,5 +1,7 @@
 $ cat .gitignore
 bin/**/*
+/resources
+/working_directory
 /bin
 /dist
 /temp.json

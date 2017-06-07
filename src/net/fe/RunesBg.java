@@ -1,6 +1,7 @@
 package net.fe;
 
 import net.fe.overworldStage.DoNotDestroy;
+import net.fe.resources.objects.FEResources;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;

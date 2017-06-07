@@ -2,9 +2,9 @@ package net.fe.overworldStage;
 
 import org.newdawn.slick.Color;
 
-import net.fe.FEResources;
 import net.fe.Player;
 import net.fe.fightStage.FightStage;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.Unit;
 import chu.engine.Entity;
 import chu.engine.anim.Renderer;

@@ -2,8 +2,8 @@ package net.fe.fightStage.anim;
 
 import java.util.HashMap;
 
-import net.fe.FEResources;
 import net.fe.fightStage.FightStage;
+import net.fe.resources.objects.FEResources;
 import chu.engine.Entity;
 import chu.engine.AnimationData;
 import chu.engine.anim.Animation;

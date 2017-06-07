@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import net.fe.FEResources;
 import net.fe.PaletteSwapper;
 import net.fe.Party;
 import net.fe.fightStage.CombatTrigger;
@@ -23,6 +22,7 @@ import net.fe.overworldStage.ClientOverworldStage;
 import net.fe.overworldStage.OverworldStage;
 import net.fe.overworldStage.Path;
 import net.fe.overworldStage.Terrain;
+import net.fe.resources.objects.FEResources;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;

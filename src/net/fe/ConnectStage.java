@@ -5,6 +5,7 @@ import java.util.List;
 import net.fe.builderStage.TeamBuilderStage;
 import net.fe.network.FEServer;
 import net.fe.network.Message;
+import net.fe.resources.objects.FEResources;
 
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Color;

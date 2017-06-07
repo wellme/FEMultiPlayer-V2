@@ -2,9 +2,9 @@ package net.fe.fightStage.anim;
 
 import org.newdawn.slick.opengl.Texture;
 
-import net.fe.FEResources;
 import net.fe.fightStage.CombatCalculator;
 import net.fe.fightStage.FightStage;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.ItemDisplay;
 import net.fe.unit.Unit;
 import chu.engine.Entity;

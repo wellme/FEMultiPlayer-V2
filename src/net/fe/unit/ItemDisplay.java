@@ -3,12 +3,12 @@ package net.fe.unit;
 
 import org.newdawn.slick.opengl.Texture;
 
-import net.fe.FEResources;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.anim.Renderer;
 import chu.engine.anim.ShaderArgs;
 import chu.engine.anim.Transform;
+import net.fe.resources.objects.FEResources;
 
 // TODO: Auto-generated Javadoc
 /**

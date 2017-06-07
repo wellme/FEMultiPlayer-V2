@@ -3,6 +3,7 @@ package net.fe;
 import java.util.List;
 
 import net.fe.fightStage.FightStage;
+import net.fe.resources.objects.FEResources;
 
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.Color;

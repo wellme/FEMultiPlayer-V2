@@ -1,7 +1,7 @@
 package net.fe.overworldStage;
-import net.fe.FEResources;
 import chu.engine.GriddedEntity;
 import chu.engine.anim.Animation;
+import net.fe.resources.objects.FEResources;
 
 // TODO: Auto-generated Javadoc
 /**

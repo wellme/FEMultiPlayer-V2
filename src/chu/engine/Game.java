@@ -65,8 +65,8 @@ public abstract class Game {
 	 * @param name the name
 	 */
 	public void init(int width, int height, String name) {
-		windowWidth = Math.round(width*net.fe.FEResources.getWindowScale());
-		windowHeight = Math.round(height*net.fe.FEResources.getWindowScale());
+		windowWidth = Math.round(width*net.fe.resources.objects.FEResources.getWindowScale());
+		windowHeight = Math.round(height*net.fe.resources.objects.FEResources.getWindowScale());
 
 		try {
 			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
@@ -95,7 +95,7 @@ public abstract class Game {
 		glViewport(0, 0, windowWidth, windowHeight);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, windowWidth/net.fe.FEResources.getWindowScale(), windowHeight/net.fe.FEResources.getWindowScale(), 0, 1, -1);		//It's basically a camera
+		glOrtho(0, windowWidth/net.fe.resources.objects.FEResources.getWindowScale(), windowHeight/net.fe.resources.objects.FEResources.getWindowScale(), 0, 1, -1);		//It's basically a camera
 		glMatrixMode(GL_MODELVIEW);
 		
 		keys = new ArrayList<KeyboardEvent>();
@@ -194,7 +194,7 @@ public abstract class Game {
 	 * @return the scale x
 	 */
 	public static float getScaleX() {
-		return net.fe.FEResources.getWindowScale();
+		return net.fe.resources.objects.FEResources.getWindowScale();
 	}
 	
 	/**
@@ -203,6 +203,6 @@ public abstract class Game {
 	 * @return the scale y
 	 */
 	public static float getScaleY() {
-		return net.fe.FEResources.getWindowScale();
+		return net.fe.resources.objects.FEResources.getWindowScale();
 	}
 }

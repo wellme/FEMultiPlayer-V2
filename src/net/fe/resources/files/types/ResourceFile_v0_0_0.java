@@ -1,9 +1,9 @@
-package net.fe.resources.filetype;
+package net.fe.resources.files.types;
 
 import java.nio.file.Path;
 
-import net.fe.resources.ResourceFile;
-import net.fe.resources.Version;
+import net.fe.resources.files.ResourceFile;
+import net.fe.resources.files.Version;
 
 /**
  * v0.0.0

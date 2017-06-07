@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Set;
 
 import net.fe.FEMultiplayer;
-import net.fe.FEResources;
 import net.fe.Session;
 import net.fe.fightStage.CombatCalculator;
 import net.fe.fightStage.CombatTrigger;
 import net.fe.fightStage.FightStage;
 import net.fe.modifier.Modifier;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.ItemDisplay;
 import net.fe.unit.Unit;
 import chu.engine.Entity;

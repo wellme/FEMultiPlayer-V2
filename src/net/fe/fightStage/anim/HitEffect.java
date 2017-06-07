@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import net.fe.FEResources;
 import net.fe.fightStage.AttackRecord;
 import net.fe.fightStage.FightStage;
+import net.fe.resources.objects.FEResources;
 import net.fe.unit.Weapon;
 import chu.engine.Entity;
 import chu.engine.AnimationData;

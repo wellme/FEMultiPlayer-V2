@@ -1,4 +1,4 @@
-package net.fe;
+package net.fe.resources.objects;
 
 import java.io.File;
 import java.io.IOException;
