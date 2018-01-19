@@ -9,34 +9,18 @@ import org.newdawn.slick.Color;
  */
 public final class SpawnPoint implements Serializable {
 	
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8955139984944016201L;
 	
-	/** The x-coordinate. */
 	public final int x;
-	
-	/** The y-coordinate. */
 	public final int y;
-	
-	/** The team. */
 	public final Color team;
 	
-	/**
-	 * Instantiates a new spawn point.
-	 *
-	 * @param x the x-coordinate
-	 * @param y the y-coordinate
-	 * @param team the team
-	 */
 	public SpawnPoint(int x, int y, Color team) {
 		this.x = x;
 		this.y = y;
 		this.team = team;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -46,9 +30,6 @@ public final class SpawnPoint implements Serializable {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
