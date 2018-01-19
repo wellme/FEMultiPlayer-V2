@@ -68,6 +68,7 @@ public class LevelEditor extends Game {
 				currentStage.endStep();
 			glPopMatrix();
 			Display.update();
+			Display.sync(60);
 			timeDelta = System.nanoTime()-time;
 		}
 		AL.destroy();
