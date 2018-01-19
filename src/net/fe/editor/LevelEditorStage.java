@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Stack;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -33,6 +34,7 @@ public class LevelEditorStage extends Stage {
 	private int[][] tiles;
 	private String levelName;
 	private HashSet<SpawnPoint> spawns;
+	private Stack<Action> history = new Stack<>();
 
 	static {
 		try {
@@ -139,20 +141,17 @@ public class LevelEditorStage extends Stage {
 		}
 	}
 	
-	private boolean isValid(int x, int y) {
-		return x >= 0 && y >= 0 && x < tiles[0].length && y < tiles.length;
-	}
-	
 	private boolean isValid(Point p) {
-		return isValid(p.x, p.y);
+		return p.x >= 0 && p.y >= 0 && p.x < tiles[0].length && p.y < tiles.length;
 	}
 	
 	private Point getMousePosition() {
 		return new Point(Mouse.getX() / 16, (Game.getWindowHeight() - Mouse.getY()) / 16);
 	}
 	
-	private void set(Point p, int tile) {
-		tiles[p.y][p.x] = tile;
+	public void set(Point p, int tile) {
+		history.push(new SetTileAction(p, tile, tiles[p.y][p.x]));
+		history.peek().redo();
 	}
 	
 	/**
@@ -164,7 +163,7 @@ public class LevelEditorStage extends Stage {
 	 */
 	private boolean trySet(Point p, int tile) {
 		if(isValid(p)) {
-			tiles[p.y][p.x] = tile;
+			set(p, tile);
 			return true;
 		}
 		return false;
@@ -178,21 +177,15 @@ public class LevelEditorStage extends Stage {
 		else
 			System.out.printf("Spawnpoint added at (%s, %s)%n", spawn.x, spawn.y);
 	}
+	
+	public void modifySize(int dx, int dy) {
+		history.push(new ChangeSizeAction(dx, dy));
+		history.peek().redo();
+	}
 
-	private void modifySize(int dx, int dy) {
-		int width = Math.max(0, tiles[0].length + dx);
-		int height = Math.max(0, tiles.length + dy);
-		
-		int[][] newTiles = new int[height][width];
-		
-		int a = Math.min(height, tiles.length);
-		int b = Math.min(width, tiles[0].length);
-		
-		for (int i = 0; i < a; i++)
-			for (int j = 0; j < b; j++)
-				newTiles[i][j] = tiles[i][j];
-		
-		tiles = newTiles;
+	
+	public void undo() {
+		history.pop().undo();
 	}
 	
 	private void save() {
@@ -222,6 +215,7 @@ public class LevelEditorStage extends Stage {
 	public void endStep() {}
 	
 	private static class Point {
+		
 		public final int x, y;
 		
 		public Point(int x, int y) {
@@ -229,4 +223,85 @@ public class LevelEditorStage extends Stage {
 			this.y = y;
 		}
 	}
-}
+	
+	/**
+	 * Abstract class representing an action performed on the map
+	 * (changing a tile, the title, spawns, etc.)
+	 * Used to undo/redo previous actions.
+	 * @author wellme
+	 *
+	 */
+	private static abstract class Action {
+		/**
+		 * Performs the action. Even though the method is named "redo", it
+		 * may be called even if the action was not undone. This is because Java
+		 * reserves the "do" keyword. Thanks Java!
+		 */
+		public abstract void redo();
+		/**
+		 * Do the opposite of the action.
+		 */
+		public abstract void undo();
+	}
+	
+	private class ChangeSizeAction extends Action {
+		public final int dx;
+		public final int dy;
+		
+		public ChangeSizeAction(int dx, int dy) {
+			this.dx = dx;
+			this.dy = dy;
+		}
+
+		@Override
+		public void redo() {
+			modifySize(-dx, -dy);
+		}
+
+		@Override
+		public void undo() {
+			modifySize(dx, dy);
+		}
+		
+		private void modifySize(int dx, int dy) {
+			int width = Math.max(0, tiles[0].length + dx);
+			int height = Math.max(0, tiles.length + dy);
+			
+			int[][] newTiles = new int[height][width];
+			
+			int a = Math.min(height, tiles.length);
+			int b = Math.min(width, tiles[0].length);
+			
+			for (int i = 0; i < a; i++)
+				for (int j = 0; j < b; j++)
+					newTiles[i][j] = tiles[i][j];
+			
+			tiles = newTiles;
+		}
+		
+		
+	}
+	
+	private class SetTileAction extends Action {
+
+		public final Point position;
+		public final int tile;
+		public final int prev;
+		
+		public SetTileAction(Point position, int tile, int prev) {
+			this.position = position;
+			this.tile = tile;
+			this.prev = prev;
+		}
+
+		@Override
+		public void redo() {
+			tiles[position.y][position.x] = tile;
+		}
+
+		@Override
+		public void undo() {
+			tiles[position.y][position.x] = prev;
+		}
+	}
+	}
