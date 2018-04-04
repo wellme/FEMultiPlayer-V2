@@ -1,0 +1,312 @@
+package net.fe.editor;
+
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeListener;
+
+public class EditorFrame extends JFrame {
+	
+	private static final long serialVersionUID = 5668737481915340413L;
+	
+	private LevelEditorStage stage;
+	
+	private JMenuItem mntmKeybinds;
+	private JMenu mnHelp;
+	private JMenuItem mntmRedo;
+	private JMenuItem mntmUndo;
+	private JMenu mnEdit;
+	private JMenuItem mntmExit;
+	private JSeparator separator;
+	private JMenuItem mntmSaveAs;
+	private JMenuItem mntmSave;
+	private JMenuItem mntmOpen;
+	private JMenuItem mntmNew;
+	private JMenu mnFile;
+	private JMenuBar menuBar;
+	
+	private KeybindsFrame keybinds;
+	private JScrollPane pnlConsole;
+	private JTextArea txtConsole;
+	private JPanel pnlInfo;
+	private JLabel lblName;
+	private JTextField txtName;
+	private JLabel lblWidth;
+	private JLabel lblHeight;
+	private JSpinner spnWidth;
+	private JSpinner spnHeight;
+	private JSeparator separator_1;
+	private JMenuItem mntmClearConsole;
+	private JSeparator separator_2;
+	
+	public static void main(String[] args) {
+		EditorFrame frame;
+		LevelEditor editor = new LevelEditor();
+		editor.init(960, 640, "Fire Emblem Level Editor");
+		
+		frame = new EditorFrame();
+		frame.setVisible(true);
+		frame.useAsConsoleOutput();
+		frame.setStage(editor.getStage());
+		
+		editor.loop();
+	}
+	
+	public EditorFrame() {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				//Handle exiting without saving
+				System.err.println("Exiting");
+				System.exit(0);
+			}
+		});
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+			System.err.println("Failed to set look and feel");
+		}
+
+		setBounds(100, 100, 541, 226);
+		
+		setTitle("Level editor");
+		
+		menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		mnFile = new JMenu("File");
+		menuBar.add(mnFile);
+		
+		mntmNew = new JMenuItem("New");
+		mntmNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+		mnFile.add(mntmNew);
+		
+		mntmOpen = new JMenuItem("Open");
+		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+		mnFile.add(mntmOpen);
+		
+		mntmSave = new JMenuItem("Save");
+		mntmSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				stage.save(new File("final_destination.lvl"));
+			}
+		});
+		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+		mnFile.add(mntmSave);
+		
+		mntmSaveAs = new JMenuItem("Save as...");
+		mnFile.add(mntmSaveAs);
+		
+		separator = new JSeparator();
+		mnFile.add(separator);
+		
+		mntmExit = new JMenuItem("Exit");
+		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
+		mnFile.add(mntmExit);
+		
+		mnEdit = new JMenu("Edit");
+		menuBar.add(mnEdit);
+		
+		mntmUndo = new JMenuItem("Undo");
+		mntmUndo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				stage.undo();
+			}
+		});
+		mntmUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
+		mnEdit.add(mntmUndo);
+		
+		mntmRedo = new JMenuItem("Redo");
+		mntmRedo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				stage.redo();
+			}
+		});
+		mntmRedo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK));
+		mnEdit.add(mntmRedo);
+		
+		mntmClearConsole = new JMenuItem("Clear console");
+		mntmClearConsole.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				txtConsole.setText("");
+			}
+		});
+		
+		separator_2 = new JSeparator();
+		mnEdit.add(separator_2);
+		mntmClearConsole.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
+		mnEdit.add(mntmClearConsole);
+		
+		mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+		
+		mntmKeybinds = new JMenuItem("Keybinds");
+		mntmKeybinds.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				keybinds.setVisible(true);
+			}
+		});
+		mnHelp.add(mntmKeybinds);
+		
+		pnlConsole = new JScrollPane();
+		getContentPane().add(pnlConsole, BorderLayout.CENTER);
+		
+		txtConsole = new JTextArea();
+		txtConsole.setLineWrap(true);
+		txtConsole.setEditable(false);
+		pnlConsole.setViewportView(txtConsole);
+		
+		pnlInfo = new JPanel();
+		getContentPane().add(pnlInfo, BorderLayout.WEST);
+		GridBagLayout gbl_pnlInfo = new GridBagLayout();
+		gbl_pnlInfo.columnWidths = new int[]{0, 0, 0};
+		gbl_pnlInfo.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gbl_pnlInfo.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_pnlInfo.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		pnlInfo.setLayout(gbl_pnlInfo);
+		
+		lblName = new JLabel("Name");
+		GridBagConstraints gbc_lblName = new GridBagConstraints();
+		gbc_lblName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblName.gridx = 0;
+		gbc_lblName.gridy = 0;
+		pnlInfo.add(lblName, gbc_lblName);
+		
+		txtName = new JTextField();
+		GridBagConstraints gbc_txtName = new GridBagConstraints();
+		gbc_txtName.insets = new Insets(0, 0, 5, 0);
+		gbc_txtName.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtName.gridx = 1;
+		gbc_txtName.gridy = 0;
+		pnlInfo.add(txtName, gbc_txtName);
+		txtName.setColumns(10);
+		
+		lblWidth = new JLabel("Width");
+		GridBagConstraints gbc_lblWidth = new GridBagConstraints();
+		gbc_lblWidth.anchor = GridBagConstraints.EAST;
+		gbc_lblWidth.insets = new Insets(0, 0, 5, 5);
+		gbc_lblWidth.gridx = 0;
+		gbc_lblWidth.gridy = 1;
+		pnlInfo.add(lblWidth, gbc_lblWidth);
+		
+		ChangeListener resizeListener = e -> {
+			stage.modifySize((Integer)spnWidth.getValue(), (Integer)spnHeight.getValue());
+		};
+		
+		spnWidth = new JSpinner();
+		spnWidth.addChangeListener(resizeListener);
+		spnWidth.setModel(new SpinnerNumberModel(10, 0, null, 1));
+		GridBagConstraints gbc_spnWidth = new GridBagConstraints();
+		gbc_spnWidth.fill = GridBagConstraints.HORIZONTAL;
+		gbc_spnWidth.insets = new Insets(0, 0, 5, 0);
+		gbc_spnWidth.gridx = 1;
+		gbc_spnWidth.gridy = 1;
+		pnlInfo.add(spnWidth, gbc_spnWidth);
+		
+		lblHeight = new JLabel("Height");
+		GridBagConstraints gbc_lblHeight = new GridBagConstraints();
+		gbc_lblHeight.anchor = GridBagConstraints.EAST;
+		gbc_lblHeight.insets = new Insets(0, 0, 5, 5);
+		gbc_lblHeight.gridx = 0;
+		gbc_lblHeight.gridy = 2;
+		pnlInfo.add(lblHeight, gbc_lblHeight);
+		
+		spnHeight = new JSpinner();
+		spnHeight.addChangeListener(resizeListener);
+		spnHeight.setModel(new SpinnerNumberModel(new Integer(10), new Integer(0), null, new Integer(1)));
+		GridBagConstraints gbc_spnHeight = new GridBagConstraints();
+		gbc_spnHeight.insets = new Insets(0, 0, 5, 0);
+		gbc_spnHeight.fill = GridBagConstraints.HORIZONTAL;
+		gbc_spnHeight.gridx = 1;
+		gbc_spnHeight.gridy = 2;
+		pnlInfo.add(spnHeight, gbc_spnHeight);
+		
+		separator_1 = new JSeparator();
+		GridBagConstraints gbc_separator_1 = new GridBagConstraints();
+		gbc_separator_1.insets = new Insets(0, 0, 5, 5);
+		gbc_separator_1.gridx = 0;
+		gbc_separator_1.gridy = 3;
+		pnlInfo.add(separator_1, gbc_separator_1);
+		
+		keybinds = new KeybindsFrame();
+		keybinds.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+	}
+	
+	public void useAsConsoleOutput() {
+		System.setOut(new PrintStream(new TextAreaOutputStream()));
+		System.setErr(new PrintStream(new TextAreaOutputStream()));
+	}
+	
+	public void setStage(LevelEditorStage stage) {
+		this.stage = stage;
+	}
+	
+	private static class KeybindsFrame extends JFrame {
+
+		private static final long serialVersionUID = -4376848978555760917L;
+		
+		private JPanel contentPane;
+
+		public KeybindsFrame() {
+			
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+				System.err.println("Failed to set look and feel");
+			}
+			
+			setTitle("Keybinds");
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setBounds(100, 100, 274, 178);
+			contentPane = new JPanel();
+			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+			contentPane.setLayout(new BorderLayout(0, 0));
+			setContentPane(contentPane);
+			
+			JTextPane txtpnWShrinks = new JTextPane();
+			txtpnWShrinks.setEditable(false);
+			txtpnWShrinks.setText("W - Shrinks the grid vertically\r\nA - Shriks the grid horizontally\r\nS - Expands the grid vertically\r\nD - Expands the grid horizontally\r\n\r\nZ - Add a blue spawn point at target position\r\nX - Add a red spawn point at target position\r\nC - Add a green spawn point at target position\r\nV - Remove the spawn point at target position");
+			contentPane.add(txtpnWShrinks, BorderLayout.CENTER);
+		}
+	}
+	
+	private class TextAreaOutputStream extends OutputStream {
+
+		@Override
+		public void write(int b) throws IOException {
+			txtConsole.append(""+(char)b);
+			pnlConsole.getVerticalScrollBar().setValue(pnlConsole.getVerticalScrollBar().getMaximum());
+		}
+		
+	}
+}
