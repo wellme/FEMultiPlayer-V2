@@ -1,5 +1,6 @@
 package net.fe.editor;
 
+import static java.util.Collections.emptyList;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
@@ -11,22 +12,13 @@ import static org.lwjgl.opengl.GL11.glPushMatrix;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 
-import static java.util.Collections.emptyList;
-
 import chu.engine.Game;
-import chu.engine.Stage;
 import chu.engine.anim.Renderer;
 
 public class LevelEditor extends Game {
 	
-	private static Stage currentStage;
+	private LevelEditorStage currentStage;
 
-	public static void main(String[] args) {
-		LevelEditor game = new LevelEditor();
-		game.init(960, 640, "Fire Emblem Level Editor");
-		game.loop();
-	}
-	
 	@Override
 	public void init(int width, int height, String name) {
 		super.init(width, height, name);
@@ -59,6 +51,10 @@ public class LevelEditor extends Game {
 		}
 		AL.destroy();
 		Display.destroy();
+	}
+	
+	public LevelEditorStage getStage() {
+		return currentStage;
 	}
 
 }

@@ -98,7 +98,7 @@ public class LevelEditorStage extends Stage {
 							break;
 						}
 						
-						case Keyboard.KEY_F1: save(); break;
+						case Keyboard.KEY_F1: save(new File(levelName)); break;
 					}
 				}
 			}
@@ -178,6 +178,10 @@ public class LevelEditorStage extends Stage {
 			System.out.printf("Spawnpoint added at (%s, %s)%n", spawn.x, spawn.y);
 	}
 	
+	private void removeSpawn(Color color) {
+		
+	}
+	
 	public void modifySize(int dx, int dy) {
 		history.push(new ChangeSizeAction(dx, dy));
 		history.peek().redo();
@@ -188,9 +192,12 @@ public class LevelEditorStage extends Stage {
 		history.pop().undo();
 	}
 	
-	private void save() {
+	public void redo() {
+		//TODO
+	}
+	
+	public void save(File file) {
 		Level level = new Level(tiles[0].length, tiles.length, tiles, spawns);
-		File file = new File("levels/" + levelName + ".lvl");
 		FileOutputStream fo;
 		ObjectOutputStream oos;
 		try {
