@@ -24,6 +24,7 @@ import chu.engine.Stage;
 import chu.engine.anim.Renderer;
 import chu.engine.anim.Tileset;
 import net.fe.Party;
+import net.fe.editor.history.Action;
 import net.fe.network.Message;
 
 public class LevelEditorStage extends Stage {
@@ -229,26 +230,6 @@ public class LevelEditorStage extends Stage {
 			this.x = x;
 			this.y = y;
 		}
-	}
-	
-	/**
-	 * Abstract class representing an action performed on the map
-	 * (changing a tile, the title, spawns, etc.)
-	 * Used to undo/redo previous actions.
-	 * @author wellme
-	 *
-	 */
-	private static abstract class Action {
-		/**
-		 * Performs the action. Even though the method is named "redo", it
-		 * may be called even if the action was not undone. This is because Java
-		 * reserves the "do" keyword. Thanks Java!
-		 */
-		public abstract void redo();
-		/**
-		 * Do the opposite of the action.
-		 */
-		public abstract void undo();
 	}
 	
 	private class ChangeSizeAction extends Action {
