@@ -14,6 +14,7 @@ import org.lwjgl.opengl.Display;
 
 import chu.engine.Game;
 import chu.engine.anim.Renderer;
+import net.fe.FEResources;
 
 public class LevelEditor extends Game {
 	
@@ -46,7 +47,7 @@ public class LevelEditor extends Game {
 			}
 			glPopMatrix();
 			Display.update();
-			Display.sync(60);
+			Display.sync(FEResources.getTargetFPS());
 			timeDelta = System.nanoTime()-time;
 		}
 		AL.destroy();
