@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -40,7 +41,7 @@ public class EditorFrame extends JFrame {
 	
 	private LevelEditorStage stage;
 	
-	private JMenuItem mntmKeybinds;
+	private JMenuItem mntmControls;
 	private JMenu mnHelp;
 	private JMenuItem mntmRedo;
 	private JMenuItem mntmUndo;
@@ -67,7 +68,7 @@ public class EditorFrame extends JFrame {
 	private JSeparator separator_1;
 	private JMenuItem mntmClearConsole;
 	private JSeparator separator_2;
-	
+
 	public static void main(String[] args) {
 		EditorFrame frame;
 		LevelEditor editor = new LevelEditor();
@@ -75,19 +76,19 @@ public class EditorFrame extends JFrame {
 		
 		frame = new EditorFrame();
 		frame.setVisible(true);
-		frame.useAsConsoleOutput();
+		//frame.useAsConsoleOutput();
 		frame.setStage(editor.getStage());
 		
 		editor.loop();
 	}
 	
 	public EditorFrame() {
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				//Handle exiting without saving
-				System.err.println("Exiting");
-				System.exit(0);
+				if(exitRequested())
+					dispose();
 			}
 		});
 		
@@ -108,29 +109,62 @@ public class EditorFrame extends JFrame {
 		menuBar.add(mnFile);
 		
 		mntmNew = new JMenuItem("New");
+		mntmNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int result = promtUnsavedChanges("New file", "Create a new file?");
+				
+				switch(result) {
+					case JOptionPane.YES_OPTION:
+						//TODO save
+						saveLevel();
+						//falls through
+					case JOptionPane.NO_OPTION:
+						//TODO new file
+						break;
+					case JOptionPane.CANCEL_OPTION:
+						//Nothing to do.
+						break;
+				}
+			}
+		});
 		mntmNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 		mnFile.add(mntmNew);
 		
 		mntmOpen = new JMenuItem("Open");
+		mntmOpen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
 		mnFile.add(mntmOpen);
 		
 		mntmSave = new JMenuItem("Save");
 		mntmSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				stage.save(new File("final_destination.lvl"));
+				saveLevel();
 			}
 		});
 		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		mnFile.add(mntmSave);
 		
 		mntmSaveAs = new JMenuItem("Save as...");
+		mntmSaveAs.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO
+			}
+		});
 		mnFile.add(mntmSaveAs);
 		
 		separator = new JSeparator();
 		mnFile.add(separator);
 		
 		mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(exitRequested())
+					dispose();
+			}
+		});
 		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
 		mnFile.add(mntmExit);
 		
@@ -170,13 +204,13 @@ public class EditorFrame extends JFrame {
 		mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
 		
-		mntmKeybinds = new JMenuItem("Keybinds");
-		mntmKeybinds.addActionListener(new ActionListener() {
+		mntmControls = new JMenuItem("Controls");
+		mntmControls.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keybinds.setVisible(true);
 			}
 		});
-		mnHelp.add(mntmKeybinds);
+		mnHelp.add(mntmControls);
 		
 		pnlConsole = new JScrollPane();
 		getContentPane().add(pnlConsole, BorderLayout.CENTER);
@@ -203,6 +237,11 @@ public class EditorFrame extends JFrame {
 		pnlInfo.add(lblName, gbc_lblName);
 		
 		txtName = new JTextField();
+		txtName.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO rename
+			}
+		});
 		GridBagConstraints gbc_txtName = new GridBagConstraints();
 		gbc_txtName.insets = new Insets(0, 0, 5, 0);
 		gbc_txtName.fill = GridBagConstraints.HORIZONTAL;
@@ -262,6 +301,27 @@ public class EditorFrame extends JFrame {
 		keybinds.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}
 	
+	private boolean exitRequested() {
+		int result = promtUnsavedChanges("Exit", "");
+		
+		switch(result) {
+			case JOptionPane.YES_OPTION:
+				saveLevel();
+				//falls through
+			case JOptionPane.NO_OPTION:
+				System.exit(0);
+				return true;
+			case JOptionPane.CANCEL_OPTION:
+			default:
+				//Nothing to do.
+				return false;
+		}
+	}
+
+	private void saveLevel() {
+		stage.save(new File(stage.getLevelName() + ".lvl"));
+	}
+
 	public void useAsConsoleOutput() {
 		System.setOut(new PrintStream(new TextAreaOutputStream()));
 		System.setErr(new PrintStream(new TextAreaOutputStream()));
@@ -269,6 +329,19 @@ public class EditorFrame extends JFrame {
 	
 	public void setStage(LevelEditorStage stage) {
 		this.stage = stage;
+		setTitle(stage.getLevelName());
+	}
+	
+	private int promtUnsavedChanges(String title, String content) {
+		if(stage.hasChange()) {
+			//TODO change default option to cancel instead of yes.
+			int result = JOptionPane.showOptionDialog(this, 
+					(content == null || content.equals("") ? "" : content + "\n") + "Unsaved changes will be lost.", title,
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+			return result;
+		}
+		//No action needs to be taken if there are no changes.
+		return JOptionPane.NO_OPTION;
 	}
 	
 	private static class KeybindsFrame extends JFrame {

@@ -34,8 +34,10 @@ public class LevelEditorStage extends Stage {
 	private int selectedID;
 	private int[][] tiles;
 	private String levelName;
+	private String folder;
 	private HashSet<SpawnPoint> spawns;
 	private Stack<Action> history = new Stack<>();
+	private boolean changed = true;
 
 	static {
 		try {
@@ -46,21 +48,25 @@ public class LevelEditorStage extends Stage {
 		}
 	}
 
-	public LevelEditorStage(int x, int y, String levelName) {
+	public LevelEditorStage(int x, int y, String folder, String name) {
 		super(null);
 		selectedID = 0;
-		this.levelName = levelName;
+		this.levelName = name;
+		this.folder = folder;
 		tiles = new int[y][x];
 		spawns = new HashSet<SpawnPoint>();
-		try {
-			FileInputStream in = new FileInputStream(new File("levels/" + levelName + ".lvl"));
-			ObjectInputStream ois = new ObjectInputStream(in);
+		loadMap(name);
+	}
+
+	private void loadMap(String levelName) {
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(folder + "/" + levelName + ".lvl"))) {
 			Level level = (Level) ois.readObject();
 			tiles = level.tiles;
-			spawns = new HashSet<>(level.spawns);
-			if(spawns == null) spawns = new HashSet<SpawnPoint>();
+			if(level.spawns == null)
+				spawns = new HashSet<SpawnPoint>(level.spawns);
+			else
+				spawns = new HashSet<SpawnPoint>();
 			ois.close();
-			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -222,6 +228,10 @@ public class LevelEditorStage extends Stage {
 	@Override
 	public void endStep() {}
 	
+	public boolean hasChange() {
+		return changed;
+	}
+
 	private static class Point {
 		
 		public final int x, y;
@@ -291,5 +301,21 @@ public class LevelEditorStage extends Stage {
 		public void undo() {
 			tiles[position.y][position.x] = prev;
 		}
+	}
+
+	public String getLevelName() {
+		return levelName;
+	}
+
+	public void setLevelName(String levelName) {
+		this.levelName = levelName;
+	}
+
+	public String getFolder() {
+		return folder;
+	}
+
+	public void setFolder(String folder) {
+		this.folder = folder;
 	}
 	}
