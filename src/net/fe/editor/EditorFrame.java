@@ -239,7 +239,7 @@ public class EditorFrame extends JFrame {
 		txtName = new JTextField();
 		txtName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO rename
+				stage.setLevelName(txtName.getName());
 			}
 		});
 		GridBagConstraints gbc_txtName = new GridBagConstraints();

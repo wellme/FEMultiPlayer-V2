@@ -190,8 +190,28 @@ public class LevelEditorStage extends Stage {
 	}
 	
 	public void modifySize(int dx, int dy) {
-		history.push(new ChangeSizeAction(dx, dy));
+		performAction(new SetSizeAction(dx, dy));
+	}
+	
+	private void performAction(Action action) {
+		history.push(action);
 		history.peek().redo();
+	}
+
+	public String getLevelName() {
+		return levelName;
+	}
+
+	public void setLevelName(String levelName) {
+		performAction(new SetNameAction(levelName));
+	}
+
+	public String getFolder() {
+		return folder;
+	}
+
+	public void setFolder(String folder) {
+		this.folder = folder;
 	}
 
 	
@@ -242,13 +262,13 @@ public class LevelEditorStage extends Stage {
 		}
 	}
 	
-	private class ChangeSizeAction extends Action {
+	private class SetSizeAction extends Action {
 		public final int dx;
 		public final int dy;
 		
-		public ChangeSizeAction(int dx, int dy) {
-			this.dx = dx;
-			this.dy = dy;
+		public SetSizeAction(int x, int y) {
+			this.dx = x - tiles.length;
+			this.dy = y - tiles[0].length;
 		}
 
 		@Override
@@ -276,7 +296,27 @@ public class LevelEditorStage extends Stage {
 			
 			tiles = newTiles;
 		}
+	}
+	
+	private class SetNameAction extends Action {
 		
+		private final String prevName;
+		private final String newName;
+		
+		public SetNameAction(String newName) {
+			this.prevName = levelName;
+			this.newName = newName;
+		}
+		
+		@Override
+		public void redo() {
+			levelName = newName;
+		}
+
+		@Override
+		public void undo() {
+			levelName = prevName;
+		}
 		
 	}
 	
@@ -302,20 +342,4 @@ public class LevelEditorStage extends Stage {
 			tiles[position.y][position.x] = prev;
 		}
 	}
-
-	public String getLevelName() {
-		return levelName;
-	}
-
-	public void setLevelName(String levelName) {
-		this.levelName = levelName;
-	}
-
-	public String getFolder() {
-		return folder;
-	}
-
-	public void setFolder(String folder) {
-		this.folder = folder;
-	}
-	}
+}
