@@ -40,6 +40,7 @@ public class EditorFrame extends JFrame {
 	private static final long serialVersionUID = 5668737481915340413L;
 	
 	private LevelEditorStage stage;
+	private LevelEditor editor;
 	
 	private JMenuItem mntmControls;
 	private JMenu mnHelp;
@@ -70,16 +71,15 @@ public class EditorFrame extends JFrame {
 	private JSeparator separator_2;
 
 	public static void main(String[] args) {
-		EditorFrame frame;
-		LevelEditor editor = new LevelEditor();
-		editor.init(960, 640, "Fire Emblem Level Editor");
-		
-		frame = new EditorFrame();
+		EditorFrame frame = new EditorFrame();
+		frame.editor = new LevelEditor();
+		frame.editor.init(960, 640, "Fire Emblem Level Editor");
+		frame.editor.setCloseRequestedListener(() -> frame.exitRequested());
 		frame.setVisible(true);
 		//frame.useAsConsoleOutput();
-		frame.setStage(editor.getStage());
+		frame.setStage(frame.editor.getStage());
 		
-		editor.loop();
+		frame.editor.loop();
 	}
 	
 	public EditorFrame() {
@@ -309,6 +309,8 @@ public class EditorFrame extends JFrame {
 				saveLevel();
 				//falls through
 			case JOptionPane.NO_OPTION:
+				//TODO this is kinda silly, but it doesn't really matter if System.exit() is called 
+				//instead of actually relying on the caller to end the program?
 				System.exit(0);
 				return true;
 			case JOptionPane.CANCEL_OPTION:

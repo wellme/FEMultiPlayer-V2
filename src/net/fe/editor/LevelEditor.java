@@ -19,6 +19,7 @@ import net.fe.FEResources;
 public class LevelEditor extends Game {
 	
 	private LevelEditorStage currentStage;
+	private VoidToBooleanFunction handler;
 
 	@Override
 	public void init(int width, int height, String name) {
@@ -28,7 +29,7 @@ public class LevelEditor extends Game {
 	
 	@Override
 	public void loop() {
-		while(!Display.isCloseRequested()) {
+		while(true) {
 			final long time = System.nanoTime();
 			glClear(GL_COLOR_BUFFER_BIT |
 					GL_DEPTH_BUFFER_BIT |
@@ -49,6 +50,8 @@ public class LevelEditor extends Game {
 			Display.update();
 			Display.sync(FEResources.getTargetFPS());
 			timeDelta = System.nanoTime()-time;
+			if(Display.isCloseRequested() && (handler == null || handler.eval()))
+				break;
 		}
 		AL.destroy();
 		Display.destroy();
@@ -57,5 +60,12 @@ public class LevelEditor extends Game {
 	public LevelEditorStage getStage() {
 		return currentStage;
 	}
+	
+	public void setCloseRequestedListener(VoidToBooleanFunction handler) {
+		this.handler = handler;
+	}
 
+	public static interface VoidToBooleanFunction {
+		public boolean eval();
+	}
 }
