@@ -9,6 +9,8 @@ import static org.lwjgl.opengl.GL11.glClearDepth;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 
+import java.io.File;
+
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 
@@ -24,7 +26,7 @@ public class LevelEditor extends Game {
 	@Override
 	public void init(int width, int height, String name) {
 		super.init(width, height, name);
-		currentStage = new LevelEditorStage(3, 20, "levels", "seven?");
+		currentStage = new LevelEditorStage(3, 20, "levels" + File.separatorChar + "Sample.lvl");
 	}
 	
 	@Override
@@ -67,5 +69,9 @@ public class LevelEditor extends Game {
 
 	public static interface VoidToBooleanFunction {
 		public boolean eval();
+	}
+	
+	public void changeMap(String file) {
+		currentStage = new LevelEditorStage(150, 150, file);
 	}
 }

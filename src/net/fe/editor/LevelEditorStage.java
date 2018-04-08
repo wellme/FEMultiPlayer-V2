@@ -34,7 +34,7 @@ public class LevelEditorStage extends Stage {
 	private int selectedID;
 	private int[][] tiles;
 	private String levelName;
-	private String folder;
+	private String file;
 	private HashSet<SpawnPoint> spawns;
 	private Stack<Action> history = new Stack<>();
 	private boolean changed = true;
@@ -48,18 +48,18 @@ public class LevelEditorStage extends Stage {
 		}
 	}
 
-	public LevelEditorStage(int x, int y, String folder, String name) {
+	public LevelEditorStage(int x, int y, String file) {
 		super(null);
 		selectedID = 0;
-		this.levelName = name;
-		this.folder = folder;
+		this.levelName = file.substring(file.lastIndexOf(File.separatorChar) + 1, file.lastIndexOf("."));
+		this.file = file;
 		tiles = new int[y][x];
 		spawns = new HashSet<SpawnPoint>();
-		loadMap(name);
+		loadMap(file);
 	}
 
 	private void loadMap(String levelName) {
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(folder + "/" + levelName + ".lvl"))) {
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
 			Level level = (Level) ois.readObject();
 			tiles = level.tiles;
 			if(level.spawns == null)
@@ -205,15 +205,6 @@ public class LevelEditorStage extends Stage {
 	public void setLevelName(String levelName) {
 		performAction(new SetNameAction(levelName));
 	}
-
-	public String getFolder() {
-		return folder;
-	}
-
-	public void setFolder(String folder) {
-		this.folder = folder;
-	}
-
 	
 	public void undo() {
 		history.pop().undo();
@@ -342,4 +333,13 @@ public class LevelEditorStage extends Stage {
 			tiles[position.y][position.x] = prev;
 		}
 	}
+	
+	public int getHeight() {
+		return tiles[0].length;
+	}
+
+	public int getWidth() {
+		return tiles.length;
+	}
+
 }

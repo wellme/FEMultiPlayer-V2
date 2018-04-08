@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -133,6 +134,9 @@ public class EditorFrame extends JFrame {
 		mntmOpen = new JMenuItem("Open");
 		mntmOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				File file = promptFile();
+				editor.changeMap(file.toString());
+				stage = editor.getStage();
 			}
 		});
 		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
@@ -332,6 +336,8 @@ public class EditorFrame extends JFrame {
 	public void setStage(LevelEditorStage stage) {
 		this.stage = stage;
 		setTitle(stage.getLevelName());
+		spnWidth.setValue(stage.getWidth());
+		spnHeight.setValue(stage.getHeight());
 	}
 	
 	private int promtUnsavedChanges(String title, String content) {
@@ -344,6 +350,12 @@ public class EditorFrame extends JFrame {
 		}
 		//No action needs to be taken if there are no changes.
 		return JOptionPane.NO_OPTION;
+	}
+	
+	private static File promptFile() {
+		JFileChooser chooser = new JFileChooser(new File("./levels"));
+		chooser.showDialog(null, "Open");
+		return chooser.getSelectedFile();
 	}
 	
 	private static class KeybindsFrame extends JFrame {
