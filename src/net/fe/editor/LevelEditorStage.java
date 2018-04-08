@@ -190,7 +190,11 @@ public class LevelEditorStage extends Stage {
 	}
 	
 	public void modifySize(int dx, int dy) {
-		performAction(new SetSizeAction(dx, dy));
+		performAction(new ChangeSizeAction(dx, dy));
+	}
+	
+	public void setSize(int x, int y) {
+		performAction(new SetSizeAction(x, y));
 	}
 	
 	private void performAction(Action action) {
@@ -254,25 +258,66 @@ public class LevelEditorStage extends Stage {
 	}
 	
 	private class SetSizeAction extends Action {
-		public final int dx;
-		public final int dy;
+		public final int x;
+		public final int y;
+		
+		public final int prevX;
+		public final int prevY;
 		
 		public SetSizeAction(int x, int y) {
-			this.dx = x - tiles.length;
-			this.dy = y - tiles[0].length;
+			this.x = x;
+			this.y = y;
+			prevX = tiles[0].length;
+			prevY = tiles.length;
 		}
 
 		@Override
 		public void redo() {
-			modifySize(-dx, -dy);
+			setSize(x, y);
 		}
 
 		@Override
 		public void undo() {
-			modifySize(dx, dy);
+			setSize(prevX, prevY);
 		}
 		
-		private void modifySize(int dx, int dy) {
+		private void setSize(int x, int y) {
+			int width = Math.max(0, x);
+			int height = Math.max(0, y);
+			
+			int[][] newTiles = new int[height][width];
+			
+			int a = Math.min(height, tiles.length);
+			int b = Math.min(width, tiles[0].length);
+			
+			for (int i = 0; i < a; i++)
+				for (int j = 0; j < b; j++)
+					newTiles[i][j] = tiles[i][j];
+			
+			tiles = newTiles;
+		}
+	}
+	
+	private class ChangeSizeAction extends Action {
+		public final int dx;
+		public final int dy;
+		
+		public ChangeSizeAction(int dx, int dy) {
+			this.dx = dx;
+			this.dy = dy;
+		}
+
+		@Override
+		public void redo() {
+			changeSize(dx, dy);
+		}
+
+		@Override
+		public void undo() {
+			changeSize(-dx, -dy);
+		}
+		
+		private void changeSize(int dx, int dy) {
 			int width = Math.max(0, tiles[0].length + dx);
 			int height = Math.max(0, tiles.length + dy);
 			
@@ -335,11 +380,12 @@ public class LevelEditorStage extends Stage {
 	}
 	
 	public int getHeight() {
-		return tiles[0].length;
+		return tiles.length;
 	}
 
 	public int getWidth() {
-		return tiles.length;
+		return tiles[0].length;
 	}
+
 
 }

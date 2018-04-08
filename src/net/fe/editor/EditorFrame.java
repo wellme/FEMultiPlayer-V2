@@ -136,7 +136,7 @@ public class EditorFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				File file = promptFile();
 				editor.changeMap(file.toString());
-				stage = editor.getStage();
+				setStage(editor.getStage());
 			}
 		});
 		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
@@ -263,7 +263,7 @@ public class EditorFrame extends JFrame {
 		pnlInfo.add(lblWidth, gbc_lblWidth);
 		
 		ChangeListener resizeListener = e -> {
-			stage.modifySize((Integer)spnWidth.getValue(), (Integer)spnHeight.getValue());
+			stage.setSize((Integer)spnWidth.getValue(), (Integer)spnHeight.getValue());
 		};
 		
 		spnWidth = new JSpinner();
