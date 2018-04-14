@@ -9,7 +9,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Stack;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -25,6 +24,7 @@ import chu.engine.anim.Renderer;
 import chu.engine.anim.Tileset;
 import net.fe.Party;
 import net.fe.editor.history.Action;
+import net.fe.editor.history.StackHistory;
 import net.fe.network.Message;
 
 public class LevelEditorStage extends Stage {
@@ -36,7 +36,7 @@ public class LevelEditorStage extends Stage {
 	private String folder;
 	private String levelName;
 	private HashSet<SpawnPoint> spawns;
-	private Stack<Action> history = new Stack<>();
+	private StackHistory history = new StackHistory();
 	private Action topAction = null;
 
 	static {
@@ -158,8 +158,10 @@ public class LevelEditorStage extends Stage {
 	}
 	
 	public void set(Point p, int tile) {
-		history.push(new SetTileAction(p, tile, tiles[p.y][p.x]));
-		history.peek().redo();
+		if(tiles[p.y][p.x] != tile) {
+			history.push(new SetTileAction(p, tile, tiles[p.y][p.x]));
+			history.peek().redo();
+		}
 	}
 	
 	/**
@@ -195,7 +197,8 @@ public class LevelEditorStage extends Stage {
 	}
 	
 	public void setSize(int x, int y) {
-		performAction(new SetSizeAction(x, y));
+		if(getWidth() != x || getHeight() != y)
+			performAction(new SetSizeAction(x, y));
 	}
 	
 	private void performAction(Action action) {
@@ -212,11 +215,19 @@ public class LevelEditorStage extends Stage {
 	}
 	
 	public void undo() {
-		history.pop().undo();
+		Action action = history.pop();
+		System.out.println("Undoing " + action);
+		action.undo();
 	}
 	
 	public void redo() {
-		//TODO
+		Action action = history.undoPop();
+		System.out.println("Redoing " + action);
+		action.redo();
+	}
+	
+	public void clearHistory() {
+		history = new StackHistory();
 	}
 	
 	public void save() {
@@ -228,7 +239,7 @@ public class LevelEditorStage extends Stage {
 			oos = new ObjectOutputStream(fo);
 			oos.writeObject(level);
 			oos.close();
-			topAction = history.isEmpty() ? null : history.peek();
+			topAction = !history.hasPrevious() ? null : history.peek();
 			System.out.println("Level serialization successful.");
 		} catch (FileNotFoundException e) {
 			System.out.println("Invalid file path!");
@@ -246,7 +257,7 @@ public class LevelEditorStage extends Stage {
 	public void endStep() {}
 	
 	public boolean hasChange() {
-		if(history.isEmpty() && topAction == null)
+		if(!history.hasPrevious() && topAction == null)
 			return false;
 		return history.peek() != topAction;
 	}

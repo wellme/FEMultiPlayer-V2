@@ -1,6 +1,7 @@
 package net.fe.editor.history;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 
 public class StackHistory implements HistoryManager {
 
@@ -12,17 +13,21 @@ public class StackHistory implements HistoryManager {
 	
 	@Override
 	public Action undoPop() {
+		if(!hasNext())
+			throw new ArrayIndexOutOfBoundsException("No next element");
 		return actions.get(index++);
 	}
 
 	@Override
 	public void push(Action a) {
-		actions.ensureCapacity(index);
-		if(index == max)
+		if(index == max) {
 			max++;
-		else
+			actions.add(a);
+		} else {
 			max = index + 1;
-		actions.set(index++, a);
+			actions.set(index, a);
+		}
+		index++;
 	}
 
 	@Override
@@ -32,7 +37,17 @@ public class StackHistory implements HistoryManager {
 
 	@Override
 	public Action pop() {
+		if(!hasPrevious())
+			throw new ArrayIndexOutOfBoundsException("No previous element");
 		return actions.get(--index);
+	}
+	
+	public boolean hasPrevious() {
+		return index != 0;
+	}
+	
+	public boolean hasNext() {
+		return index != max;
 	}
 
 }

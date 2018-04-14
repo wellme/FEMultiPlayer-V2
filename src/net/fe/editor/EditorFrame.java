@@ -344,6 +344,7 @@ public class EditorFrame extends JFrame {
 		spnWidth.addChangeListener(resizeListener);
 		spnHeight.setValue(stage.getHeight());
 		txtName.setText(stage.getLevelName());
+		stage.clearHistory();
 	}
 	
 	private int promtUnsavedChanges(String title, String content) {
