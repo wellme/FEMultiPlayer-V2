@@ -37,7 +37,7 @@ public class LevelEditorStage extends Stage {
 	private String levelName;
 	private HashSet<SpawnPoint> spawns;
 	private Stack<Action> history = new Stack<>();
-	private boolean changed = true;
+	private Action topAction = null;
 
 	static {
 		try {
@@ -66,6 +66,7 @@ public class LevelEditorStage extends Stage {
 				spawns = new HashSet<SpawnPoint>(level.spawns);
 			else
 				spawns = new HashSet<SpawnPoint>();
+			topAction = null;
 			ois.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -227,6 +228,7 @@ public class LevelEditorStage extends Stage {
 			oos = new ObjectOutputStream(fo);
 			oos.writeObject(level);
 			oos.close();
+			topAction = history.isEmpty() ? null : history.peek();
 			System.out.println("Level serialization successful.");
 		} catch (FileNotFoundException e) {
 			System.out.println("Invalid file path!");
@@ -244,7 +246,9 @@ public class LevelEditorStage extends Stage {
 	public void endStep() {}
 	
 	public boolean hasChange() {
-		return changed;
+		if(history.isEmpty() && topAction == null)
+			return false;
+		return history.peek() != topAction;
 	}
 
 	private static class Point {
