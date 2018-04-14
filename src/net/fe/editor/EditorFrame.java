@@ -243,7 +243,8 @@ public class EditorFrame extends JFrame {
 		txtName = new JTextField();
 		txtName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				stage.setLevelName(txtName.getName());
+				stage.setLevelName(txtName.getText());
+				setTitle(txtName.getText());
 			}
 		});
 		GridBagConstraints gbc_txtName = new GridBagConstraints();
@@ -325,7 +326,7 @@ public class EditorFrame extends JFrame {
 	}
 
 	private void saveLevel() {
-		stage.save(new File(stage.getLevelName() + ".lvl"));
+		stage.save();
 	}
 
 	public void useAsConsoleOutput() {
@@ -338,6 +339,7 @@ public class EditorFrame extends JFrame {
 		setTitle(stage.getLevelName());
 		spnWidth.setValue(stage.getWidth());
 		spnHeight.setValue(stage.getHeight());
+		txtName.setText(stage.getLevelName());
 	}
 	
 	private int promtUnsavedChanges(String title, String content) {
