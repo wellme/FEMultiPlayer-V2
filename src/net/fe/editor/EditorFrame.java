@@ -70,6 +70,8 @@ public class EditorFrame extends JFrame {
 	private JSeparator separator_1;
 	private JMenuItem mntmClearConsole;
 	private JSeparator separator_2;
+	
+	private ChangeListener resizeListener;
 
 	public static void main(String[] args) {
 		EditorFrame frame = new EditorFrame();
@@ -263,7 +265,7 @@ public class EditorFrame extends JFrame {
 		gbc_lblWidth.gridy = 1;
 		pnlInfo.add(lblWidth, gbc_lblWidth);
 		
-		ChangeListener resizeListener = e -> {
+		resizeListener = e -> {
 			stage.setSize((Integer)spnWidth.getValue(), (Integer)spnHeight.getValue());
 		};
 		
@@ -337,7 +339,9 @@ public class EditorFrame extends JFrame {
 	public void setStage(LevelEditorStage stage) {
 		this.stage = stage;
 		setTitle(stage.getLevelName());
+		spnWidth.removeChangeListener(resizeListener);
 		spnWidth.setValue(stage.getWidth());
+		spnWidth.addChangeListener(resizeListener);
 		spnHeight.setValue(stage.getHeight());
 		txtName.setText(stage.getLevelName());
 	}
