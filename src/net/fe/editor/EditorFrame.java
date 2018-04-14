@@ -388,7 +388,16 @@ public class EditorFrame extends JFrame {
 			
 			JTextPane txtpnWShrinks = new JTextPane();
 			txtpnWShrinks.setEditable(false);
-			txtpnWShrinks.setText("W - Shrinks the grid vertically\r\nA - Shriks the grid horizontally\r\nS - Expands the grid vertically\r\nD - Expands the grid horizontally\r\n\r\nZ - Add a blue spawn point at target position\r\nX - Add a red spawn point at target position\r\nC - Add a green spawn point at target position\r\nV - Remove the spawn point at target position");
+			txtpnWShrinks.setText(
+				"W - Shrinks the grid vertically\r\n " +
+				"A - Shriks the grid horizontally\r\n" + 
+				"S - Expands the grid vertically\r\n" +
+				"D - Expands the grid horizontally\r\n"+
+				"\r\n" + 
+				"Z - Add a blue spawn point at target position\r\n" + 
+				"X - Add a red spawn point at target position\r\n" +
+				"C - Add a green spawn point at target position\r\n" +
+				"V - Remove the spawn point at target position");
 			contentPane.add(txtpnWShrinks, BorderLayout.CENTER);
 		}
 	}
