@@ -215,15 +215,19 @@ public class LevelEditorStage extends Stage {
 	}
 	
 	public void undo() {
-		Action action = history.pop();
-		System.out.println("Undoing " + action);
-		action.undo();
+		if(history.hasPrevious()) {
+			Action action = history.pop();
+			System.out.println("Undoing " + action);
+			action.undo();
+		}
 	}
 	
 	public void redo() {
-		Action action = history.undoPop();
-		System.out.println("Redoing " + action);
-		action.redo();
+		if(history.hasNext()) {
+			Action action = history.undoPop();
+			System.out.println("Redoing " + action);
+			action.redo();
+		}
 	}
 	
 	public void clearHistory() {
