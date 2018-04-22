@@ -239,12 +239,13 @@ public class LevelEditorStage extends Stage {
 		FileOutputStream fo;
 		ObjectOutputStream oos;
 		try {
-			fo = new FileOutputStream(new File(folder + levelName + ".lvl"));
+			File file = new File(folder + levelName + ".lvl"); 
+			fo = new FileOutputStream(file);
 			oos = new ObjectOutputStream(fo);
 			oos.writeObject(level);
 			oos.close();
 			topAction = !history.hasPrevious() ? null : history.peek();
-			System.out.println("Level serialization successful.");
+			System.out.printf("Level successfully saved at %s%n", file.getAbsolutePath());
 		} catch (FileNotFoundException e) {
 			System.out.println("Invalid file path!");
 			e.printStackTrace();
