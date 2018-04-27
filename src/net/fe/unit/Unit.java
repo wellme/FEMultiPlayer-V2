@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.PriorityQueue;
 import java.util.Set;
 
 import org.newdawn.slick.Color;
@@ -31,7 +32,6 @@ import net.fe.overworldStage.Node;
 import net.fe.overworldStage.OverworldStage;
 import net.fe.overworldStage.Path;
 import net.fe.overworldStage.Terrain;
-import net.fe.overworldStage.Zone;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -747,6 +747,71 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 		stats = growths.times(lv / 100f).plus(bases)
 				.min(new Statistics(60, 35,35,35, 35,35,35, 35,35,35,35));
 		fillHp();
+	}
+	
+	
+	public void setLevel2(int lv) {
+		if (lv > 20 || lv < 1) {
+			return;
+		}
+		this.level = lv;
+		lv--;
+		
+		int[] stats = {bases.maxHp, bases.str, bases.mag, bases.skl,
+						bases.spd,bases.def, bases.res, bases.lck};
+		
+		int[] counter = {0, 0, 0, 0, 0, 0, 0, 0};
+		
+		int[] growths = {this.growths.maxHp, this.growths.str, this.growths.mag, this.growths.skl,
+						this.growths.spd, this.growths.def, this.growths.res, this.growths.lck};
+		
+		int statCounter = 0;
+		int statPerLevel = 0;
+		
+		for(int i = 0; i < growths.length; i++)
+			statPerLevel += growths[i];
+		
+		PriorityQueue<Stat> queue = new PriorityQueue<>(8);
+		for(int i = 0; i < lv; i++) {
+			for(int j = 0; j < stats.length; j++)
+				if(!isCapped(j, stats[j]))
+					queue.add(new Stat(counter[j] += growths[j], j));
+			statCounter += statPerLevel;
+			while(statCounter >= 100) {
+				statCounter -= 100;
+				Stat stat = queue.poll();
+				stats[stat.index]++;
+				if(isCapped(stat.index, stats[stat.index])) {
+					counter[stat.index] = Integer.MIN_VALUE;
+					statPerLevel -= growths[stat.index];
+				} else
+					counter[stat.index] -= 100;
+			}
+			queue.clear();
+		}
+		this.stats = new Statistics(stats[0], stats[1], stats[2], stats[3],
+									stats[4], stats[5], stats[6], stats[7],
+									this.stats.mov, this.stats.con, this.stats.aid);
+		fillHp();
+	}
+	
+	private static boolean isCapped(int index, int value) {
+		return index == 0 ? value == 60 : value == 35;
+	}
+	
+	private static class Stat implements Comparable<Stat> {
+		private int value;
+		private int index;
+		
+		public Stat(int value, int index) {
+			this.value = value;
+			this.index = index;
+		}
+		
+		@Override
+		public int compareTo(Stat arg) {
+			return arg.value - value;
+		}
 	}
 	
 	/**
