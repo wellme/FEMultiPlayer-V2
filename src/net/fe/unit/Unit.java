@@ -791,7 +791,7 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 		}
 		this.stats = new Statistics(stats[0], stats[1], stats[2], stats[3],
 									stats[4], stats[5], stats[6], stats[7],
-									this.stats.mov, this.stats.con, this.stats.aid);
+									this.bases.mov, this.bases.con, this.bases.aid);
 		fillHp();
 	}
 	
