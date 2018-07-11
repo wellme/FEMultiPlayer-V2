@@ -262,4 +262,12 @@ public class Client {
 	public Session getSession() {
 		return session;
 	}
+
+	public void crash() {
+		try {
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

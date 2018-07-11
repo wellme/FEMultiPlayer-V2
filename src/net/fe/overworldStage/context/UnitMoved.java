@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import chu.engine.anim.AudioPlayer;
+import net.fe.FEMultiplayer;
 import net.fe.network.command.WaitCommand;
 import net.fe.overworldStage.FieldSkill;
 import net.fe.overworldStage.Menu;
@@ -116,6 +117,8 @@ public class UnitMoved extends MenuContext<String> {
 			new TakeTarget(stage, this, zone, unit).startContext();
 		} else if (action.equals("Drop")){
 			new DropTarget(stage, this, zone, unit).startContext();
+		} else if (action.equals("Crash")){
+			FEMultiplayer.getClient().crash();
 		} else if (action.equals("Summon")){
 			new Summon(stage, this, zone, unit).startContext();
 		} else {
@@ -276,6 +279,7 @@ public class UnitMoved extends MenuContext<String> {
 		}
 		
 		list.add("Item");
+		list.add("Crash");
 		list.add("Wait");
 
 		return list;
