@@ -217,7 +217,7 @@ public class FEMultiplayer extends Game{
 		u2.fillHp();
 		
 		
-		setCurrentStage(new FightStage(new UnitIdentifier(u1), new UnitIdentifier(u2), calc.getAttackQueue(), map, new EmptyRunnable()));
+		setCurrentStage(new FightStage(new UnitIdentifier(u1), new UnitIdentifier(u2), calc.getAttackQueue(), map, () -> System.exit(0)));
 	}
 	
 	/**
