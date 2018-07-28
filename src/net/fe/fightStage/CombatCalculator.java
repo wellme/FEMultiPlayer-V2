@@ -222,8 +222,8 @@ public class CombatCalculator {
 			}
 		}
 		
-		
-		if (!((RNG.get()+RNG.get())/2 < hitRate(a, d))) {
+		int hitrate = hitRate(a, d);
+		if (!((RNG.get()+RNG.get())/2 < hitrate)) {
 			miss = true;
 			if (a.getWeapon().isMagic())
 				use = true;
@@ -260,6 +260,16 @@ public class CombatCalculator {
 		}
 		damage = Math.max(0, Math.min(damage, d.getHp()));
 		
+		if(miss) {
+			if(hitrate >= 50)
+				damage /= 2;
+			else if(hitrate >= 25)
+				damage /= 4;
+			else
+				damage = 0;
+			animation += " Miss";
+		}
+		
 		for (CombatTrigger t : aSuccess.keySet()) {
 			if(aSuccess.get(t) && (t.turnToRun & CombatTrigger.YOUR_TURN_DRAIN)!=0){
 				drain = t.runDrain(a, d, damage);
@@ -269,12 +279,6 @@ public class CombatCalculator {
 			if(dSuccess.get(t) && (t.turnToRun & CombatTrigger.ENEMY_TURN_DRAIN)!=0){
 				drain = t.runDrain(a, d, damage);
 			}
-		}
-		
-		if(miss){
-			damage = 0;
-			drain = 0;
-			animation += " Miss";
 		}
 		
 		damage = Math.max(0, Math.min(damage, d.getHp()));
