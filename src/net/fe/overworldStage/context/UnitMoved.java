@@ -118,7 +118,9 @@ public class UnitMoved extends MenuContext<String> {
 		} else if (action.equals("Drop")){
 			new DropTarget(stage, this, zone, unit).startContext();
 		} else if (action.equals("Crash")){
-			FEMultiplayer.getClient().crash();
+			FEMultiplayer.getClient().crash(false);
+		} else if (action.equals("Crash delay")){
+			FEMultiplayer.getClient().crash(true);
 		} else if (action.equals("Summon")){
 			new Summon(stage, this, zone, unit).startContext();
 		} else {
@@ -280,6 +282,7 @@ public class UnitMoved extends MenuContext<String> {
 		
 		list.add("Item");
 		list.add("Crash");
+		list.add("Crash delay");
 		list.add("Wait");
 
 		return list;

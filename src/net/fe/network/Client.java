@@ -72,6 +72,7 @@ public class Client {
 	private long token;
 	private long lastTimestamp = -1;
 	private boolean shouldReconnect = true;
+	private boolean delay = false;
 	
 	/** The messages. Should only operate on if the monitor to messagesLock is held */
 	public final CopyOnWriteArrayList<Message> messages;
@@ -119,6 +120,10 @@ public class Client {
 	
 	private void connect(String ip, int port) {
 		try {
+			if(delay) {
+				Thread.sleep(750);
+				delay = false;
+			}
 			logger.info("CLIENT: Connecting to server: "+ip+":"+port);
 			serverSocket = new Socket(ip, port);
 			logger.info("CLIENT: Successfully connected!");
@@ -129,6 +134,8 @@ public class Client {
 			open = true;
 		} catch (IOException e) {
 			logger.throwing("Client", "<init>", e);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -263,9 +270,10 @@ public class Client {
 		return session;
 	}
 
-	public void crash() {
+	public void crash(boolean delay) {
 		try {
 			in.close();
+			this.delay = delay;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
