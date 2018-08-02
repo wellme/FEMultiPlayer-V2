@@ -122,7 +122,7 @@ public class Client {
 	private void connect(String ip, int port) {
 		try {
 			if(delay) {
-				Thread.sleep(750);
+				Thread.sleep(Server.TIMEOUT + 250);
 				delay = false;
 			}
 			logger.info("CLIENT: Connecting to server: "+ip+":"+port);
