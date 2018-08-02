@@ -37,7 +37,7 @@ public final class Server {
 		}
 	}
 	
-	private static final long TIMEOUT = 500; // 30 seconds
+	public static final long TIMEOUT = 500; // 30 seconds
 	
 	/** The server socket. */
 	private ServerSocket serverSocket;
@@ -168,5 +168,9 @@ public final class Server {
 			}
 		}
 		return false;
+	}
+	
+	public Message[] getBroadcastedMessages() {
+		return broadcastedMessages.toArray(new Message[0]);
 	}
 }

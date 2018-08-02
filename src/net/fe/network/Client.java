@@ -102,7 +102,8 @@ public class Client {
 					close();
 				} catch (Throwable e) {
 					close(); // Close just to be sure.
-					if(shouldReconnect)
+					long time = System.currentTimeMillis();
+					while(shouldReconnect && !open && System.currentTimeMillis() - time <= Server.TIMEOUT)
 						connect(ip, port);
 					logger.throwing("ClientNetworkingReader", "run", e);
 				}
