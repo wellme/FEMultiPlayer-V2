@@ -62,12 +62,7 @@ public class FEServer extends Game {
 		WeaponFactory.loadWeapons();
 		UnitFactory.loadUnits();
 
-		Thread serverThread = new Thread() {
-			@Override
-			public void run() {
-				server.start();
-			}
-		};
+		Thread serverThread = new Thread(server::start);
 		lobby = new LobbyStage(server.getSession());
 		currentStage = lobby;
 		serverThread.start();
@@ -78,8 +73,7 @@ public class FEServer extends Game {
 	 */
 	@Override
 	public void loop() {
-		boolean yes = true;
-		while (yes) {
+		while (true) {
 			final long time = System.nanoTime();
 			final ArrayList<Message> messages = new ArrayList<>();
 			synchronized (server.messagesLock) {
@@ -91,7 +85,7 @@ public class FEServer extends Game {
 				messages.addAll(server.messages);
 				for (Message message : messages) {
 					if (message instanceof JoinTeam || message instanceof ReadyMessage) {
-						if (!(FEServer.getCurrentStage() instanceof LobbyStage)) {
+						if (!(currentStage instanceof LobbyStage)) {
 							// ignore message to prevent late-joining players from switching teams or readying up
 						} else
 							// TODO: percelate broadcasting of these up to stages
@@ -115,15 +109,6 @@ public class FEServer extends Game {
 			currentStage.endStep();
 			timeDelta = System.nanoTime() - time;
 		}
-	}
-
-	/**
-	 * Gets the current stage.
-	 *
-	 * @return the current stage
-	 */
-	public static Stage getCurrentStage() {
-		return currentStage;
 	}
 
 	/**
@@ -159,7 +144,6 @@ public class FEServer extends Game {
 	public static void resetToLobby() {
 		for (Player p : getPlayers().values())
 			p.ready = false;
-		FEServer.getServer().allowConnections = false;
 		currentStage = lobby;
 	}
 

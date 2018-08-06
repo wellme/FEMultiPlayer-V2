@@ -3,13 +3,12 @@ package net.fe.network;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
-import java.time.LocalDateTime;
 
 import net.fe.Session;
-import net.fe.overworldStage.objective.Seize;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -36,26 +35,17 @@ public final class Server implements MessageDestination {
 	public static final int DEFAULT_PORT = 21255;
 	private int port = DEFAULT_PORT;
 	
-	/** The server socket. */
-	private ServerSocket serverSocket;
-	
-	/** The close requested. */
-	private boolean closeRequested = false;
-	
 	/** The clients. */
 	final CopyOnWriteArrayList<ServerListener> clients;
 	
 	/** The messages. Should only operate on if the monitor to messagesLock is held */
 	public final ArrayList<Message> messages;
 	
-	/** A lock which should be wated upon or notified for changes to messages */
+	/** A lock which should be waited upon or notified for changes to messages */
 	public final Object messagesLock;
 	
 	/** The session. */
 	private final Session session;
-	
-	/** The allow connections. */
-	public boolean allowConnections;
 	
 	/** Contains the next playerId to be used when a player joins the server */
 	private byte nextPlayerId = 1;
@@ -68,7 +58,6 @@ public final class Server implements MessageDestination {
 		messagesLock = new Object();
 		clients = new CopyOnWriteArrayList<ServerListener>();
 		session = s;
-		allowConnections = true;
 		this.port = port;
 	}
 	
@@ -78,10 +67,9 @@ public final class Server implements MessageDestination {
 	 * @param port the port
 	 */
 	public void start() {
-		try {
-			serverSocket = new ServerSocket(port);
+		try (ServerSocket serverSocket = new ServerSocket(port)) {
 			logger.info("SERVER: Waiting for connections...");
-			while(!closeRequested) {
+			while(true) {
 				Socket connectSocket = serverSocket.accept();
 				logger.info("SERVER: Connection #"+nextPlayerId+" accepted!");
 				ServerListener listener = new ServerListener(this, connectSocket, nextPlayerId);
@@ -89,7 +77,6 @@ public final class Server implements MessageDestination {
 				listener.start();
 				nextPlayerId++;
 			}
-			serverSocket.close();
 		} catch (IOException e) {
 			logger.throwing("Server", "start", e);
 		}
