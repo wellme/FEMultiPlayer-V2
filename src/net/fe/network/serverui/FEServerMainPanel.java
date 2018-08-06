@@ -11,7 +11,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import net.fe.Session;
-import net.fe.network.FEServer;
+import net.fe.network.Server;
 
 public class FEServerMainPanel extends JPanel {
 	
@@ -40,7 +40,7 @@ public class FEServerMainPanel extends JPanel {
 		
 		spnPort = new JSpinner();
 		spnPort.setToolTipText("Don't change this unless you know what you're doing!");
-		spnPort.setModel(new SpinnerNumberModel(FEServer.DEFAULT_PORT, 0, 65565, 1));
+		spnPort.setModel(new SpinnerNumberModel(Server.DEFAULT_PORT, 0, 65565, 1));
 		panel.add(spnPort);
 		
 		JButton button = new JButton("Start server");

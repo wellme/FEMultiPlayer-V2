@@ -2,12 +2,6 @@ package net.fe;
 
 import java.util.List;
 
-import net.fe.fightStage.FightStage;
-import net.fe.builderStage.TeamBuilderStage;
-import net.fe.network.FEServer;
-import net.fe.network.Message;
-
-import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Color;
 
 import chu.engine.Entity;
@@ -20,6 +14,10 @@ import chu.engine.anim.Renderer;
 import chu.engine.anim.ShaderArgs;
 import chu.engine.menu.MenuButton;
 import chu.engine.menu.TextInputBox;
+import net.fe.builderStage.TeamBuilderStage;
+import net.fe.fightStage.FightStage;
+import net.fe.network.Message;
+import net.fe.network.Server;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -214,12 +212,12 @@ public final class ConnectStage extends Stage {
 			String ip = split[0];
 			int port;
 			if(split.length == 1)
-				port = FEServer.DEFAULT_PORT;
+				port = Server.DEFAULT_PORT;
 			else {
 				try {
 					port = Integer.parseInt(split[1]);
 				} catch (NumberFormatException e) {
-					port = FEServer.DEFAULT_PORT;
+					port = Server.DEFAULT_PORT;
 				}
 			}
 			FEMultiplayer.connect(name.getInput(), ip, port);

@@ -33,6 +33,9 @@ public final class Server implements MessageDestination {
 		}
 	}
 	
+	public static final int DEFAULT_PORT = 21255;
+	private int port = DEFAULT_PORT;
+	
 	/** The server socket. */
 	private ServerSocket serverSocket;
 	
@@ -60,12 +63,13 @@ public final class Server implements MessageDestination {
 	/**
 	 * Instantiates a new server.
 	 */
-	public Server(Session s) {
+	public Server(Session s, int port) {
 		messages = new ArrayList<Message>();
 		messagesLock = new Object();
 		clients = new CopyOnWriteArrayList<ServerListener>();
 		session = s;
 		allowConnections = true;
+		this.port = port;
 	}
 	
 	/**
@@ -73,7 +77,7 @@ public final class Server implements MessageDestination {
 	 *
 	 * @param port the port
 	 */
-	public void start(int port) {
+	public void start() {
 		try {
 			serverSocket = new ServerSocket(port);
 			logger.info("SERVER: Waiting for connections...");

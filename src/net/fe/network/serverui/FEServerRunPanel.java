@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.fe.network.FEServer;
+import net.fe.network.Server;
 
 /**
  * The second panel displayed to the server's host.
@@ -34,7 +35,7 @@ public class FEServerRunPanel extends JPanel {
 	 * Initialize the panel.
 	 */
 	public FEServerRunPanel() {
-		this(FEServer.DEFAULT_PORT);
+		this(Server.DEFAULT_PORT);
 	}
 
 
@@ -54,7 +55,7 @@ public class FEServerRunPanel extends JPanel {
 		try {
 			ip = getIP();
 			String text = "Server IP:" + ip;
-			if (port != FEServer.DEFAULT_PORT)
+			if (port != Server.DEFAULT_PORT)
 				text += ":" + port;
 			lblServerAddress.setText(text);
 		} catch (IOException e) {
@@ -75,7 +76,7 @@ public class FEServerRunPanel extends JPanel {
 			if (ip == null)
 				return;
 			String text = ip;
-			if (port != FEServer.DEFAULT_PORT)
+			if (port != Server.DEFAULT_PORT)
 				text += ":" + port;
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
 
