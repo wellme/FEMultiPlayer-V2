@@ -10,7 +10,7 @@ import net.fe.modifier.Modifier;
 import net.fe.network.Chat;
 import net.fe.network.Message;
 import net.fe.network.message.ChatMessage;
-import net.fe.network.message.JoinLobby;
+import net.fe.network.message.JoinServer;
 import net.fe.network.message.JoinTeam;
 import net.fe.network.message.KickMessage;
 import net.fe.network.message.QuitMessage;
@@ -249,8 +249,8 @@ public final class Session implements Serializable {
 	 * Perform an action in response to the message
 	 */
 	public void handleMessage(Message message) {
-		if(message instanceof JoinLobby) {
-			JoinLobby join = (JoinLobby)message;
+		if(message instanceof JoinServer) {
+			JoinServer join = (JoinServer)message;
 			this.addPlayer(join.origin, new Player(join.nickname, join.origin));
 		} else if(message instanceof QuitMessage) {
 			QuitMessage quit = (QuitMessage)message;

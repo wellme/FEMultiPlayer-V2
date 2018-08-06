@@ -1,13 +1,12 @@
 package net.fe.network.message;
 
-import net.fe.Player;
 import net.fe.network.Message;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class JoinLobby.
  */
-public final class JoinLobby extends Message {
+public final class JoinServer extends Message {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4749147769637678401L;
@@ -21,7 +20,7 @@ public final class JoinLobby extends Message {
 	 * @param origin the origin
 	 * @param player the player
 	 */
-	public JoinLobby(int origin, String nickname) {
+	public JoinServer(int origin, String nickname) {
 		super(origin);
 		this.nickname = nickname;
 	}

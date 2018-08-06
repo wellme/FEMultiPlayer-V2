@@ -16,7 +16,7 @@ import net.fe.Party;
 import net.fe.Session;
 import net.fe.network.message.ClientInit;
 import net.fe.network.message.EndGame;
-import net.fe.network.message.JoinLobby;
+import net.fe.network.message.JoinServer;
 import net.fe.network.message.KickMessage;
 import net.fe.network.message.QuitMessage;
 import net.fe.network.message.RejoinMessage;
@@ -154,8 +154,8 @@ public class Client {
 						FEMultiplayer.getLocalPlayer().getParty().setColor(Party.TEAM_RED);
 					}
 					logger.info("CLIENT: Recieved ID "+id+" from server");
-					// Send a join lobby request
-					sendMessage(new JoinLobby(id, FEMultiplayer.getLocalPlayer().getName()));
+					// Send a join server request
+					sendMessage(new JoinServer(id, FEMultiplayer.getLocalPlayer().getName()));
 					initialized = true;
 				} else {
 					logger.info("CLIENT: Mismatched hashes:" +

@@ -11,7 +11,7 @@ import net.fe.network.Lobby;
 import net.fe.network.Message;
 import net.fe.network.message.ChatMessage;
 import net.fe.network.message.ClientInit;
-import net.fe.network.message.JoinLobby;
+import net.fe.network.message.JoinServer;
 import net.fe.network.message.JoinTeam;
 import net.fe.network.message.QuitMessage;
 import net.fe.network.message.ReadyMessage;
