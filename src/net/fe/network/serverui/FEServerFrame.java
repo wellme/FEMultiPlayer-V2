@@ -13,7 +13,7 @@ import net.fe.network.FEServer;
 /**
  * A frame containing panels related to the server.
  * Also manages transitions between the two.
- * @see FEServerMainPanel
+ * @see SessionPanel
  * @see FEServerRunPanel
  * @author wellme
  */
@@ -74,4 +74,5 @@ public class FEServerFrame extends JFrame {
 		}
 		System.exit(-1);
 	}
+	
 }

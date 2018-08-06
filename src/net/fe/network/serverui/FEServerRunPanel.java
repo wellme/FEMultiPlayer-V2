@@ -7,10 +7,7 @@ import java.awt.datatransfer.StringSelection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -21,7 +18,7 @@ import net.fe.network.FEServer;
 
 /**
  * The second panel displayed to the server's host.
- * @see FEServerMainPanel
+ * @see SessionPanel
  * @see FEServerRunPanel
  * @author wellme
  */
