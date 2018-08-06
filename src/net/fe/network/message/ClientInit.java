@@ -15,6 +15,7 @@ public final class ClientInit extends Message {
 	
 	/** The id assigned to the client */
 	public final int clientID;
+	public final long token;
 	
 	/** Session data */
 	public final Session session;
@@ -29,10 +30,11 @@ public final class ClientInit extends Message {
 	 * @param clientID the client id
 	 * @param s the s
 	 */
-	public ClientInit(int origin, int clientID, Session s) {
+	public ClientInit(int origin, int clientID, Session s, long token) {
 		super(origin);
 		this.clientID = clientID;
 		this.session = s;
+		this.token = token;
 		this.hashes = Hashes.pullFromStatics(session.getMap());
 	}
 	

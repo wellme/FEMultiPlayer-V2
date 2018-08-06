@@ -82,6 +82,7 @@ public class FEServer extends Game {
 				} catch (InterruptedException e) {
 					// No, really. Has there ever been a meaningful response to an InterruptedException?
 				}
+				server.timeoutClients();
 				messages.addAll(server.messages);
 				for (Message message : messages) {
 					if (message instanceof JoinTeam || message instanceof ReadyMessage) {
@@ -152,12 +153,16 @@ public class FEServer extends Game {
 	 */
 	public static void resetToLobbyAndKickPlayers() {
 		resetToLobby();
+		kickPlayers("Reseting server");
+	}
+	
+	public static void kickPlayers(String reason) {
 		ArrayList<Integer> ids = new ArrayList<>();
 		for (Player p : getPlayers().values())
 			ids.add(p.getID());
 		synchronized (server.messagesLock) {
 			for (int i : ids) {
-				final KickMessage kick = new KickMessage((byte) 0, i, "Reseting server");
+				final KickMessage kick = new KickMessage((byte) 0, i, reason);
 				server.broadcastMessage(kick);
 				server.messages.add(kick);
 			}
