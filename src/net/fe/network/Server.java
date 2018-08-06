@@ -15,7 +15,7 @@ import net.fe.overworldStage.objective.Seize;
 /**
  * The Class Server.
  */
-public final class Server {
+public final class Server implements MessageDestination {
 	
 	/** a logger */
 	private static final Logger logger = Logger.getLogger("net.fe.network.Server");
@@ -110,5 +110,13 @@ public final class Server {
 	 */
 	public Session getSession() {
 		return session;
+	}
+
+	@Override
+	public void addMessage(Message message) {
+		synchronized(messagesLock) {
+			messages.add(message);
+			messagesLock.notifyAll();
+		}
 	}
 }

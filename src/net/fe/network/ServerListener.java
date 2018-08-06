@@ -53,6 +53,8 @@ public final class ServerListener extends Thread {
 	/** The client that this is linked to. */
 	private final byte clientId;
 	
+	private MessageDestination destination;
+	
 	/**
 	 * Instantiates a new server listener.
 	 *
@@ -64,6 +66,7 @@ public final class ServerListener extends Thread {
 		this.clientId = clientId;
 		this.socket = socket;
 		this.main = main;
+		this.destination = main;
 		try {
 			out = new ObjectOutputStream(socket.getOutputStream());
 			out.flush();
@@ -115,14 +118,10 @@ public final class ServerListener extends Thread {
 	 * @param message the message
 	 */
 	public void processInput(Message message) {
-		synchronized(main.messagesLock) {
-			if (message.origin == clientId) {
-				if (message instanceof QuitMessage) {
-					clientQuit = true;
-				}
-				main.messages.add(message);
-				main.messagesLock.notifyAll();
-			}
+		if (message.origin == clientId) {
+			if (message instanceof QuitMessage)
+				clientQuit = true;
+			destination.addMessage(message);
 		}
 	}
 	
