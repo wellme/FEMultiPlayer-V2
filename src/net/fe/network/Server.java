@@ -56,8 +56,7 @@ public final class Server implements MessageDestination {
 	/** The session. */
 	private final Session session;
 	
-	/** Contains the next playerId to be used when a player joins the server */
-	private int nextPlayerId = 1;
+	private IDManager manager;
 	
 	private ArrayList<Message> broadcastedMessages = new ArrayList<>();
 	
@@ -70,6 +69,7 @@ public final class Server implements MessageDestination {
 		clients = new CopyOnWriteArrayList<ServerListener>();
 		pastClients = new TreeMap<>();
 		session = s;
+		manager = new IDManager();
 		this.port = port;
 	}
 	
@@ -83,11 +83,11 @@ public final class Server implements MessageDestination {
 			logger.info("SERVER: Waiting for connections...");
 			while(true) {
 				Socket connectSocket = serverSocket.accept();
-				logger.info("SERVER: Connection #"+nextPlayerId+" accepted!");
-				ServerListener listener = new ServerListener(this, connectSocket, nextPlayerId);
+				int id = manager.newPlayerID();
+				logger.info("SERVER: Connection #" + id + " accepted!");
+				ServerListener listener = new ServerListener(this, connectSocket, id);
 				clients.add(listener);
 				listener.start();
-				nextPlayerId++;
 			}
 		} catch (IOException e) {
 			logger.throwing("Server", "start", e);
