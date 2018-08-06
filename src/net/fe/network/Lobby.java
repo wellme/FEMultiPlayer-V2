@@ -25,6 +25,7 @@ import net.fe.unit.WeaponFactory;
  */
 public class Lobby extends Game {
 
+	private static Session session;
 
 	/** The server. */
 	private static Server server;
@@ -47,12 +48,13 @@ public class Lobby extends Game {
 	/**
 	 * Instantiates a new FE server.
 	 */
-	public Lobby(Session s) {
-		this(s, Server.DEFAULT_PORT);
+	public Lobby(Session session) {
+		this(session, Server.DEFAULT_PORT);
 	}
 
-	public Lobby(Session s, int port) {
-		server = new Server(s, port);
+	public Lobby(Session session, int port) {
+		server = new Server(port);
+		this.session = session;
 	}
 
 	/**
@@ -63,7 +65,7 @@ public class Lobby extends Game {
 		UnitFactory.loadUnits();
 
 		Thread serverThread = new Thread(server::start);
-		lobby = new LobbyStage(server.getSession());
+		lobby = new LobbyStage(session);
 		currentStage = lobby;
 		serverThread.start();
 	}
@@ -104,7 +106,7 @@ public class Lobby extends Game {
 				}
 			}
 			for (Message m : messages)
-				server.getSession().handleMessage(m);
+				session.handleMessage(m);
 			currentStage.beginStep(messages);
 			currentStage.onStep();
 			currentStage.endStep();
@@ -136,7 +138,7 @@ public class Lobby extends Game {
 	 * @return the players
 	 */
 	private static HashMap<Integer, Player> getPlayers() {
-		return server.getSession().getPlayerMap();
+		return session.getPlayerMap();
 	}
 
 	/**
@@ -167,6 +169,10 @@ public class Lobby extends Game {
 				server.messages.add(kick);
 			}
 		}
+	}
+
+	public static Session getSession() {
+		return session;
 	}
 
 }

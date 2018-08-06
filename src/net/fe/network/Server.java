@@ -11,7 +11,6 @@ import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
-import net.fe.Session;
 import net.fe.network.message.KickMessage;
 import net.fe.network.message.RejoinMessage;
 
@@ -52,9 +51,6 @@ public final class Server implements MessageDestination {
 	/** A lock which should be waited upon or notified for changes to messages */
 	public final Object messagesLock;
 	
-	/** The session. */
-	private final Session session;
-	
 	private IDManager manager;
 	
 	private ArrayList<Message> broadcastedMessages = new ArrayList<>();
@@ -62,12 +58,11 @@ public final class Server implements MessageDestination {
 	/**
 	 * Instantiates a new server.
 	 */
-	public Server(Session s, int port) {
+	public Server(int port) {
 		messages = new ArrayList<Message>();
 		messagesLock = new Object();
 		clients = new CopyOnWriteArrayList<ServerListener>();
 		pastClients = new TreeMap<>();
-		session = s;
 		manager = new IDManager();
 		this.port = port;
 	}
@@ -105,15 +100,6 @@ public final class Server implements MessageDestination {
 		for(ServerListener out : clients) {
 			out.sendMessage(message);
 		}
-	}
-	
-	/**
-	 * Gets the session.
-	 *
-	 * @return the session
-	 */
-	public Session getSession() {
-		return session;
 	}
 	
 	public ServerListener getClient(int id) {
