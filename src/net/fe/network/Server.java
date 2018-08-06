@@ -43,9 +43,8 @@ public final class Server implements MessageDestination {
 	
 	
 	/** The clients. */
-	final CopyOnWriteArrayList<ServerListener> clients;
-	
-	final TreeMap<Long, ServerListener> pastClients;
+	private final CopyOnWriteArrayList<ServerListener> clients;
+	private final TreeMap<Long, ServerListener> pastClients;
 	
 	/** The messages. Should only operate on if the monitor to messagesLock is held */
 	public final ArrayList<Message> messages;
@@ -160,6 +159,17 @@ public final class Server implements MessageDestination {
 		synchronized(messagesLock) {
 			messages.add(message);
 			messagesLock.notifyAll();
+		}
+	}
+	
+	public void removeListener(boolean allowReconnection, ServerListener listener) {
+		synchronized (clients) {
+			clients.remove(listener);
+		}
+		if(allowReconnection) {
+			synchronized (pastClients) {
+				pastClients.put(System.currentTimeMillis(), listener);
+			}
 		}
 	}
 }

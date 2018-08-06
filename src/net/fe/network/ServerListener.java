@@ -183,16 +183,14 @@ public final class ServerListener {
 	
 	/**
 	 * Make the client quit the server. Only takes effect if the client hasn't quit.
-	 * @param allowReconnect If the client is allowed to reconnect to the server
+	 * @param allowReconnection If the client is allowed to reconnect to the server
 	 * via a {@link RejoinMessage}.
 	 */
-	private void quit(boolean allowReconnect) {
+	private void quit(boolean allowReconnection) {
 		if(!clientQuit) {
 			clientQuit = true;
-			main.clients.remove(this);
+			main.removeListener(allowReconnection, this);
 			close();
-			if(allowReconnect)
-				main.pastClients.put(System.currentTimeMillis(), this);
 		}
 	}
 
