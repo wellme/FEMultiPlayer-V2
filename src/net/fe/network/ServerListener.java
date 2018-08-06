@@ -120,7 +120,7 @@ public final class ServerListener {
 				this.clientId = rejoin.origin;
 				synchronized(this) {
 					Message[] messages;
-					synchronized(main.messages) {
+					synchronized(main.messagesLock) {
 						messages = main.getBroadcastedMessages();
 					}
 					rejoin.setTimestamp(rejoin.getLastTimestamp());
