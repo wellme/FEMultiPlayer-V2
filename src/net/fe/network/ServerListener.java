@@ -72,7 +72,7 @@ public final class ServerListener {
 			out.flush();
 			in = new ObjectInputStream(socket.getInputStream());
 			logger.fine("LISTENER: I/O streams initialized");
-			sendMessage(new ClientInit((byte) 0, clientId, main.getSession(), token));
+			sendMessage(new ClientInit(0, clientId, main.getSession(), token));
 		} catch (IOException e) {
 			logger.throwing("ServerListener", "<init>", e);
 		}
@@ -138,7 +138,7 @@ public final class ServerListener {
 						sendMessage(messages[i]);
 				}
 			} else {
-				sendMessage(new KickMessage((byte) 0, rejoin.origin, "Reconnection failed: Timed out"));
+				sendMessage(new KickMessage(0, rejoin.origin, "Reconnection failed: Timed out"));
 				quit(false);
 			}
 		} else {

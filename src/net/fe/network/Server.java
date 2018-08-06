@@ -117,7 +117,7 @@ public final class Server implements MessageDestination {
 		return session;
 	}
 	
-	public ServerListener getClient(byte id) {
+	public ServerListener getClient(int id) {
 		for(int i = 0; i < clients.size(); i++)
 			if(clients.get(i).getId() == id)
 				return clients.get(i);
@@ -129,7 +129,7 @@ public final class Server implements MessageDestination {
 		synchronized(pastClients) {
 			while(!pastClients.isEmpty() && pastClients.firstKey() <= minTimestamp) {
 				ServerListener listener = pastClients.pollFirstEntry().getValue();
-				KickMessage kick = new KickMessage((byte) 0, listener.getId(), "Timed out");
+				KickMessage kick = new KickMessage(0, listener.getId(), "Timed out");
 				broadcastMessage(kick);
 				synchronized(messagesLock) {
 					messages.add(kick);

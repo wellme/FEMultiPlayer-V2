@@ -16,7 +16,7 @@ public class ReadyMessage extends Message {
 	 *
 	 * @param origin the origin
 	 */
-	public ReadyMessage(byte origin) {
+	public ReadyMessage(int origin) {
 		super(origin);
 	}
 

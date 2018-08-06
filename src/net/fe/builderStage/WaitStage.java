@@ -69,7 +69,7 @@ public final class WaitStage extends Stage {
 				validationResult.ifPresent(new Consumer<String>() {
 					@Override public void accept(String validationError) {
 						synchronized(FEServer.getServer().messagesLock) {
-							final KickMessage kick = new KickMessage((byte) 0, pm.origin, validationError);
+							final KickMessage kick = new KickMessage(0, pm.origin, validationError);
 							FEServer.getServer().broadcastMessage(kick);
 							FEServer.getServer().messages.add(kick);
 						}
@@ -115,7 +115,7 @@ public final class WaitStage extends Stage {
 			for(PartyMessage pm : messages) {
 				FEServer.getServer().broadcastMessage(pm);
 			}
-			FEServer.getServer().broadcastMessage(new StartGame((byte) 0));
+			FEServer.getServer().broadcastMessage(new StartGame(0));
 			for(Player p : session.getPlayers()) {
 				for(Unit u : p.getParty()) {
 					u.initializeEquipment();

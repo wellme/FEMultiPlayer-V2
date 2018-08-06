@@ -396,7 +396,7 @@ public class OverworldStage extends Stage {
 			FEMultiplayer.disconnectGame("All players have disconnected");
 		}
 		if(winner > 0 && FEServer.getServer() != null) {
-			FEServer.getServer().broadcastMessage(new EndGame((byte) 0, winner));
+			FEServer.getServer().broadcastMessage(new EndGame(0, winner));
 			FEServer.resetToLobby();
 		}
 	}

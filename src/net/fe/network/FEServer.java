@@ -162,7 +162,7 @@ public class FEServer extends Game {
 			ids.add(p.getID());
 		synchronized (server.messagesLock) {
 			for (int i : ids) {
-				final KickMessage kick = new KickMessage((byte) 0, i, reason);
+				final KickMessage kick = new KickMessage(0, i, reason);
 				server.broadcastMessage(kick);
 				server.messages.add(kick);
 			}

@@ -16,7 +16,7 @@ public class StartPicking extends Message {
 	 *
 	 * @param origin the origin
 	 */
-	public StartPicking(byte origin) {
+	public StartPicking(int origin) {
 		super(origin);
 	}
 

@@ -114,7 +114,7 @@ public class FEMultiplayer extends Game{
 	 */
 	public void init(int width, int height, String name) {
 		super.init(width, height, name);
-		Player p1 = new Player("Player", (byte) 0);
+		Player p1 = new Player("Player", 0);
 		localPlayer = p1;
 		ByteBuffer icon16, icon32;
 		icon16 = icon32 = null;
@@ -147,8 +147,8 @@ public class FEMultiplayer extends Game{
 	public void testDraftStage() {
 		Player p1 = localPlayer;
 		testSession = new Session(new net.fe.overworldStage.objective.Rout(), "test", 6, new java.util.HashSet<>(), new net.fe.pick.Draft(), new TrueHitRNG(), new SimpleRNG(), new SimpleRNG(), FogType.NONE, SpectatorFogOption.REVEAL_ALL, 3, 8, false, true);
-		Player p2 = new Player("p2", (byte) 1);
-		Player p3 = new Player("p3", (byte) 2);
+		Player p2 = new Player("p2", 1);
+		Player p3 = new Player("p3", 2);
 		p2.getParty().setColor(Party.TEAM_RED);
 		p3.getParty().setColor(Party.TEAM_GREEN);
 		p2.getParty().addUnit(UnitFactory.getUnit("Mia"));
@@ -175,7 +175,7 @@ public class FEMultiplayer extends Game{
 	public void testFightStage(){
 		Player p1 = localPlayer;
 		testSession = new Session(new Seize(), "test", 8, new java.util.HashSet<>(), new net.fe.pick.Draft(), new TrueHitRNG(), new SimpleRNG(), new SimpleRNG(), FogType.NONE, SpectatorFogOption.REVEAL_ALL, 3, 8, false, true);
-		Player p2 = new Player("p2", (byte) 1);
+		Player p2 = new Player("p2", 1);
 		p2.getParty().setColor(Party.TEAM_RED);
 		p1.getParty().setColor(Party.TEAM_BLUE);
 		p2.setTeam(2);
@@ -230,7 +230,7 @@ public class FEMultiplayer extends Game{
 				FogType.SNES, SpectatorFogOption.REVEAL_ALL, 3, 8, false, false);
 		testSession.addPlayer(localPlayer);
 		
-		Player p2 = new Player("P2", (byte)1);
+		Player p2 = new Player("P2", 1);
 		p2.getParty().setColor(Party.TEAM_RED);
 		testSession.addPlayer(p2);
 		localPlayer.getParty().setColor(Party.TEAM_BLUE);

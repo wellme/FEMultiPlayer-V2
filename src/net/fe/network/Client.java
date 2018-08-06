@@ -65,7 +65,7 @@ public class Client {
 	private boolean closeRequested = false;
 	
 	/** The winner. */
-	public volatile byte winner = -1;
+	public volatile int winner = -1;
 	
 	/** The id. */
 	int id;
@@ -178,7 +178,7 @@ public class Client {
 				resetToLobby("KICKED: " + kick.reason);
 			}
 		} else if(message instanceof EndGame) {
-			winner = (byte) ((EndGame)message).winner;
+			winner = ((EndGame)message).winner;
 		}
 		
 		session.handleMessage(message);

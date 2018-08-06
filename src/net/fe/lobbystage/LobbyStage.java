@@ -91,7 +91,7 @@ public class LobbyStage extends Stage {
 		
 		// Teams are valid
 		if (activeBlue == 1 && activeRed == 1 && allPlayersReady) {
-			FEServer.getServer().broadcastMessage(new StartPicking((byte)0));
+			FEServer.getServer().broadcastMessage(new StartPicking(0));
 			session.getPickMode().setUpServer(session);
 		}
 		

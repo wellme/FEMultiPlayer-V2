@@ -251,7 +251,7 @@ public final class Session implements Serializable {
 	public void handleMessage(Message message) {
 		if(message instanceof JoinLobby) {
 			JoinLobby join = (JoinLobby)message;
-			this.addPlayer((byte) join.origin, new Player(join.nickname, join.origin));
+			this.addPlayer(join.origin, new Player(join.nickname, join.origin));
 		} else if(message instanceof QuitMessage) {
 			QuitMessage quit = (QuitMessage)message;
 			Player player = this.getPlayer(quit.origin);

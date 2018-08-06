@@ -16,7 +16,7 @@ public class StartGame extends Message {
 	 *
 	 * @param origin the origin
 	 */
-	public StartGame(byte origin) {
+	public StartGame(int origin) {
 		super(origin);
 	}
 }

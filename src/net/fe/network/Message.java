@@ -19,7 +19,7 @@ public abstract class Message implements Serializable {
 	 * Instantiates a new message.
 	 */
 	public Message() {
-		this((byte) 0);
+		this(0);
 	}
 	
 	/**
