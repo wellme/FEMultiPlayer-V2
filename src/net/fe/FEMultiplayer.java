@@ -421,7 +421,7 @@ public class FEMultiplayer extends Game{
 	 *
 	 * @return the players
 	 */
-	public static HashMap<Byte, Player> getPlayers() {
+	public static HashMap<Integer, Player> getPlayers() {
 		return getSession().getPlayerMap();
 	}
 	

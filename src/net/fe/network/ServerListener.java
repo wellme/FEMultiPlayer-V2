@@ -51,7 +51,7 @@ public final class ServerListener extends Thread {
 	private volatile boolean clientQuit;
 	
 	/** The client that this is linked to. */
-	private final byte clientId;
+	private final int clientId;
 	
 	private MessageDestination destination;
 	
@@ -61,7 +61,7 @@ public final class ServerListener extends Thread {
 	 * @param main the main
 	 * @param socket the socket
 	 */
-	public ServerListener(Server main, Socket socket, byte clientId) {
+	public ServerListener(Server main, Socket socket, int clientId) {
 		super("Listener "+ clientId);
 		this.clientId = clientId;
 		this.socket = socket;

@@ -12,7 +12,7 @@ public abstract class Message implements Serializable {
 	private static final long serialVersionUID = 8838417404744137405L;
 	
 	/** The origin. */
-	public byte origin;
+	public int origin;
 	
 	/**
 	 * Instantiates a new message.
@@ -26,7 +26,7 @@ public abstract class Message implements Serializable {
 	 *
 	 * @param origin the origin
 	 */
-	public Message(byte origin) {
+	public Message(int origin) {
 		this.origin = origin;
 	}
 	

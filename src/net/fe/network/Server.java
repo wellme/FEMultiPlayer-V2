@@ -48,7 +48,7 @@ public final class Server implements MessageDestination {
 	private final Session session;
 	
 	/** Contains the next playerId to be used when a player joins the server */
-	private byte nextPlayerId = 1;
+	private int nextPlayerId = 1;
 	
 	/**
 	 * Instantiates a new server.

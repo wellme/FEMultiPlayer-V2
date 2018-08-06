@@ -20,7 +20,7 @@ public final class JoinTeam extends Message {
 	 * @param origin the origin
 	 * @param team the team
 	 */
-	public JoinTeam(byte origin, int team) {
+	public JoinTeam(int origin, int team) {
 		super(origin);
 		this.team = team;
 	}
