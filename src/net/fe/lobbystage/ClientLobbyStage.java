@@ -10,7 +10,7 @@ import net.fe.Player;
 import net.fe.Session;
 import net.fe.ConnectStage;
 import net.fe.modifier.Modifier;
-import net.fe.network.FEServer;
+import net.fe.network.Lobby;
 import net.fe.network.Message;
 import net.fe.network.message.QuitMessage;
 import net.fe.network.message.ReadyMessage;

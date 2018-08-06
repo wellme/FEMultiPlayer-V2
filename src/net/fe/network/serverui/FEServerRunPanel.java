@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import net.fe.network.FEServer;
+import net.fe.network.Lobby;
 import net.fe.network.Server;
 
 /**
@@ -68,7 +68,7 @@ public class FEServerRunPanel extends JPanel {
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
 
 		JButton btnKickAll = new JButton("Kick all");
-		btnKickAll.addActionListener((e2) -> FEServer.resetToLobbyAndKickPlayers());
+		btnKickAll.addActionListener((e2) -> Lobby.resetToLobbyAndKickPlayers());
 		panel.add(btnKickAll);
 
 		JButton btnCopyToClipboard = new JButton("Copy IP to clipboard");

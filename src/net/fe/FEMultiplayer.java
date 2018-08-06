@@ -34,7 +34,7 @@ import net.fe.fightStage.CombatCalculator;
 import net.fe.fightStage.FightStage;
 import net.fe.lobbystage.ClientLobbyStage;
 import net.fe.network.Client;
-import net.fe.network.FEServer;
+import net.fe.network.Lobby;
 import net.fe.network.Message;
 import net.fe.network.command.Command;
 import net.fe.network.message.CommandMessage;
@@ -456,9 +456,9 @@ public class FEMultiplayer extends Game{
 		session.removePlayer(leaver);
 		System.out.println(leaver.getName()+" LEFT THE GAME");
 		 * */
-		if(FEServer.getServer() != null) {
+		if(Lobby.getServer() != null) {
 			//boot the server back to lobby
-			FEServer.resetToLobbyAndKickPlayers();
+			Lobby.resetToLobbyAndKickPlayers();
 		}else{
 			//exit the client
 			if(message!=null && !message.equals("")){

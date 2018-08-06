@@ -7,7 +7,7 @@ import net.fe.Player;
 import net.fe.Session;
 import net.fe.builderStage.WaitStage;
 import net.fe.network.Chat;
-import net.fe.network.FEServer;
+import net.fe.network.Lobby;
 import net.fe.network.Message;
 import net.fe.network.message.ChatMessage;
 import net.fe.network.message.ClientInit;
@@ -91,7 +91,7 @@ public class LobbyStage extends Stage {
 		
 		// Teams are valid
 		if (activeBlue == 1 && activeRed == 1 && allPlayersReady) {
-			FEServer.getServer().broadcastMessage(new StartPicking(0));
+			Lobby.getServer().broadcastMessage(new StartPicking(0));
 			session.getPickMode().setUpServer(session);
 		}
 		

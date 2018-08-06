@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import chu.engine.Stage;
 import net.fe.Player;
 import net.fe.Session;
-import net.fe.network.FEServer;
+import net.fe.network.Lobby;
 import net.fe.network.Message;
 import net.fe.network.message.KickMessage;
 import net.fe.network.message.PartyMessage;
@@ -68,10 +68,10 @@ public final class WaitStage extends Stage {
 				);
 				validationResult.ifPresent(new Consumer<String>() {
 					@Override public void accept(String validationError) {
-						synchronized(FEServer.getServer().messagesLock) {
+						synchronized(Lobby.getServer().messagesLock) {
 							final KickMessage kick = new KickMessage(0, pm.origin, validationError);
-							FEServer.getServer().broadcastMessage(kick);
-							FEServer.getServer().messages.add(kick);
+							Lobby.getServer().broadcastMessage(kick);
+							Lobby.getServer().messages.add(kick);
 						}
 					}
 				});
@@ -88,7 +88,7 @@ public final class WaitStage extends Stage {
 			else if(message instanceof QuitMessage || message instanceof KickMessage) {
 				if (this.session.getNonSpectators().length < 2) {
 					// player has left
-					FEServer.resetToLobby();
+					Lobby.resetToLobby();
 				}
 			}
 		}
@@ -113,15 +113,15 @@ public final class WaitStage extends Stage {
 				if(!b) return;
 			}
 			for(PartyMessage pm : messages) {
-				FEServer.getServer().broadcastMessage(pm);
+				Lobby.getServer().broadcastMessage(pm);
 			}
-			FEServer.getServer().broadcastMessage(new StartGame(0));
+			Lobby.getServer().broadcastMessage(new StartGame(0));
 			for(Player p : session.getPlayers()) {
 				for(Unit u : p.getParty()) {
 					u.initializeEquipment();
 				}
 			}
-			FEServer.setCurrentStage(new OverworldStage(session));
+			Lobby.setCurrentStage(new OverworldStage(session));
 			sentStartMessage = true;
 		}
 	}

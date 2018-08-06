@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import net.fe.network.FEServer;
+import net.fe.network.Lobby;
 
 /**
  * A frame containing panels related to the server.
@@ -51,12 +51,12 @@ public class FEServerFrame extends JFrame {
 
 		//Does this even need it's own thread?
 		new Thread(() -> {
-			FEServer feserver = new FEServer(mainPanel.getSession(), mainPanel.getPort());
+			Lobby feserver = new Lobby(mainPanel.getSession(), mainPanel.getPort());
 			try {
 				feserver.init();
 				feserver.loop();
 			} catch (Throwable e) {
-				FEServer.kickPlayers("Server crashed");
+				Lobby.kickPlayers("Server crashed");
 				logError(e);
 			}
 		}).start();

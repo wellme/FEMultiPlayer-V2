@@ -23,7 +23,7 @@ import net.fe.unit.WeaponFactory;
  * @author Shawn
  *
  */
-public class FEServer extends Game {
+public class Lobby extends Game {
 
 
 	/** The server. */
@@ -47,11 +47,11 @@ public class FEServer extends Game {
 	/**
 	 * Instantiates a new FE server.
 	 */
-	public FEServer(Session s) {
+	public Lobby(Session s) {
 		this(s, Server.DEFAULT_PORT);
 	}
 
-	public FEServer(Session s, int port) {
+	public Lobby(Session s, int port) {
 		server = new Server(s, port);
 	}
 

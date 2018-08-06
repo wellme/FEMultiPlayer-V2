@@ -5,7 +5,7 @@ import net.fe.Session;
 import net.fe.builderStage.ClientWaitStage;
 import net.fe.builderStage.TeamBuilderStage;
 import net.fe.builderStage.WaitStage;
-import net.fe.network.FEServer;
+import net.fe.network.Lobby;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -35,7 +35,7 @@ public class AllPick implements PickMode {
 	 */
 	@Override
 	public void setUpServer(Session session) {
-		FEServer.setCurrentStage(new WaitStage(session));
+		Lobby.setCurrentStage(new WaitStage(session));
 	}
 	
 	/* (non-Javadoc)

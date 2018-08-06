@@ -22,7 +22,7 @@ import net.fe.editor.Level;
 import net.fe.editor.SpawnPoint;
 import net.fe.fightStage.AttackRecord;
 import net.fe.modifier.Modifier;
-import net.fe.network.FEServer;
+import net.fe.network.Lobby;
 import net.fe.network.Message;
 import net.fe.network.message.CommandMessage;
 import net.fe.network.message.EndGame;
@@ -380,7 +380,7 @@ public class OverworldStage extends Stage {
 		if(unit != null) {
 			unit.setMoved(true);
 		}
-		FEServer.getServer().broadcastMessage(message);
+		Lobby.getServer().broadcastMessage(message);
 		checkEndGame();
 	}
 
@@ -395,9 +395,9 @@ public class OverworldStage extends Stage {
 		}else if (session.numPlayers()<1){
 			FEMultiplayer.disconnectGame("All players have disconnected");
 		}
-		if(winner > 0 && FEServer.getServer() != null) {
-			FEServer.getServer().broadcastMessage(new EndGame(0, winner));
-			FEServer.resetToLobby();
+		if(winner > 0 && Lobby.getServer() != null) {
+			Lobby.getServer().broadcastMessage(new EndGame(0, winner));
+			Lobby.resetToLobby();
 		}
 	}
 

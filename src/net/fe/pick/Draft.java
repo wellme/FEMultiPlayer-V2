@@ -6,7 +6,7 @@ import net.fe.Session;
 import net.fe.builderStage.TeamDraftStage;
 import net.fe.builderStage.DraftViewStage;
 import net.fe.builderStage.WaitStage;
-import net.fe.network.FEServer;
+import net.fe.network.Lobby;
 
 /**
  * Draft picking mode.
@@ -43,7 +43,7 @@ public class Draft implements PickMode {
 		for(Player p : session.getPlayers()) {
 			p.getParty().clear();
 		}
-		FEServer.setCurrentStage(new WaitStage(session));
+		Lobby.setCurrentStage(new WaitStage(session));
 	}
 	
 	/* (non-Javadoc)

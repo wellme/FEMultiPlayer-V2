@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 import net.fe.FEMultiplayer;
-import net.fe.network.FEServer;
+import net.fe.network.Lobby;
 import net.fe.network.Message;
 import net.fe.unit.Unit;
 import net.fe.unit.UnitIdentifier;
