@@ -72,7 +72,7 @@ public final class ServerListener {
 			out.flush();
 			in = new ObjectInputStream(socket.getInputStream());
 			logger.fine("LISTENER: I/O streams initialized");
-			sendMessage(new ClientInit(0, clientId, Lobby.getSession(), token));
+			sendMessage(new ClientInit(0, clientId, token));
 		} catch (IOException e) {
 			logger.throwing("ServerListener", "<init>", e);
 		}

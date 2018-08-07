@@ -145,9 +145,8 @@ public class Client {
 				sendMessage(new RejoinMessage(lastTimestamp, token));
 			} else {
 				ClientInit message2 = (ClientInit) message;
-				if (message2.hashes.equals(ClientInit.Hashes.pullFromStatics(message2.session.getMap()))) {
+				if (message2.hashes.equals(ClientInit.Hashes.pullFromStatics())) {
 					this.id = message2.clientID;
-					this.session = message2.session;
 					this.token = message2.token;
 					FEMultiplayer.getLocalPlayer().setClientID(message2.clientID);
 					if(id >= 2) {
@@ -160,7 +159,7 @@ public class Client {
 				} else {
 					logger.info("CLIENT: Mismatched hashes:" +
 							"\n\tServer: " + message2.hashes +
-							"\n\tClient: " + ClientInit.Hashes.pullFromStatics(message2.session.getMap()));
+							"\n\tClient: " + ClientInit.Hashes.pullFromStatics());
 					this.id = message2.clientID;
 					this.quit();
 					resetToLobby("ERROR: Server and Client versions don't match");

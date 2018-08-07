@@ -2,22 +2,14 @@ package net.fe.lobbystage;
 
 import java.util.List;
 
-import net.fe.Party;
+import chu.engine.Stage;
 import net.fe.Player;
 import net.fe.Session;
-import net.fe.builderStage.WaitStage;
-import net.fe.network.Chat;
 import net.fe.network.Lobby;
 import net.fe.network.Message;
-import net.fe.network.message.ChatMessage;
 import net.fe.network.message.ClientInit;
-import net.fe.network.message.JoinServer;
-import net.fe.network.message.JoinTeam;
-import net.fe.network.message.QuitMessage;
 import net.fe.network.message.ReadyMessage;
 import net.fe.network.message.StartPicking;
-import chu.engine.Game;
-import chu.engine.Stage;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -48,7 +40,7 @@ public class LobbyStage extends Stage {
 		for(Message message : messages) {
 			if(message instanceof ClientInit) {		// Only clients will get this
 				ClientInit init = (ClientInit)message;
-				session = init.session;
+				//session = init.session; // TODO change this probably
 			}
 			else if(message instanceof ReadyMessage) {
 				boolean ready = !session.getPlayer(message.origin).ready;
