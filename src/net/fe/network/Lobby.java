@@ -26,6 +26,7 @@ import net.fe.unit.WeaponFactory;
 public class Lobby extends Game {
 
 	private static Session session;
+	private static int id = -2;
 
 	/** The server. */
 	private static Server server;
@@ -175,4 +176,14 @@ public class Lobby extends Game {
 		return session;
 	}
 
+	public static class LobbyInfo {
+		
+		public final int id;
+		public final Session session;
+		
+		private LobbyInfo(Lobby lobby) {
+			this.id = lobby.id;
+			this.session = lobby.session;
+		}
+	}
 }
