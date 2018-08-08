@@ -13,6 +13,8 @@ import net.fe.network.message.KickMessage;
 import net.fe.network.message.PartyMessage;
 import net.fe.network.message.ReadyMessage;
 import net.fe.network.serverui.FEServerFrame;
+import net.fe.network.stage.ServerLobbyStage;
+import net.fe.network.stage.ServerStage;
 import net.fe.unit.UnitFactory;
 import net.fe.unit.WeaponFactory;
 
@@ -34,7 +36,7 @@ public class Lobby extends Game {
 	private static ServerStage currentStage;
 
 	/** The lobby. */
-	public static LobbyStage lobbyStage;
+	public static ServerLobbyStage lobbyStage;
 
 	/**
 	 * The main method.
@@ -66,7 +68,7 @@ public class Lobby extends Game {
 		UnitFactory.loadUnits();
 
 		Thread serverThread = new Thread(server::start);
-		lobbyStage = new LobbyStage(session);
+		lobbyStage = new ServerLobbyStage(lobby, session);
 		currentStage = lobbyStage;
 		serverThread.start();
 	}
