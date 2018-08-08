@@ -35,7 +35,7 @@ import org.newdawn.slick.opengl.Texture;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.SortByRender;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.anim.AudioPlayer;
 import chu.engine.anim.Renderer;
 
@@ -43,7 +43,7 @@ import chu.engine.anim.Renderer;
 /**
  * The Class FightStage.
  */
-public class FightStage extends Stage {
+public class FightStage extends ClientStage {
 	
 	/** The right. */
 	private final Unit left, right;

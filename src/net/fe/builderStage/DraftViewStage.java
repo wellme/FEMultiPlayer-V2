@@ -10,7 +10,7 @@ import org.newdawn.slick.Color;
 
 import chu.engine.Entity;
 import chu.engine.Game;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.anim.Renderer;
 import chu.engine.anim.Transform;
 import net.fe.builderStage.ClientWaitStage;
@@ -31,7 +31,7 @@ import net.fe.unit.Unit;
 import net.fe.unit.UnitFactory;
 import net.fe.unit.UnitIcon;
 
-public class DraftViewStage extends Stage {
+public class DraftViewStage extends ClientStage {
 	/** The vassal list. */
 	private UnitList vassalList;
 	

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import chu.engine.Game;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import net.fe.Player;
 import net.fe.Session;
 import net.fe.lobbystage.LobbyStage;
@@ -31,7 +31,7 @@ public class Lobby extends Game {
 	private static Server server;
 
 	/** The current stage. */
-	private static Stage currentStage;
+	private static ClientStage currentStage;
 
 	/** The lobby. */
 	public static LobbyStage lobby;
@@ -119,7 +119,7 @@ public class Lobby extends Game {
 	 *
 	 * @param stage the new current stage
 	 */
-	public static void setCurrentStage(Stage stage) {
+	public static void setCurrentStage(ClientStage stage) {
 		currentStage = stage;
 	}
 

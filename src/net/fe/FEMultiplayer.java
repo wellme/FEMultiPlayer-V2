@@ -27,7 +27,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 import chu.engine.Game;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.menu.Notification;
 import net.fe.builderStage.TeamDraftStage;
 import net.fe.fightStage.CombatCalculator;
@@ -57,7 +57,7 @@ import net.fe.unit.WeaponFactory;
 public class FEMultiplayer extends Game{
 	
 	/** The current stage. */
-	private static Stage currentStage;
+	private static ClientStage currentStage;
 	
 	/** The client. */
 	private static Client client;
@@ -373,7 +373,7 @@ public class FEMultiplayer extends Game{
 	 *
 	 * @param stage the new current stage
 	 */
-	public static void setCurrentStage(Stage stage) {
+	public static void setCurrentStage(ClientStage stage) {
 		currentStage = stage;
 		if(stage.soundTrack != null){
 			SoundTrack.loop(stage.soundTrack);
@@ -394,7 +394,7 @@ public class FEMultiplayer extends Game{
 	 *
 	 * @return the current stage
 	 */
-	public static Stage getCurrentStage() {
+	public static ClientStage getCurrentStage() {
 		return currentStage;
 	}
 

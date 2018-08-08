@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import net.fe.Player;
 import net.fe.Session;
 import net.fe.network.Lobby;
@@ -23,7 +23,7 @@ import net.fe.unit.Unit;
  *
  * @author Shawn
  */
-public final class WaitStage extends Stage {
+public final class WaitStage extends ClientStage {
 	
 	/** The ready status. */
 	private final HashMap<Integer, Boolean> readyStatus;

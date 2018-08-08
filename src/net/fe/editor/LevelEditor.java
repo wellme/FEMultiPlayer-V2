@@ -14,7 +14,7 @@ import org.lwjgl.opengl.Display;
 import static java.util.Collections.emptyList;
 
 import chu.engine.Game;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.anim.Renderer;
 
 // TODO: Auto-generated Javadoc
@@ -24,7 +24,7 @@ import chu.engine.anim.Renderer;
 public class LevelEditor extends Game {
 	
 	/** The current stage. */
-	private static Stage currentStage;
+	private static ClientStage currentStage;
 
 	/**
 	 * The main method.

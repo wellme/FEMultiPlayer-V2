@@ -23,7 +23,7 @@ import org.newdawn.slick.util.ResourceLoader;
 
 import chu.engine.Game;
 import chu.engine.KeyboardEvent;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.anim.Renderer;
 import chu.engine.anim.Tileset;
 
@@ -33,7 +33,7 @@ import net.fe.network.Message;
 /**
  * The Class LevelEditorStage.
  */
-public class LevelEditorStage extends Stage {
+public class LevelEditorStage extends ClientStage {
 
 	/** The palette. */
 	private static Texture palette;

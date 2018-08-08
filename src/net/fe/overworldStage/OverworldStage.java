@@ -13,7 +13,7 @@ import java.util.Set;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.util.ResourceLoader;
 
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import net.fe.FEMultiplayer;
 import net.fe.Party;
 import net.fe.Player;
@@ -38,7 +38,7 @@ import net.fe.unit.UnitIdentifier;
 /**
  * The Class OverworldStage.
  */
-public class OverworldStage extends Stage {
+public class OverworldStage extends ClientStage {
 	
 	/** The grid. */
 	public Grid grid;
