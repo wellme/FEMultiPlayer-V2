@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import chu.engine.Game;
-import chu.engine.ClientStage;
 import net.fe.Player;
 import net.fe.Session;
 import net.fe.lobbystage.LobbyStage;
@@ -25,16 +24,17 @@ import net.fe.unit.WeaponFactory;
  */
 public class Lobby extends Game {
 
+	private static Lobby lobby;
 	private static Session session;
 
 	/** The server. */
 	private static Server server;
 
 	/** The current stage. */
-	private static ClientStage currentStage;
+	private static ServerStage currentStage;
 
 	/** The lobby. */
-	public static LobbyStage lobby;
+	public static LobbyStage lobbyStage;
 
 	/**
 	 * The main method.
@@ -54,6 +54,7 @@ public class Lobby extends Game {
 
 	public Lobby(Session session, int port) {
 		server = new Server(port);
+		this.lobby = this;
 		this.session = session;
 	}
 
@@ -65,8 +66,8 @@ public class Lobby extends Game {
 		UnitFactory.loadUnits();
 
 		Thread serverThread = new Thread(server::start);
-		lobby = new LobbyStage(session);
-		currentStage = lobby;
+		lobbyStage = new LobbyStage(session);
+		currentStage = lobbyStage;
 		serverThread.start();
 	}
 
@@ -119,7 +120,7 @@ public class Lobby extends Game {
 	 *
 	 * @param stage the new current stage
 	 */
-	public static void setCurrentStage(ClientStage stage) {
+	public static void setCurrentStage(ServerStage stage) {
 		currentStage = stage;
 	}
 
@@ -147,7 +148,7 @@ public class Lobby extends Game {
 	public static void resetToLobby() {
 		for (Player p : getPlayers().values())
 			p.ready = false;
-		currentStage = lobby;
+		currentStage = lobbyStage;
 	}
 
 	/**

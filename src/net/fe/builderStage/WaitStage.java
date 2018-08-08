@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-import chu.engine.ClientStage;
 import net.fe.Player;
 import net.fe.Session;
 import net.fe.network.Lobby;
 import net.fe.network.Message;
+import net.fe.network.ServerStage;
 import net.fe.network.message.KickMessage;
 import net.fe.network.message.PartyMessage;
 import net.fe.network.message.QuitMessage;
@@ -23,7 +23,7 @@ import net.fe.unit.Unit;
  *
  * @author Shawn
  */
-public final class WaitStage extends ClientStage {
+public final class WaitStage implements ServerStage {
 	
 	/** The ready status. */
 	private final HashMap<Integer, Boolean> readyStatus;
@@ -35,16 +35,18 @@ public final class WaitStage extends ClientStage {
 	private boolean sentStartMessage;
 	
 	/** The session. */
-	protected final Session session;
+	private final Session session;
+	
+	private final Lobby lobby;
 	
 	/**
 	 * Instantiates a new wait stage.
 	 *
 	 * @param s the s
 	 */
-	public WaitStage(Session s) {
-		super("preparations");
-		session = s;
+	public WaitStage(Lobby lobby, Session session) {
+		this.session = session;
+		this.lobby = lobby;
 		sentStartMessage = false;
 		readyStatus = new HashMap<>();
 		for(Player p : session.getNonSpectators()) {
@@ -121,9 +123,14 @@ public final class WaitStage extends ClientStage {
 					u.initializeEquipment();
 				}
 			}
-			Lobby.setCurrentStage(new OverworldStage(session));
+			lobby.setCurrentStage(new OverworldStage(session));
 			sentStartMessage = true;
 		}
+	}
+
+	@Override
+	public Lobby getLobby() {
+		return lobby;
 	}
 	
 }

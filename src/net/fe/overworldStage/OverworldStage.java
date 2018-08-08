@@ -24,6 +24,7 @@ import net.fe.fightStage.AttackRecord;
 import net.fe.modifier.Modifier;
 import net.fe.network.Lobby;
 import net.fe.network.Message;
+import net.fe.network.ServerStage;
 import net.fe.network.message.CommandMessage;
 import net.fe.network.message.EndGame;
 import net.fe.network.message.EndTurn;
@@ -38,7 +39,7 @@ import net.fe.unit.UnitIdentifier;
 /**
  * The Class OverworldStage.
  */
-public class OverworldStage extends ClientStage {
+public class OverworldStage extends ClientStage implements ServerStage {
 	
 	/** The grid. */
 	public Grid grid;
@@ -513,6 +514,11 @@ public class OverworldStage extends ClientStage {
 
 	public RNG getSkillRNG() {
 		return skillRNG;
+	}
+
+	@Override
+	public Lobby getLobby() {
+		return Lobby.getLobby();
 	}
 
 }

@@ -7,6 +7,7 @@ import net.fe.Player;
 import net.fe.Session;
 import net.fe.network.Lobby;
 import net.fe.network.Message;
+import net.fe.network.ServerStage;
 import net.fe.network.message.ClientInit;
 import net.fe.network.message.ReadyMessage;
 import net.fe.network.message.StartPicking;
@@ -17,7 +18,7 @@ import net.fe.network.message.StartPicking;
  *
  * @author Shawn
  */
-public class LobbyStage extends ClientStage {
+public class LobbyStage extends ClientStage implements ServerStage {
 	
 	/** The session. */
 	protected Session session;
@@ -84,9 +85,14 @@ public class LobbyStage extends ClientStage {
 		// Teams are valid
 		if (activeBlue == 1 && activeRed == 1 && allPlayersReady) {
 			Lobby.getServer().broadcastMessage(new StartPicking(0));
-			session.getPickMode().setUpServer(session);
+			session.getPickMode().setUpServer(getLobby(), session);
 		}
 		
+	}
+
+	@Override
+	public Lobby getLobby() {
+		return Lobby.getLobby();
 	}
 
 }
