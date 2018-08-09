@@ -65,13 +65,8 @@ public class Lobby extends Game {
 	 * Inits the.
 	 */
 	public void init() {
-		WeaponFactory.loadWeapons();
-		UnitFactory.loadUnits();
-
-		Thread serverThread = new Thread(server::start);
 		lobbyStage = new ServerLobbyStage(this, session);
 		currentStage = lobbyStage;
-		serverThread.start();
 	}
 
 	/* (non-Javadoc)
