@@ -27,10 +27,10 @@ public final class SmiteCommand extends Command {
 		int deltaX = 2 * (shovee.getXCoord() - unit.getXCoord());
 		int deltaY = 2 * (shovee.getYCoord() - unit.getYCoord());
 		
-		if (! net.fe.overworldStage.fieldskill.Smite.canSmite(stage.grid, unit, shovee)) {
+		if (! net.fe.overworldStage.fieldskill.Smite.canSmite(stage.getGrid(), unit, shovee)) {
 			throw new IllegalStateException("SMITE: Shover is not allowed to shove shovee");
 		} else {
-			stage.grid.move(shovee, shovee.getXCoord() + deltaX, shovee.getYCoord() + deltaY, false);
+			stage.getGrid().move(shovee, shovee.getXCoord() + deltaX, shovee.getYCoord() + deltaY, false);
 			return null;
 		}
 	}
@@ -51,7 +51,7 @@ public final class SmiteCommand extends Command {
 				shovee.setOrigY(newY); // Otherwise, shovee will jump back to it's inital space on select
 				Path p = new Path();
 				p.add(new Node(newX, newY));
-				stage.grid.move(shovee, newX, newY, true);
+				stage.getGrid().move(shovee, newX, newY, true);
 				shovee.move(p, new Runnable() {
 					public void run() {
 						shovee.sprite.setAnimation("IDLE");

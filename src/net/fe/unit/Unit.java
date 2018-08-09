@@ -31,7 +31,6 @@ import net.fe.overworldStage.Node;
 import net.fe.overworldStage.OverworldStage;
 import net.fe.overworldStage.Path;
 import net.fe.overworldStage.Terrain;
-import net.fe.overworldStage.Zone;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -112,6 +111,8 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	private int origX, origY;
 
 	private Node[] move;
+	
+	private OverworldStage overworld;
 	
 	/** The Constant MAP_ANIM_SPEED. */
 	public static final float MAP_ANIM_SPEED = 0.2f;
@@ -240,7 +241,6 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 		final int oldY = u.ycoord;
 		rescuedUnit = u;
 		rescuedUnit.rescued = true;
-		final OverworldStage grid = (OverworldStage) stage;
 		Path p = new Path();
 		p.add(new Node(this.xcoord, this.ycoord));
 		rescuedUnit.move(p, new Runnable(){
@@ -248,7 +248,7 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 			public void run() {
 				rescuedUnit.xcoord = oldX;
 				rescuedUnit.ycoord = oldY;
-				grid.removeUnit(rescuedUnit);
+				overworld.removeUnit(rescuedUnit);
 			}
 		});
 	}
@@ -285,8 +285,7 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 		if(rescuedUnit == null) throw new IllegalStateException("rescuedUnit == null");
 		rescuedUnit.rescued = false;
 		rescuedUnit.setMoved(true);
-		final OverworldStage grid = (OverworldStage) stage;
-		grid.addUnit(rescuedUnit, x, y);
+		overworld.addUnit(rescuedUnit, x, y);
 		rescuedUnit.rX = this.x - x * 16;
 		rescuedUnit.rY = this.y - y * 16;
 		rescuedUnit = null;
@@ -337,12 +336,12 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 			return depth-0.0001f;
 		}
 		float highlightDiff = (ClientOverworldStage.UNIT_DEPTH - ClientOverworldStage.UNIT_MAX_DEPTH)/2;
-		Grid g = ((ClientOverworldStage) stage).grid;
+		Grid g = ((ClientOverworldStage) overworld).getGrid();
 		float yDiff = highlightDiff/g.width;
 		float xDiff = yDiff/g.height;
 		
 		if(path!=null) depth -= highlightDiff;
-		if(((ClientOverworldStage) stage).getHoveredUnit() == this) depth -= highlightDiff;
+		if(((ClientOverworldStage) overworld).getHoveredUnit() == this) depth -= highlightDiff;
 		depth -= ycoord*yDiff;
 		depth -= (g.width-xcoord)*xDiff;
 		return depth;
@@ -397,7 +396,7 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	 */
 	public void render() {
 		
-		ClientOverworldStage cs = (ClientOverworldStage)stage;
+		ClientOverworldStage cs = (ClientOverworldStage)overworld;
 		
 		if(!isVisible(cs))
 			return;
@@ -886,13 +885,13 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	public void setHp(int hp) {
 		this.hp = Math.max(hp, 0);
 		if(this.hp == 0) {
-			((OverworldStage) stage).removeUnit(xcoord, ycoord);
+			overworld.removeUnit(xcoord, ycoord);
 			if(rescuedUnit != null) {
 				drop(xcoord, ycoord);
 			}
 			if(Game.glContextExists()) {
-				((ClientOverworldStage) stage).setControl(false);
-				stage.addEntity(new Corpse(this));
+				((ClientOverworldStage) overworld).setControl(false);
+				super.stage.addEntity(new Corpse(this));
 			}
 		}
 	}
@@ -1046,8 +1045,9 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	 * @return the terrain
 	 */
 	public Terrain getTerrain() {
-		if(stage == null) return Terrain.PLAIN;
-		return ((OverworldStage) stage).getTerrain(xcoord, ycoord);
+		if(overworld == null)
+			return Terrain.PLAIN;
+		return overworld.getTerrain(xcoord, ycoord);
 	}
 	
 	/* (non-Javadoc)
@@ -1177,5 +1177,9 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 	
 	public Node[] getMove() {
 		return move;
+	}
+
+	public void setOverworld(OverworldStage overworld) {
+		this.overworld = overworld;
 	}
 }

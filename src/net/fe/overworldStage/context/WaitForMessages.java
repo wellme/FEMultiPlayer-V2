@@ -100,9 +100,9 @@ public class WaitForMessages extends CursorContext {
 	 * @param u the u
 	 */
 	public void addZones(Unit u){
-		this.move = new RangeIndicator(stage.grid.getPossibleMoves(u), RangeType.MOVE_LIGHT);
-		this.attack = new RangeIndicator(stage.grid.getAttackRange(u), RangeType.ATTACK_LIGHT).minus(move);
-		this.heal = new RangeIndicator(stage.grid.getHealRange(u), RangeType.HEAL_LIGHT).minus(move).minus(attack);
+		this.move = new RangeIndicator(stage.getGrid().getPossibleMoves(u), RangeType.MOVE_LIGHT);
+		this.attack = new RangeIndicator(stage.getGrid().getAttackRange(u), RangeType.ATTACK_LIGHT).minus(move);
+		this.heal = new RangeIndicator(stage.getGrid().getHealRange(u), RangeType.HEAL_LIGHT).minus(move).minus(attack);
 		stage.addEntity(move);
 		stage.addEntity(attack);
 		stage.addEntity(heal);

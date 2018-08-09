@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import chu.engine.Game;
-import chu.engine.Stage;
 import net.fe.Player;
 import net.fe.Session;
 import net.fe.lobbystage.LobbyStage;
@@ -14,6 +13,8 @@ import net.fe.network.message.KickMessage;
 import net.fe.network.message.PartyMessage;
 import net.fe.network.message.ReadyMessage;
 import net.fe.network.serverui.FEServerFrame;
+import net.fe.network.stage.ServerLobbyStage;
+import net.fe.network.stage.ServerStage;
 import net.fe.unit.UnitFactory;
 import net.fe.unit.WeaponFactory;
 
@@ -25,17 +26,18 @@ import net.fe.unit.WeaponFactory;
  */
 public class Lobby extends Game {
 
-	private static Session session;
-	private static int id = -2;
+	private static Lobby lobby;
+	private Session session;
+	private int id = -2;
 
 	/** The server. */
-	private static Server server;
+	private Server server;
 
 	/** The current stage. */
-	private static Stage currentStage;
+	private ServerStage currentStage;
 
 	/** The lobby. */
-	public static LobbyStage lobby;
+	public ServerLobbyStage lobbyStage;
 
 	/**
 	 * The main method.
@@ -55,6 +57,7 @@ public class Lobby extends Game {
 
 	public Lobby(Session session, int port) {
 		server = new Server(port);
+		this.lobby = this;
 		this.session = session;
 	}
 
@@ -66,8 +69,8 @@ public class Lobby extends Game {
 		UnitFactory.loadUnits();
 
 		Thread serverThread = new Thread(server::start);
-		lobby = new LobbyStage(session);
-		currentStage = lobby;
+		lobbyStage = new ServerLobbyStage(this, session);
+		currentStage = lobbyStage;
 		serverThread.start();
 	}
 
@@ -120,7 +123,7 @@ public class Lobby extends Game {
 	 *
 	 * @param stage the new current stage
 	 */
-	public static void setCurrentStage(Stage stage) {
+	public void setCurrentStage(ServerStage stage) {
 		currentStage = stage;
 	}
 
@@ -129,7 +132,7 @@ public class Lobby extends Game {
 	 *
 	 * @return the server
 	 */
-	public static Server getServer() {
+	public Server getServer() {
 		return server;
 	}
 
@@ -138,28 +141,28 @@ public class Lobby extends Game {
 	 *
 	 * @return the players
 	 */
-	private static HashMap<Integer, Player> getPlayers() {
+	private HashMap<Integer, Player> getPlayers() {
 		return session.getPlayerMap();
 	}
 
 	/**
 	 * Reset to lobby.
 	 */
-	public static void resetToLobby() {
+	public void resetToLobby() {
 		for (Player p : getPlayers().values())
 			p.ready = false;
-		currentStage = lobby;
+		currentStage = lobbyStage;
 	}
 
 	/**
 	 * Reset to lobby and kick players.
 	 */
-	public static void resetToLobbyAndKickPlayers() {
+	public void resetToLobbyAndKickPlayers() {
 		resetToLobby();
 		kickPlayers("Reseting server");
 	}
 	
-	public static void kickPlayers(String reason) {
+	public void kickPlayers(String reason) {
 		ArrayList<Integer> ids = new ArrayList<>();
 		for (Player p : getPlayers().values())
 			ids.add(p.getID());
@@ -173,7 +176,7 @@ public class Lobby extends Game {
 	}
 
 	public static Session getSession() {
-		return session;
+		return lobby.session;
 	}
 
 	public static class LobbyInfo {

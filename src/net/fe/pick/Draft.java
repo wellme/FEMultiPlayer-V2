@@ -39,11 +39,11 @@ public class Draft implements PickMode {
 	 * @see net.fe.pick.PickMode#setUpServer(net.fe.Session)
 	 */
 	@Override
-	public void setUpServer(Session session) {
+	public void setUpServer(Lobby lobby, Session session) {
 		for(Player p : session.getPlayers()) {
 			p.getParty().clear();
 		}
-		Lobby.setCurrentStage(new WaitStage(session));
+		lobby.setCurrentStage(new WaitStage(lobby, session));
 	}
 	
 	/* (non-Javadoc)

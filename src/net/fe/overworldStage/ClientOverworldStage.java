@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.util.ResourceLoader;
 
+import chu.engine.ClientStage;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.KeyboardEvent;
@@ -29,6 +31,7 @@ import net.fe.Session;
 import net.fe.SoundTrack;
 import net.fe.editor.Level;
 import net.fe.editor.SpawnPoint;
+import net.fe.modifier.Modifier;
 import net.fe.network.Message;
 import net.fe.network.command.AttackCommand;
 import net.fe.network.command.Command;
@@ -48,7 +51,13 @@ import net.fe.unit.UnitIdentifier;
 /**
  * The Class ClientOverworldStage.
  */
-public class ClientOverworldStage extends OverworldStage {
+public class ClientOverworldStage extends ClientStage implements OverworldStage {
+	
+	private Session session;
+	private Grid grid;
+	private ArrayList<Player> turnOrder;
+	private int currentPlayer;
+	private int turnCount;
 	
 	/** The context. */
 	private OverworldContext context;
@@ -107,25 +116,30 @@ public class ClientOverworldStage extends OverworldStage {
 	public static final float MENU_DEPTH = 0.1f;
 	public static final float CURSOR_DEPTH = 0.15f;
 	
-	/** The Constant RIGHT_AXIS. */
 	public static final int RIGHT_AXIS = 480 - ObjectiveInfo.WIDTH/2 -2;
 	
-	/**
-	 * Instantiates a new client overworld stage.
-	 *
-	 * @param s the s
-	 */
-	public ClientOverworldStage(Session s) {
-		super(s);
-		
-		
-		fogOption = s.getFogOption();
+	public ClientOverworldStage(Session session) {
+		super(null);
+		this.session = session;
+		turnOrder = new ArrayList<Player>();
+		for(Player p : getSession().getNonSpectators())
+			turnOrder.add(p);
+		Collections.sort(turnOrder, (a, b) -> a.getID() - b.getID());
+		currentPlayer = 0;
+		turnCount = 1;
+		loadLevel(getSession().getMap());
+		for(Modifier m : getSession().getModifiers())
+			m.initOverworldUnits(getAllUnits());
+		for(Unit unit : getAllUnits())
+			unit.setOverworld(this);
+		processAddStack();
+		fogOption = session.getFogOption();
 		fog = new Fog(new HashSet<Node>());
 		addEntity(fog);
 		
 		camX = camY = 0;
-		camMaxX = Math.max(0,grid.width*16-368);
-		camMaxY = Math.max(0,grid.height*16-240);
+		camMaxX = Math.max(0, getGrid().width*16-368);
+		camMaxY = Math.max(0, getGrid().height*16-240);
 		{
 			List<Unit> units = FEMultiplayer.getLocalPlayer().getParty().getUnits();
 			Node[] n = units.stream()
@@ -148,7 +162,7 @@ public class ClientOverworldStage extends OverworldStage {
 		addEntity(new RunesBg(c));
 		addEntity(unitInfo);
 		addEntity(new TerrainInfo(cursor));
-		addEntity(new OverworldChat(this.session.getChatlog()));
+		addEntity(new OverworldChat(this.getSession().getChatlog()));
 		addEntity(new ObjectiveInfo());
 		setControl(true);
 		if(getCurrentPlayer().equals(FEMultiplayer.getLocalPlayer())) {
@@ -269,7 +283,7 @@ public class ClientOverworldStage extends OverworldStage {
 		
 		messages.forEach(pendingMessages::add);
 		while (runningMessagesCount == 0 && pendingMessages.peek() != null) {
-			super.executeMessage(pendingMessages.poll());
+			executeMessage(pendingMessages.poll());
 		}
 		
 		for (Entity e : entities) {
@@ -387,16 +401,25 @@ public class ClientOverworldStage extends OverworldStage {
 		FEMultiplayer.getClient().sendMessage(message);
 		selectedUnit = null;
 		// do the turn transition stuff now to prevent fast-fingering a second end turn
-		super.beginStep(java.util.Collections.singletonList(message));
+		executeMessage(message);
 	}
 	
 	@Override
-	protected void doEndTurn() {
+	public boolean addUnit(Unit u, int x, int y) {
+		boolean success = OverworldStage.super.addUnit(u, x, y);
+		if(success)
+			addEntity(u);
+		return success;
+	}
+
+	
+	@Override
+	public void doEndTurn() {
 		removeExtraneousEntities();
-		super.doEndTurn();
+		OverworldStage.super.doEndTurn();
 		context.cleanUp();
 		// reset assists
-		for(Player p : session.getPlayers()) {
+		for(Player p : getSession().getPlayers()) {
 			for(Unit u : p.getParty()) {
 				u.getAssisters().clear();
 			}
@@ -409,8 +432,8 @@ public class ClientOverworldStage extends OverworldStage {
 	}
 	
 	@Override
-	protected void doStartTurn(){
-		super.doStartTurn();
+	public void doStartTurn(){
+		OverworldStage.super.doEndTurn();
 		if(FEMultiplayer.getLocalPlayer().getID() == getCurrentPlayer().getID()){
 			context = new Idle(this, FEMultiplayer.getLocalPlayer());
 			addEntity(new TurnDisplay(true, Party.TEAM_BLUE, false));
@@ -439,10 +462,8 @@ public class ClientOverworldStage extends OverworldStage {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see net.fe.overworldStage.OverworldStage#beforeTriggerHook(net.fe.overworldStage.TerrainTrigger, int, int)
-	 */
-	protected void beforeTriggerHook(TerrainTrigger t, int x, int y){
+	@Override
+	public void beforeTriggerHook(TerrainTrigger t, int x, int y){
 		addEntity(t.getAnimation(this, x, y));
 	}
 	
@@ -503,9 +524,9 @@ public class ClientOverworldStage extends OverworldStage {
 	 */
 	public void checkEndGame() {
 		if(FEMultiplayer.getClient().winner != -1) {
-			String winnerName = getPlayerByID(FEMultiplayer.getClient().winner).getName();
+			String winnerName = getSession().getPlayer(FEMultiplayer.getClient().winner).getName();
 			FEMultiplayer.getClient().winner = -1;
-			addEntity(new OverworldEndTransition(new EndGameStage(session), winnerName));
+			addEntity(new OverworldEndTransition(new EndGameStage(getSession()), winnerName));
 		}
 	}
 	
@@ -540,12 +561,12 @@ public class ClientOverworldStage extends OverworldStage {
             InputStream in = ResourceLoader.getResourceAsStream("levels/"+levelName+".lvl");
             ObjectInputStream ois = new ObjectInputStream(in);
             Level level = (Level) ois.readObject();
-            grid = new Grid(level.width, level.height, Terrain.NONE);
             Set<SpawnPoint> spawns = new HashSet<>(level.spawns);
+            grid = new Grid(level.width, level.height, Terrain.NONE);
             for(int i=0; i<level.tiles.length; i++) {
             	for(int j=0; j<level.tiles[0].length; j++) {
             		Tile tile = new Tile(j, i, level.tiles[i][j]);
-            		grid.setTerrain(j, i, tile.getTerrain());
+            		getGrid().setTerrain(j, i, tile.getTerrain());
             		if(Tile.getTerrainFromID(level.tiles[i][j]) == Terrain.THRONE) {
             			int blue = 0;
             			int red = 0;
@@ -558,10 +579,10 @@ public class ClientOverworldStage extends OverworldStage {
                     	}
             			if(blue < red) {
             				System.out.println(blue + " "+ red);
-            				grid.setThronePos(Party.TEAM_BLUE, j, i);
+            				getGrid().setThronePos(Party.TEAM_BLUE, j, i);
             			} else {
             				System.out.println(blue + " "+ red);
-            				grid.setThronePos(Party.TEAM_RED, j, i);
+            				getGrid().setThronePos(Party.TEAM_RED, j, i);
             			}
             		}
             		addEntity(tile);
@@ -570,7 +591,7 @@ public class ClientOverworldStage extends OverworldStage {
             
             // Add units
 
-            for(Player p : session.getPlayers()) {
+            for(Player p : getSession().getPlayers()) {
             	Color team = p.getParty().getColor();
     			for(int i=0; i<p.getParty().size(); i++) {
     				SpawnPoint remove = null;
@@ -603,13 +624,18 @@ public class ClientOverworldStage extends OverworldStage {
 		return getVisibleUnit(cursor.getXCoord(), cursor.getYCoord());
 	}
 	
+
+	public final Unit getVisibleUnit(int x, int y) {
+		return getGrid().getVisibleUnit(x, y);
+	}
+	
 	/**
 	 * Gets the hovered terrain.
 	 *
 	 * @return the hovered terrain
 	 */
 	public Terrain getHoveredTerrain() {
-		return grid.getVisibleTerrain(cursor.getXCoord(), cursor.getYCoord());
+		return getGrid().getVisibleTerrain(cursor.getXCoord(), cursor.getYCoord());
 	}
 
 	/**
@@ -639,11 +665,26 @@ public class ClientOverworldStage extends OverworldStage {
 		this.unitInfo.setUnit(u);
 	}
 	
+
+	@Override
+	public Unit removeUnit(int x, int y) {
+		Unit u = OverworldStage.super.removeUnit(x, y);
+		if(u != null)
+			removeEntity(u);
+		return u;
+	}
+	
+	@Override
+	public void removeUnit(Unit u) {
+		OverworldStage.super.removeUnit(u);
+		removeEntity(u);
+	}
+	
 	private void updateFog() {
 		if (fogOption != FogType.NONE) {
 			Set<Node> nodes = new HashSet<>();
 			if(FEMultiplayer.getLocalPlayer().isSpectator()) {
-				switch(session.getSpectatorFogOption()) {
+				switch(getSession().getSpectatorFogOption()) {
 					case REVEAL_ALL:
 						//Nothing to do here
 						//nodes is already the empty set
@@ -652,7 +693,7 @@ public class ClientOverworldStage extends OverworldStage {
 						nodes = calcSpectatorFog();
 						break;
 					case SPECTATE_RED: {
-						nodes = Zone.all(grid);
+						nodes = Zone.all(getGrid());
 						Set<Player> players = new HashSet<Player>();
 						for(Player player : FEMultiplayer.getPlayers().values()) {
 							if(player.getParty().getColor().equals(Party.TEAM_RED)) {
@@ -665,7 +706,7 @@ public class ClientOverworldStage extends OverworldStage {
 						break;
 					}
 					case SPECTATE_BLUE: {
-						nodes = Zone.all(grid);
+						nodes = Zone.all(getGrid());
 						Set<Player> players = new HashSet<Player>();
 						for(Player player : FEMultiplayer.getPlayers().values()) {
 							if(player.getParty().getColor().equals(Party.TEAM_BLUE)) {
@@ -679,7 +720,7 @@ public class ClientOverworldStage extends OverworldStage {
 					}
 				}
 			} else {
-				nodes = Zone.all(grid);
+				nodes = Zone.all(getGrid());
 				nodes.removeAll(Fog.getPartyPerception(FEMultiplayer.getLocalPlayer().getParty()));
 			}
 			fog.setNodes(nodes);
@@ -692,7 +733,7 @@ public class ClientOverworldStage extends OverworldStage {
 	 * @param nodes The set of nodes to change
 	 */
 	private Set<Node> calcSpectatorFog() {
-		Set<Node> nodes = Zone.all(grid);
+		Set<Node> nodes = Zone.all(getGrid());
 		//This is not what God intended
 		//This would be so much simpler if I didn't care that technically, there could be more than 2 parties
 		Set<Set<Node>> partyPerceptions = new HashSet<>();
@@ -736,7 +777,7 @@ public class ClientOverworldStage extends OverworldStage {
 		nodes.removeAll(spectatorVision);
 		return nodes;
 	}
-		
+
 	public Zone getFog() {
 		return fog;
 	}
@@ -744,6 +785,12 @@ public class ClientOverworldStage extends OverworldStage {
 	public FogType getFogOption() {
 		return fogOption;
 	}
+	
+	@Override
+	public Session getSession() {
+		return session;
+	}
+
 	
 	public static enum SpectatorFogOption {
 		REVEAL_ALL("Reveal all"), 
@@ -793,8 +840,37 @@ public class ClientOverworldStage extends OverworldStage {
 		}
 	}
 
-	public Session getSession() {
-		return session;
+	@Override
+	public Grid getGrid() {
+		return grid;
+	}
+	
+	@Override
+	public int getTurnCount() {
+		return turnCount;
 	}
 
+	@Override
+	public void setTurnCount(int count) {
+		turnCount = count;
+	}
+	
+	@Override
+	public Player[] getTurnOrder() {
+		Player[] t = new Player[turnOrder.size()];
+		for(int i=0; i<t.length; i++) {
+			t[i] = turnOrder.get((currentPlayer+ i) % t.length);
+		}
+		return t;
+	}
+
+	@Override
+	public int getCurrentPlayerIndex() {
+		return currentPlayer;
+	}
+
+	@Override
+	public void setCurrentPlayerIndex(int index) {
+		currentPlayer = index;
+	}
 }

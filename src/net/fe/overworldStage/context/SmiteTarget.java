@@ -36,16 +36,16 @@ public final class SmiteTarget extends SelectTargetContext {
 	@Override
 	public boolean validTarget(Unit u){
 		// can shove either allies or enemies, as long as the con is sufficiently high
-		return Smite.canSmiteWithFog(this.stage.grid, this.unit, u);
+		return Smite.canSmiteWithFog(this.stage.getGrid(), this.unit, u);
 	}
 	
 	@Override
 	public void unitSelected(Unit u) {
 		Command c;
 		InterruptedCommand interruption = null;
-		if(Smite.canSmite(this.stage.grid, this.unit, u))
+		if(Smite.canSmite(this.stage.getGrid(), this.unit, u))
 			c = new SmiteCommand(new UnitIdentifier(u));
-		else if(Shove.canShove(this.stage.grid, this.unit, u)) {
+		else if(Shove.canShove(this.stage.getGrid(), this.unit, u)) {
 			c = new ShoveCommand(new UnitIdentifier(u));
 			interruption = new InterruptedCommand(new Node(u.getXCoord() * 3 - unit.getXCoord() * 2, u.getYCoord() * 3 - unit.getYCoord() * 2));
 		} else

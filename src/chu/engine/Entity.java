@@ -36,7 +36,7 @@ public abstract class Entity {
 	public Hitbox hitbox;
 	
 	/** The stage. */
-	public Stage stage;
+	public ClientStage stage;
 	
 	/** The will be removed. */
 	public boolean willBeRemoved;

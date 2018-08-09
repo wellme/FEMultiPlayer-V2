@@ -30,7 +30,7 @@ public class Seize implements Objective {
 					hasLord = true;
 					System.out.println(p.getName()+" has a Lord!");
 				}
-				if(stage.grid.canSeize(u)) {
+				if(stage.getGrid().canSeize(u)) {
 					return p.getID();
 				}
 			}

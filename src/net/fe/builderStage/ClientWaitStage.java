@@ -13,14 +13,14 @@ import net.fe.network.message.StartGame;
 import net.fe.overworldStage.ClientOverworldStage;
 import net.fe.unit.Unit;
 import chu.engine.Game;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.anim.Renderer;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ClientWaitStage.
  */
-public class ClientWaitStage extends Stage {
+public class ClientWaitStage extends ClientStage {
 	
 	/** The start. */
 	private boolean start;

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-import chu.engine.Stage;
 import net.fe.Player;
 import net.fe.Session;
 import net.fe.network.Lobby;
@@ -14,7 +13,8 @@ import net.fe.network.message.KickMessage;
 import net.fe.network.message.PartyMessage;
 import net.fe.network.message.QuitMessage;
 import net.fe.network.message.StartGame;
-import net.fe.overworldStage.OverworldStage;
+import net.fe.network.stage.ServerStage;
+import net.fe.overworldStage.ServerOverworldStage;
 import net.fe.unit.Unit;
 
 // TODO: Auto-generated Javadoc
@@ -23,7 +23,7 @@ import net.fe.unit.Unit;
  *
  * @author Shawn
  */
-public final class WaitStage extends Stage {
+public final class WaitStage implements ServerStage {
 	
 	/** The ready status. */
 	private final HashMap<Integer, Boolean> readyStatus;
@@ -35,16 +35,18 @@ public final class WaitStage extends Stage {
 	private boolean sentStartMessage;
 	
 	/** The session. */
-	protected final Session session;
+	private final Session session;
+	
+	private final Lobby lobby;
 	
 	/**
 	 * Instantiates a new wait stage.
 	 *
 	 * @param s the s
 	 */
-	public WaitStage(Session s) {
-		super("preparations");
-		session = s;
+	public WaitStage(Lobby lobby, Session session) {
+		this.session = session;
+		this.lobby = lobby;
 		sentStartMessage = false;
 		readyStatus = new HashMap<>();
 		for(Player p : session.getNonSpectators()) {
@@ -68,10 +70,10 @@ public final class WaitStage extends Stage {
 				);
 				validationResult.ifPresent(new Consumer<String>() {
 					@Override public void accept(String validationError) {
-						synchronized(Lobby.getServer().messagesLock) {
+						synchronized(lobby.getServer().messagesLock) {
 							final KickMessage kick = new KickMessage(0, pm.origin, validationError);
-							Lobby.getServer().broadcastMessage(kick);
-							Lobby.getServer().messages.add(kick);
+							lobby.getServer().broadcastMessage(kick);
+							lobby.getServer().messages.add(kick);
 						}
 					}
 				});
@@ -88,7 +90,7 @@ public final class WaitStage extends Stage {
 			else if(message instanceof QuitMessage || message instanceof KickMessage) {
 				if (this.session.getNonSpectators().length < 2) {
 					// player has left
-					Lobby.resetToLobby();
+					lobby.resetToLobby();
 				}
 			}
 		}
@@ -113,17 +115,22 @@ public final class WaitStage extends Stage {
 				if(!b) return;
 			}
 			for(PartyMessage pm : messages) {
-				Lobby.getServer().broadcastMessage(pm);
+				lobby.getServer().broadcastMessage(pm);
 			}
-			Lobby.getServer().broadcastMessage(new StartGame(0));
+			lobby.getServer().broadcastMessage(new StartGame(0));
 			for(Player p : session.getPlayers()) {
 				for(Unit u : p.getParty()) {
 					u.initializeEquipment();
 				}
 			}
-			Lobby.setCurrentStage(new OverworldStage(session));
+			lobby.setCurrentStage(new ServerOverworldStage(lobby, session));
 			sentStartMessage = true;
 		}
+	}
+
+	@Override
+	public Lobby getLobby() {
+		return lobby;
 	}
 	
 }

@@ -12,7 +12,7 @@ import org.newdawn.slick.opengl.Texture;
 
 import chu.engine.Game;
 import chu.engine.Entity;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.KeyboardEvent;
 import chu.engine.anim.Renderer;
 import chu.engine.anim.Transform;
@@ -23,7 +23,7 @@ import net.fe.network.Message;
 /**
  * A stage which allows a user to modify selected options without directly editing "app.config"
  */
-public final class OptionsStage extends Stage {
+public final class OptionsStage extends ClientStage {
 	
 	public static final int BUTTON_Y = 270;
 	public static final int CANCEL_X = 390;

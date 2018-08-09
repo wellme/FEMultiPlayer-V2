@@ -31,7 +31,7 @@ public abstract class OverworldContext {
 		stage = s;
 		prev = prevContext;
 		cursor = stage.cursor;
-		grid = stage.grid;
+		grid = stage.getGrid();
 	}
 	
 	/**

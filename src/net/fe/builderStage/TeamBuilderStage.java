@@ -29,7 +29,7 @@ import org.newdawn.slick.Color;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.KeyboardEvent;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.anim.AudioPlayer;
 import chu.engine.anim.Renderer;
 
@@ -37,7 +37,7 @@ import chu.engine.anim.Renderer;
 /**
  * The Class TeamBuilderStage.
  */
-public class TeamBuilderStage extends Stage {
+public class TeamBuilderStage extends ClientStage {
 	
 	/** The units. */
 	private List<Unit> units;
