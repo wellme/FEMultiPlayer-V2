@@ -27,7 +27,7 @@ import net.fe.unit.WeaponFactory;
 public class Lobby extends Game {
 
 	private static Lobby lobby;
-	private static Session session;
+	private Session session;
 
 	/** The server. */
 	private static Server server;
@@ -68,7 +68,7 @@ public class Lobby extends Game {
 		UnitFactory.loadUnits();
 
 		Thread serverThread = new Thread(server::start);
-		lobbyStage = new ServerLobbyStage(lobby, session);
+		lobbyStage = new ServerLobbyStage(this, session);
 		currentStage = lobbyStage;
 		serverThread.start();
 	}
@@ -122,7 +122,7 @@ public class Lobby extends Game {
 	 *
 	 * @param stage the new current stage
 	 */
-	public static void setCurrentStage(ServerStage stage) {
+	public void setCurrentStage(ServerStage stage) {
 		currentStage = stage;
 	}
 
@@ -131,7 +131,7 @@ public class Lobby extends Game {
 	 *
 	 * @return the server
 	 */
-	public static Server getServer() {
+	public Server getServer() {
 		return server;
 	}
 
@@ -140,14 +140,14 @@ public class Lobby extends Game {
 	 *
 	 * @return the players
 	 */
-	private static HashMap<Integer, Player> getPlayers() {
+	private HashMap<Integer, Player> getPlayers() {
 		return session.getPlayerMap();
 	}
 
 	/**
 	 * Reset to lobby.
 	 */
-	public static void resetToLobby() {
+	public void resetToLobby() {
 		for (Player p : getPlayers().values())
 			p.ready = false;
 		currentStage = lobbyStage;
@@ -156,12 +156,12 @@ public class Lobby extends Game {
 	/**
 	 * Reset to lobby and kick players.
 	 */
-	public static void resetToLobbyAndKickPlayers() {
+	public void resetToLobbyAndKickPlayers() {
 		resetToLobby();
 		kickPlayers("Reseting server");
 	}
 	
-	public static void kickPlayers(String reason) {
+	public void kickPlayers(String reason) {
 		ArrayList<Integer> ids = new ArrayList<>();
 		for (Player p : getPlayers().values())
 			ids.add(p.getID());
@@ -175,7 +175,7 @@ public class Lobby extends Game {
 	}
 
 	public static Session getSession() {
-		return session;
+		return lobby.session;
 	}
 
 }

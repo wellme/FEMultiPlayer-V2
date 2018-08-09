@@ -436,37 +436,6 @@ public class FEMultiplayer extends Game{
 		return client.getSession();
 	}
 	
-	/**
-	 * Disconnect from game. 
-	 * Allows for resetting server and client if triggered, but is not used in all situations.
-	 *
-	 * @param message the message
-	 */
-	public static void disconnectGame(String message){
-		/*
-		//wouldn't be hard to use something like this to reset to lobby rather than quit the game:
-		//at the moment this disconnect is only in a few places between stages, i.e. while waiting
-		//so it's not too bad to quit the game.
-		Player leaver = null;
-		for(Player p : session.getPlayers()) {
-			if(p.getID() == message.origin) {
-				leaver = p;
-			}
-		}
-		session.removePlayer(leaver);
-		System.out.println(leaver.getName()+" LEFT THE GAME");
-		 * */
-		if(Lobby.getServer() != null) {
-			//boot the server back to lobby
-			Lobby.resetToLobbyAndKickPlayers();
-		}else{
-			//exit the client
-			if(message!=null && !message.equals("")){
-				Sys.alert("FE:MP", message);
-			}
-			System.exit(0);
-		}
-	}
 
 	private static final class EmptyRunnable implements Runnable {
 		@Override public void run() {}

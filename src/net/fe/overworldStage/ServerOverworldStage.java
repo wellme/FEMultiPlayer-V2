@@ -61,14 +61,15 @@ public class ServerOverworldStage implements OverworldStage, ServerStage {
 	public void checkEndGame() {
 		// Objective evaluation
 		int winner = getSession().getObjective().evaluate(this);
-		if(getSession().numPlayers()==1){//players have left
+		
+		if(getSession().numPlayers() == 1) // players have left
 			winner = getSession().getPlayers()[0].getID();//whoever's left wins
-		}else if (getSession().numPlayers()<1){
-			FEMultiplayer.disconnectGame("All players have disconnected");
-		}
-		if(winner > 0 && Lobby.getServer() != null) {
-			Lobby.getServer().broadcastMessage(new EndGame(0, winner));
-			Lobby.resetToLobby();
+		else if (getSession().numPlayers() < 1)
+			lobby.resetToLobbyAndKickPlayers();
+		
+		if(winner > 0) {
+			lobby.getServer().broadcastMessage(new EndGame(0, winner));
+			lobby.resetToLobby();
 		}
 	}
 

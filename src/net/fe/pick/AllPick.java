@@ -35,7 +35,7 @@ public class AllPick implements PickMode {
 	 */
 	@Override
 	public void setUpServer(Lobby lobby, Session session) {
-		Lobby.setCurrentStage(new WaitStage(lobby, session));
+		lobby.setCurrentStage(new WaitStage(lobby, session));
 	}
 	
 	/* (non-Javadoc)

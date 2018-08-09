@@ -70,10 +70,10 @@ public final class WaitStage implements ServerStage {
 				);
 				validationResult.ifPresent(new Consumer<String>() {
 					@Override public void accept(String validationError) {
-						synchronized(Lobby.getServer().messagesLock) {
+						synchronized(lobby.getServer().messagesLock) {
 							final KickMessage kick = new KickMessage(0, pm.origin, validationError);
-							Lobby.getServer().broadcastMessage(kick);
-							Lobby.getServer().messages.add(kick);
+							lobby.getServer().broadcastMessage(kick);
+							lobby.getServer().messages.add(kick);
 						}
 					}
 				});
@@ -90,7 +90,7 @@ public final class WaitStage implements ServerStage {
 			else if(message instanceof QuitMessage || message instanceof KickMessage) {
 				if (this.session.getNonSpectators().length < 2) {
 					// player has left
-					Lobby.resetToLobby();
+					lobby.resetToLobby();
 				}
 			}
 		}
@@ -115,9 +115,9 @@ public final class WaitStage implements ServerStage {
 				if(!b) return;
 			}
 			for(PartyMessage pm : messages) {
-				Lobby.getServer().broadcastMessage(pm);
+				lobby.getServer().broadcastMessage(pm);
 			}
-			Lobby.getServer().broadcastMessage(new StartGame(0));
+			lobby.getServer().broadcastMessage(new StartGame(0));
 			for(Player p : session.getPlayers()) {
 				for(Unit u : p.getParty()) {
 					u.initializeEquipment();

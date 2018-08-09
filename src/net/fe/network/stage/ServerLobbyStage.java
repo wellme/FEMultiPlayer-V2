@@ -40,7 +40,7 @@ public class ServerLobbyStage implements LobbyStage, ServerStage {
 		
 		// Teams are valid
 		if (activeBlue == 1 && activeRed == 1 && allPlayersReady) {
-			Lobby.getServer().broadcastMessage(new StartPicking(0));
+			lobby.getServer().broadcastMessage(new StartPicking(0));
 			session.getPickMode().setUpServer(lobby, session);
 		}
 	}
