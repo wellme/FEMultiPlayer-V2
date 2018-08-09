@@ -14,7 +14,7 @@ import net.fe.network.message.PartyMessage;
 import net.fe.network.message.QuitMessage;
 import net.fe.network.message.StartGame;
 import net.fe.network.stage.ServerStage;
-import net.fe.overworldStage.OverworldStage;
+import net.fe.overworldStage.ServerOverworldStage;
 import net.fe.unit.Unit;
 
 // TODO: Auto-generated Javadoc
@@ -123,7 +123,7 @@ public final class WaitStage implements ServerStage {
 					u.initializeEquipment();
 				}
 			}
-			lobby.setCurrentStage(new OverworldStage(session));
+			lobby.setCurrentStage(new ServerOverworldStage(lobby, session));
 			sentStartMessage = true;
 		}
 	}

@@ -239,13 +239,13 @@ public enum Terrain {
 		/* (non-Javadoc)
 		 * @see net.fe.overworldStage.TerrainTrigger#getAnimation(net.fe.overworldStage.OverworldStage, int, int)
 		 */
-		public Entity getAnimation(OverworldStage g, int x, int y){
+		public Entity getAnimation(ClientOverworldStage g, int x, int y){
 			Unit u = g.getVisibleUnit(x, y);
 			if (u == null)
 				//Returns a "do nothing" entity because the unit is not visible.
 				return new Entity(0, 0) {};
 			else
-				return new Healthbar(u, u.getHp(), u.getHp() + amount, (ClientOverworldStage) g){
+				return new Healthbar(u, u.getHp(), u.getHp() + amount, g){
 					@Override
 					public void done() {
 						destroy();

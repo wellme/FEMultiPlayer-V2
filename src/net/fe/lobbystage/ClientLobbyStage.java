@@ -191,7 +191,7 @@ public class ClientLobbyStage extends ClientStage implements LobbyStage {
 				session.getPickMode().setUpClient(session);
 			} else if(message instanceof ClientInit) {		// Only clients will get this (Actually, shouldn't happen anymore)
 				ClientInit init = (ClientInit)message;
-				//session = init.session; // TODO change this probably
+				session = init.session; // TODO change this probably
 			}
 			else if(message instanceof ReadyMessage) {
 				boolean ready = !session.getPlayer(message.origin).ready;

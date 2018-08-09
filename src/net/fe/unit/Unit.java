@@ -337,7 +337,7 @@ public final class Unit extends GriddedEntity implements Serializable, DoNotDest
 			return depth-0.0001f;
 		}
 		float highlightDiff = (ClientOverworldStage.UNIT_DEPTH - ClientOverworldStage.UNIT_MAX_DEPTH)/2;
-		Grid g = ((ClientOverworldStage) stage).grid;
+		Grid g = ((ClientOverworldStage) stage).getGrid();
 		float yDiff = highlightDiff/g.width;
 		float xDiff = yDiff/g.height;
 		

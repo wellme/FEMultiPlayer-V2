@@ -24,7 +24,7 @@ public final class MoveCommand extends Command {
 	public ArrayList<AttackRecord> applyServer(OverworldStage stage, Unit unit) {
 		
 		//TODO: validate
-		stage.grid.move(unit, path[path.length - 1].x, path[path.length - 1].y, false);
+		stage.getGrid().move(unit, path[path.length - 1].x, path[path.length - 1].y, false);
 		return null;
 	}
 	
@@ -34,7 +34,7 @@ public final class MoveCommand extends Command {
 		return () -> {
 			Path p = new Path();
 			p.setNodes(path);
-			stage.grid.move(unit, path[path.length - 1].x, path[path.length - 1].y, true);
+			stage.getGrid().move(unit, path[path.length - 1].x, path[path.length - 1].y, true);
 			unit.move(p, callback);
 			Node[] nodes = p.getAllNodes();
 			ArrayList<Node> visibleNodes = new ArrayList<Node>();
