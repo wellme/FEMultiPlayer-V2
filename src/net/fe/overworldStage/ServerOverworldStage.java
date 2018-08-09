@@ -68,7 +68,7 @@ public class ServerOverworldStage implements OverworldStage, ServerStage {
 			lobby.resetToLobbyAndKickPlayers();
 		
 		if(winner > 0) {
-			lobby.getServer().broadcastMessage(new EndGame(0, winner));
+			lobby.broadcastMessage(new EndGame(0, winner));
 			lobby.resetToLobby();
 		}
 	}
@@ -108,7 +108,7 @@ public class ServerOverworldStage implements OverworldStage, ServerStage {
 		if(unit != null) {
 			unit.setMoved(true);
 		}
-		lobby.getServer().broadcastMessage(message);
+		lobby.broadcastMessage(message);
 		checkEndGame();
 	}
 

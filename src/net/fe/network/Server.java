@@ -18,7 +18,7 @@ import net.fe.network.message.RejoinMessage;
 /**
  * The Class Server.
  */
-public final class Server implements MessageDestination {
+public final class Server {
 	
 	/** a logger */
 	private static final Logger logger = Logger.getLogger("net.fe.network.Server");
@@ -46,25 +46,27 @@ public final class Server implements MessageDestination {
 	private final TreeMap<Long, ServerListener> pastClients;
 	
 	/** The messages. Should only operate on if the monitor to messagesLock is held */
-	public final ArrayList<Message> messages;
+	private final ArrayList<Message> messages;
 	
 	/** A lock which should be waited upon or notified for changes to messages */
-	public final Object messagesLock;
+	private final Object messagesLock;
 	
 	private IDManager manager;
 	
 	private ArrayList<Message> broadcastedMessages = new ArrayList<>();
+	public final FEServer feserver;
 	
 	/**
 	 * Instantiates a new server.
 	 */
-	public Server(int port) {
+	public Server(int port, FEServer feserver) {
 		messages = new ArrayList<Message>();
 		messagesLock = new Object();
 		clients = new CopyOnWriteArrayList<ServerListener>();
 		pastClients = new TreeMap<>();
 		manager = new IDManager();
 		this.port = port;
+		this.feserver = feserver;
 	}
 	
 	/**
@@ -140,14 +142,6 @@ public final class Server implements MessageDestination {
 		return broadcastedMessages.toArray(new Message[0]);
 	}
 
-	@Override
-	public void addMessage(Message message) {
-		synchronized(messagesLock) {
-			messages.add(message);
-			messagesLock.notifyAll();
-		}
-	}
-	
 	public void removeListener(boolean allowReconnection, ServerListener listener) {
 		synchronized (clients) {
 			clients.remove(listener);

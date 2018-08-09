@@ -6,7 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -53,7 +54,7 @@ public final class ServerListener {
 	private int clientId;
 	private long token;
 	
-	private MessageDestination destination;
+	private MessageHandler destination;
 	
 	/**
 	 * Instantiates a new server listener.
@@ -65,7 +66,7 @@ public final class ServerListener {
 		this.clientId = clientId;
 		this.socket = socket;
 		this.main = main;
-		this.destination = main;
+		this.destination = main.feserver;
 		this.token = token;
 		try {
 			out = new ObjectOutputStream(socket.getOutputStream());
@@ -128,14 +129,11 @@ public final class ServerListener {
 				this.token = rejoin.getToken();
 				this.clientId = rejoin.origin;
 				synchronized(this) {
-					Message[] messages;
-					synchronized(main.messagesLock) {
-						messages = main.getBroadcastedMessages();
-					}
+					ArrayList<Message> messages = destination.getBroadcastedMessages();
 					rejoin.setTimestamp(rejoin.getLastTimestamp());
-					int index = Arrays.binarySearch(messages, rejoin, (a, b) -> (int) Math.signum(a.getTimestamp() - b.getTimestamp()));
-					for(int i = index + 1; i < messages.length; i++)
-						sendMessage(messages[i]);
+					int index = Collections.binarySearch(messages, rejoin, (a, b) -> (int) Math.signum(a.getTimestamp() - b.getTimestamp()));
+					for(int i = index + 1; i < messages.size(); i++)
+						sendMessage(messages.get(i));
 				}
 			} else {
 				sendMessage(new KickMessage(0, rejoin.origin, "Reconnection failed: Timed out"));
@@ -200,6 +198,10 @@ public final class ServerListener {
 
 	public long getToken() {
 		return token;
+	}
+
+	public void setDestination(MessageHandler destination) {
+		this.destination = destination;
 	}
 
 }

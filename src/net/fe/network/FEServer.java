@@ -5,20 +5,23 @@ import java.util.TreeMap;
 
 import net.fe.network.message.CreateLobby;
 import net.fe.network.message.JoinServer;
+import net.fe.network.serverui.FEServerFrame;
 import net.fe.unit.UnitFactory;
 import net.fe.unit.WeaponFactory;
 
-public class FEServer implements MessageDestination {
+public class FEServer implements MessageHandler {
 
 	private Server server;
+	private TreeMap<Integer, ServerListener> unassociatedClients = new TreeMap<>();
 	private TreeMap<Integer, Lobby> lobbies = new TreeMap<>();
 	private ArrayList<Message> messages = new ArrayList<Message>();
 	
+	public static void main(String[] args) {
+		new FEServerFrame().setVisible(true);
+	}
 	
-	public FEServer(Server server) {
-		this.server = server;
-		init();
-		new Thread(this::loop).start();
+	public FEServer(int port) {
+		this.server = new Server(port, this);
 	}
 	
 	private void init() {
@@ -26,6 +29,11 @@ public class FEServer implements MessageDestination {
 		UnitFactory.loadUnits();
 		
 		new Thread(server::start).start();
+	}
+	
+	public void start() {
+		init();
+		new Thread(this::loop).start();
 	}
 	
 	private void loop() {
@@ -42,7 +50,6 @@ public class FEServer implements MessageDestination {
 			}
 		}
 	}
-	
 	
 	private void processMessage(Message message) {
 		//TODO handle messages (create lobby, etc.)
@@ -63,6 +70,25 @@ public class FEServer implements MessageDestination {
 			messages.add(message);
 			messages.notifyAll();
 		}
+	}
+
+	@Override
+	public ArrayList<Message> getBroadcastedMessages() {
+		return null;
+	}
+
+	@Override
+	public void broadcastMessage(Message message) {
+		for(ServerListener listener : unassociatedClients.values())
+			listener.sendMessage(message);
+		for(Lobby lobby : lobbies.values())
+			lobby.broadcastMessage(message);
+	}
+
+	@Override
+	public void addListener(ServerListener listener) {
+		unassociatedClients.put(listener.getId(), listener);
+		listener.setDestination(this);
 	}
 
 }

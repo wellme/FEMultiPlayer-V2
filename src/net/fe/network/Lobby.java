@@ -12,86 +12,56 @@ import net.fe.network.message.JoinTeam;
 import net.fe.network.message.KickMessage;
 import net.fe.network.message.PartyMessage;
 import net.fe.network.message.ReadyMessage;
-import net.fe.network.serverui.FEServerFrame;
 import net.fe.network.stage.ServerLobbyStage;
 import net.fe.network.stage.ServerStage;
-import net.fe.unit.UnitFactory;
-import net.fe.unit.WeaponFactory;
 
-// TODO: Auto-generated Javadoc
 /**
  * A game that does not render anything. Manages logic only
  * @author Shawn
  *
  */
-public class Lobby extends Game {
+public class Lobby extends Game implements MessageHandler {
 
-	private static Lobby lobby;
 	private Session session;
 	private int id = -2;
 
-	/** The server. */
-	private Server server;
+	private ArrayList<Message> messages = new ArrayList<>();
 
-	/** The current stage. */
 	private ServerStage currentStage;
-
-	/** The lobby. */
 	public ServerLobbyStage lobbyStage;
+	
+	private ArrayList<Message> broadcastedMessages = new ArrayList<>();
+	private ArrayList<ServerListener> listeners = new ArrayList<>();
 
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
-	public static void main(String[] args) {
-		new FEServerFrame().setVisible(true);
-	}
-
-	/**
-	 * Instantiates a new FE server.
-	 */
 	public Lobby(Session session) {
-		this(session, Server.DEFAULT_PORT);
-	}
-
-	public Lobby(Session session, int port) {
-		server = new Server(port);
-		this.lobby = this;
 		this.session = session;
 	}
 
-	/**
-	 * Inits the.
-	 */
 	public void init() {
 		lobbyStage = new ServerLobbyStage(this, session);
 		currentStage = lobbyStage;
 	}
 
-	/* (non-Javadoc)
-	 * @see chu.engine.Game#loop()
-	 */
 	@Override
 	public void loop() {
 		while (true) {
 			final long time = System.nanoTime();
 			final ArrayList<Message> messages = new ArrayList<>();
-			synchronized (server.messagesLock) {
+			synchronized (messages) {
 				try {
-					server.messagesLock.wait(1000);
+					messages.wait(1000);
 				} catch (InterruptedException e) {
 					// No, really. Has there ever been a meaningful response to an InterruptedException?
 				}
-				server.timeoutClients();
-				messages.addAll(server.messages);
+				//timeoutClients();
+				messages.addAll(messages);
 				for (Message message : messages) {
 					if (message instanceof JoinTeam || message instanceof ReadyMessage) {
 						if (!(currentStage instanceof LobbyStage)) {
 							// ignore message to prevent late-joining players from switching teams or readying up
 						} else
 							// TODO: percelate broadcasting of these up to stages
-							server.broadcastMessage(message);
+							broadcastMessage(message);
 					} else if (message instanceof CommandMessage || message instanceof PartyMessage) {
 						// If the unit attacked, we need to generate battle results
 						// If party; don't tell others until all have selected their party
@@ -99,9 +69,9 @@ public class Lobby extends Game {
 						// Clients are not allowed to do this.
 					} else
 						// TODO: percelate broadcasting of these up to stages
-						server.broadcastMessage(message);
+						broadcastMessage(message);
 
-					server.messages.remove(message);
+					messages.remove(message);
 				}
 			}
 			for (Message m : messages)
@@ -113,45 +83,20 @@ public class Lobby extends Game {
 		}
 	}
 
-	/**
-	 * Sets the current stage.
-	 *
-	 * @param stage the new current stage
-	 */
 	public void setCurrentStage(ServerStage stage) {
 		currentStage = stage;
 	}
 
-	/**
-	 * Gets the server.
-	 *
-	 * @return the server
-	 */
-	public Server getServer() {
-		return server;
-	}
-
-	/**
-	 * Gets the players.
-	 *
-	 * @return the players
-	 */
 	private HashMap<Integer, Player> getPlayers() {
 		return session.getPlayerMap();
 	}
 
-	/**
-	 * Reset to lobby.
-	 */
 	public void resetToLobby() {
 		for (Player p : getPlayers().values())
 			p.ready = false;
 		currentStage = lobbyStage;
 	}
 
-	/**
-	 * Reset to lobby and kick players.
-	 */
 	public void resetToLobbyAndKickPlayers() {
 		resetToLobby();
 		kickPlayers("Reseting server");
@@ -161,17 +106,46 @@ public class Lobby extends Game {
 		ArrayList<Integer> ids = new ArrayList<>();
 		for (Player p : getPlayers().values())
 			ids.add(p.getID());
-		synchronized (server.messagesLock) {
+		synchronized (messages) {
 			for (int i : ids) {
 				final KickMessage kick = new KickMessage(0, i, reason);
-				server.broadcastMessage(kick);
-				server.messages.add(kick);
+				broadcastMessage(kick);
+				messages.add(kick);
 			}
 		}
 	}
 
-	public static Session getSession() {
-		return lobby.session;
+	@Override
+	public void addMessage(Message message) {
+		synchronized(messages) {
+			messages.add(message);
+			messages.notifyAll();
+		}
+	}
+
+	@Override
+	public ArrayList<Message> getBroadcastedMessages() {
+		return broadcastedMessages;
+	}
+
+	@Override
+	public void broadcastMessage(Message message) {
+		broadcastedMessages.add(message);
+		synchronized (listeners) {
+			for(ServerListener listener : listeners)
+				listener.sendMessage(message);
+		}
+	}
+
+	@Override
+	public void addListener(ServerListener listener) {
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+	
+	public LobbyInfo getLobbyInfo() {
+		return new LobbyInfo(this);
 	}
 
 	public static class LobbyInfo {
