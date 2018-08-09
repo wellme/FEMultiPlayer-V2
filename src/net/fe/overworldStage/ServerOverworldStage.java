@@ -48,7 +48,8 @@ public class ServerOverworldStage implements OverworldStage, ServerStage {
 		loadLevel(getSession().getMap());
 		for(Modifier m : getSession().getModifiers())
 			m.initOverworldUnits(getAllUnits());
-		//getAllUnits().forEach(unit -> unit.setStage(this));
+		for(Unit unit : getAllUnits())
+			unit.setOverworld(this);
 	}
 
 	@Override

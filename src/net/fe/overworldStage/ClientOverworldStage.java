@@ -130,6 +130,8 @@ public class ClientOverworldStage extends ClientStage implements OverworldStage 
 		loadLevel(getSession().getMap());
 		for(Modifier m : getSession().getModifiers())
 			m.initOverworldUnits(getAllUnits());
+		for(Unit unit : getAllUnits())
+			unit.setOverworld(this);
 		processAddStack();
 		fogOption = session.getFogOption();
 		fog = new Fog(new HashSet<Node>());
