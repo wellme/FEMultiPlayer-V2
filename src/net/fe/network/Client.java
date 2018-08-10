@@ -156,7 +156,7 @@ public class Client {
 					}
 					logger.info("CLIENT: Recieved ID "+id+" from server");
 					// Send a join server request
-					sendMessage(new JoinServer(id));
+					sendMessage(new JoinServer());
 					initialized = true;
 				} else {
 					logger.info("CLIENT: Mismatched hashes:" +

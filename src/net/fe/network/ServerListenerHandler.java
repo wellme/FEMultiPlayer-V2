@@ -74,7 +74,7 @@ public abstract class ServerListenerHandler {
 	
 	public void removeListener(boolean allowReconnection, ServerListener listener) {
 		synchronized (listeners) {
-			listeners.remove(listener);
+			listeners.remove(listener.getId());
 		}
 		if(allowReconnection) {
 			synchronized (disconnectedListeners) {
