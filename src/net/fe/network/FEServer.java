@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
 
+import net.fe.FEServerResources;
 import net.fe.Session;
 import net.fe.network.Lobby.LobbyInfo;
 import net.fe.network.message.CreateLobby;
@@ -23,7 +24,7 @@ public class FEServer extends ServerListenerHandler {
 	private LobbyListMessage lobbyListMessage = new LobbyListMessage(new LobbyInfo[0]);
 	
 	public static void main(String[] args) {
-		new FEServer(Server.DEFAULT_PORT).start();
+		new FEServer(FEServerResources.getPort()).start();
 	}
 	
 	public FEServer(int port) {

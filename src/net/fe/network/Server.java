@@ -43,7 +43,7 @@ public final class Server {
 	
 	public void start() {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
-			logger.info("SERVER: Waiting for connections...");
+			logger.info("SERVER: Waiting for connections on port " + port);
 			while(true) {
 				Socket connectSocket = serverSocket.accept();
 				int id = manager.newPlayerID();
