@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.lwjgl.Sys;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
@@ -26,15 +25,14 @@ import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-import chu.engine.Game;
 import chu.engine.ClientStage;
+import chu.engine.Game;
 import chu.engine.menu.Notification;
 import net.fe.builderStage.TeamDraftStage;
 import net.fe.fightStage.CombatCalculator;
 import net.fe.fightStage.FightStage;
 import net.fe.lobbystage.ClientLobbyStage;
 import net.fe.network.Client;
-import net.fe.network.Lobby;
 import net.fe.network.Message;
 import net.fe.network.command.Command;
 import net.fe.network.message.CommandMessage;
@@ -67,6 +65,7 @@ public class FEMultiplayer extends Game{
 	
 	/** The lobby. */
 	public static ClientLobbyStage lobby;
+	public static ServerBrowsingStage browse;
 	
 	/** The connecting stage. */
 	public static ConnectStage connect;
@@ -299,8 +298,8 @@ public class FEMultiplayer extends Game{
 			client = new Client(ip, port);
 			if(client.isOpen()) {
 				postRenderRunnables.add(() -> {
-					lobby = new ClientLobbyStage(client.getSession());
-					setCurrentStage(lobby);
+					browse = new ServerBrowsingStage();
+					setCurrentStage(browse);
 					client.start();
 				});
 			} else {

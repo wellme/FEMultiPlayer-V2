@@ -59,7 +59,7 @@ public final class Server {
 	/**
 	 * Instantiates a new server.
 	 */
-	public Server(int port, FEServer feserver) {
+	public Server(int port, FEServer feserver, IDManager manager) {
 		messages = new ArrayList<Message>();
 		messagesLock = new Object();
 		clients = new CopyOnWriteArrayList<ServerListener>();
@@ -67,6 +67,7 @@ public final class Server {
 		manager = new IDManager();
 		this.port = port;
 		this.feserver = feserver;
+		this.manager = manager;
 	}
 	
 	/**
@@ -83,6 +84,7 @@ public final class Server {
 				logger.info("SERVER: Connection #" + id + " accepted!");
 				ServerListener listener = new ServerListener(this, connectSocket, id);
 				clients.add(listener);
+				feserver.addListener(listener);
 				listener.start();
 			}
 		} catch (IOException e) {

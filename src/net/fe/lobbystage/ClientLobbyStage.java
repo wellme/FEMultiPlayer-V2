@@ -179,6 +179,8 @@ public class ClientLobbyStage extends ClientStage implements LobbyStage {
 		for(Entity e : entities) {
 			e.beginStep();
 		}
+		if(messages.size() != 0)
+		System.out.println("ClientLobbyStage recieving messages: " + messages);
 		for(Message message : messages) {
 			if(message instanceof StartPicking) {
 				// Set up global list of players
@@ -299,4 +301,5 @@ public class ClientLobbyStage extends ClientStage implements LobbyStage {
 	public Session getSession() {
 		return session;
 	}
+	
 }

@@ -18,6 +18,7 @@ import net.fe.network.message.ClientInit;
 import net.fe.network.message.EndGame;
 import net.fe.network.message.JoinServer;
 import net.fe.network.message.KickMessage;
+import net.fe.network.message.LobbyListMessage;
 import net.fe.network.message.QuitMessage;
 import net.fe.network.message.RejoinMessage;
 
@@ -104,6 +105,7 @@ public class Client {
 					long time = System.currentTimeMillis();
 					while(shouldReconnect && !open && System.currentTimeMillis() - time <= Server.TIMEOUT)
 						connect(ip, port);
+					e.printStackTrace();
 					logger.throwing("ClientNetworkingReader", "run", e);
 				}
 			}
@@ -154,7 +156,7 @@ public class Client {
 					}
 					logger.info("CLIENT: Recieved ID "+id+" from server");
 					// Send a join server request
-					sendMessage(new JoinServer(id, FEMultiplayer.getLocalPlayer().getName()));
+					sendMessage(new JoinServer(id));
 					initialized = true;
 				} else {
 					logger.info("CLIENT: Mismatched hashes:" +
@@ -178,6 +180,8 @@ public class Client {
 			}
 		} else if(message instanceof EndGame) {
 			winner = ((EndGame)message).winner;
+		} else if(message instanceof LobbyListMessage) {
+			
 		}
 		
 		session.handleMessage(message);
@@ -261,5 +265,9 @@ public class Client {
 	 */
 	public Session getSession() {
 		return session;
+	}
+	
+	public void setSession(Session session) {
+		this.session = session;
 	}
 }

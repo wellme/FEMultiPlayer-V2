@@ -1,5 +1,6 @@
 package net.fe.network;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,7 +24,7 @@ import net.fe.network.stage.ServerStage;
 public class Lobby extends Game implements MessageHandler {
 
 	private Session session;
-	private int id = -2;
+	private int id;
 
 	private ArrayList<Message> messages = new ArrayList<>();
 
@@ -33,8 +34,10 @@ public class Lobby extends Game implements MessageHandler {
 	private ArrayList<Message> broadcastedMessages = new ArrayList<>();
 	private ArrayList<ServerListener> listeners = new ArrayList<>();
 
-	public Lobby(Session session) {
+	public Lobby(int id, Session session) {
 		this.session = session;
+		this.id = id;
+		init();
 	}
 
 	public void init() {
@@ -47,14 +50,15 @@ public class Lobby extends Game implements MessageHandler {
 		while (true) {
 			final long time = System.nanoTime();
 			final ArrayList<Message> messages = new ArrayList<>();
-			synchronized (messages) {
+			synchronized (this.messages) {
 				try {
-					messages.wait(1000);
+					this.messages.wait(10000);
 				} catch (InterruptedException e) {
 					// No, really. Has there ever been a meaningful response to an InterruptedException?
 				}
+				messages.addAll(this.messages);
+				System.out.println(this.messages.toString() + "\t" + messages.toString());
 				//timeoutClients();
-				messages.addAll(messages);
 				for (Message message : messages) {
 					if (message instanceof JoinTeam || message instanceof ReadyMessage) {
 						if (!(currentStage instanceof LobbyStage)) {
@@ -71,7 +75,7 @@ public class Lobby extends Game implements MessageHandler {
 						// TODO: percelate broadcasting of these up to stages
 						broadcastMessage(message);
 
-					messages.remove(message);
+					this.messages.remove(message);
 				}
 			}
 			for (Message m : messages)
@@ -82,7 +86,7 @@ public class Lobby extends Game implements MessageHandler {
 			timeDelta = System.nanoTime() - time;
 		}
 	}
-
+	
 	public void setCurrentStage(ServerStage stage) {
 		currentStage = stage;
 	}
@@ -131,6 +135,7 @@ public class Lobby extends Game implements MessageHandler {
 	@Override
 	public void broadcastMessage(Message message) {
 		broadcastedMessages.add(message);
+		System.out.println("Lobby broadcasting message " + message);
 		synchronized (listeners) {
 			for(ServerListener listener : listeners)
 				listener.sendMessage(message);
@@ -141,6 +146,7 @@ public class Lobby extends Game implements MessageHandler {
 	public void addListener(ServerListener listener) {
 		synchronized (listeners) {
 			listeners.add(listener);
+			listener.setDestination(this);
 		}
 	}
 	
@@ -148,7 +154,9 @@ public class Lobby extends Game implements MessageHandler {
 		return new LobbyInfo(this);
 	}
 
-	public static class LobbyInfo {
+	public static class LobbyInfo implements Serializable {
+		
+		private static final long serialVersionUID = -5552698955020089829L;
 		
 		public final int id;
 		public final Session session;
