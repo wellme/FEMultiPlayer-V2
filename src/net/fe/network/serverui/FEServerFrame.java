@@ -54,9 +54,7 @@ public class FEServerFrame extends JFrame {
 			FEServer feserver = new FEServer(mainPanel.getPort());
 			try {
 				feserver.start();
-				//feserver.addMessage(new CreateLobby(mainPanel.getSession()));
 			} catch (Throwable e) {
-				//feserver.kickPlayers("Server crashed");
 				logError(e);
 			}
 		}).start();

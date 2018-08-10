@@ -19,13 +19,9 @@ public class FEServerMainPanel extends JPanel {
 	
 	private JSpinner spnPort;
 	private Runnable serverStart;
-	private SessionPanel sessionPanel;
 	
 	public FEServerMainPanel() {
 		setLayout(new BorderLayout(0, 0));
-		
-		sessionPanel = new SessionPanel();
-		add(sessionPanel, BorderLayout.CENTER);
 		
 		JPanel panel_1 = new JPanel();
 		add(panel_1, BorderLayout.SOUTH);
@@ -68,9 +64,5 @@ public class FEServerMainPanel extends JPanel {
 	 */
 	public int getPort() {
 		return (Integer) spnPort.getValue();
-	}
-
-	public Session getSession() {
-		return sessionPanel.getSession();
 	}
 }
