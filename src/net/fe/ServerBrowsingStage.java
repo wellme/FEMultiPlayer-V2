@@ -28,18 +28,21 @@ import chu.engine.Entity;
 import net.fe.lobbystage.ClientLobbyStage;
 import net.fe.network.Lobby.LobbyInfo;
 import net.fe.network.Message;
+import net.fe.network.message.CreateLobby;
 import net.fe.network.message.JoinLobby;
 import net.fe.network.message.LobbyListMessage;
 import net.fe.network.message.RequestLobbyListMessage;
+import net.fe.network.serverui.SessionPanel;
 
 public class ServerBrowsingStage extends ClientStage {
 	
 	private ServerBrowserFrame frame;
+	private Runnable action;
 
 	public ServerBrowsingStage() {
 		super(null);
 		addEntity(new RunesBg(Color.blue));
-		frame = new ServerBrowserFrame();
+		frame = new ServerBrowserFrame(this);
 		frame.setVisible(true);
 	}
 
@@ -47,8 +50,10 @@ public class ServerBrowsingStage extends ClientStage {
 	public void beginStep(List<Message> messages) {
 		for(Message message : messages)
 			executeMessage(message);
-		if(frame.isSelected())
-			joinLobby(frame.getLobbyInfo());
+		if(action != null) {
+			action.run();
+			action = null;
+		}
 		for(Entity e : entities)
 			e.beginStep();
 	}
@@ -80,6 +85,12 @@ public class ServerBrowsingStage extends ClientStage {
 		frame.dispose();
 	}
 	
+	private void createLobby(Session session) {
+		FEMultiplayer.lobby = new ClientLobbyStage(session);
+		FEMultiplayer.getClient().sendMessage(new CreateLobby(session));
+	}
+
+	
 	
 	public static class ServerBrowserFrame extends JFrame {
 		
@@ -88,10 +99,13 @@ public class ServerBrowsingStage extends ClientStage {
 		private JTextField txtSearch;
 		private JTable table;
 		
-		private LobbyInfo[] lobbies;
-		private int id;
+		private LobbyCreationFrame lobbyCreation = new LobbyCreationFrame(this);
+		private ServerBrowsingStage stage;
 		
-		public ServerBrowserFrame() {
+		private LobbyInfo[] lobbies;
+		
+		public ServerBrowserFrame(ServerBrowsingStage stage) {
+			this.stage = stage;
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setTitle("Server browser");
 			
@@ -134,6 +148,12 @@ public class ServerBrowsingStage extends ClientStage {
 			panel_1.add(btnRefresh);
 			
 			JButton btnCreateLobby = new JButton("Create lobby");
+			btnCreateLobby.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					lobbyCreation.setVisible(true);
+				}
+			});
 			panel_1.add(btnCreateLobby);
 			
 			JCheckBox chckbxHideFull = new JCheckBox("Hide full");
@@ -151,7 +171,7 @@ public class ServerBrowsingStage extends ClientStage {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					if(e.getClickCount() == 2)
-						id = ((IntModulo)table.getModel().getValueAt(table.getSelectedRow(), 0)).i;
+						stage.action = () -> stage.joinLobby(getLobbyInfo(((IntModulo)table.getModel().getValueAt(table.getSelectedRow(), 0)).i));
 				}
 			});
 			scrollPane.setViewportView(table);
@@ -182,16 +202,8 @@ public class ServerBrowsingStage extends ClientStage {
 			});
 			table.setRowSorter(new TableRowSorter<TableModel>(table.getModel()));
 		}
-	
-		public boolean isSelected() {
-			return id != 0;
-		}
 		
-		public int getSelectedId() {
-			return id;
-		}
-		
-		public LobbyInfo getLobbyInfo() {
+		public LobbyInfo getLobbyInfo(int id) {
 			for(int i = 0; i < lobbies.length; i++)
 				if(lobbies[i].id == id)
 					return lobbies[i];
@@ -215,4 +227,34 @@ public class ServerBrowsingStage extends ClientStage {
 		}
 	}
 
+	public static class LobbyCreationFrame extends JFrame {
+		
+		private static final long serialVersionUID = -3656992178775893254L;
+		
+		private SessionPanel sessionPanel;
+		
+		public LobbyCreationFrame(ServerBrowserFrame serverBrowserFrame) {
+	
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+				e.printStackTrace();
+			}
+			
+			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			sessionPanel = new SessionPanel();
+			getContentPane().add(sessionPanel, BorderLayout.CENTER);
+			
+			JButton btnCreate = new JButton("Create");
+			btnCreate.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					serverBrowserFrame.stage.action = () -> serverBrowserFrame.stage.createLobby(sessionPanel.getSession());
+					dispose();
+				}
+			});
+			getContentPane().add(btnCreate, BorderLayout.SOUTH);
+			pack();
+		}
+	
+	}
 }
