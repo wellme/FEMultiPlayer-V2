@@ -12,7 +12,6 @@ import net.fe.network.message.JoinServer;
 import net.fe.network.message.KickMessage;
 import net.fe.network.message.LobbyListMessage;
 import net.fe.network.message.RequestLobbyListMessage;
-import net.fe.network.serverui.FEServerFrame;
 import net.fe.unit.UnitFactory;
 import net.fe.unit.WeaponFactory;
 
@@ -24,7 +23,7 @@ public class FEServer extends ServerListenerHandler {
 	private LobbyListMessage lobbyListMessage = new LobbyListMessage(new LobbyInfo[0]);
 	
 	public static void main(String[] args) {
-		new FEServerFrame().setVisible(true);
+		new FEServer(Server.DEFAULT_PORT).start();
 	}
 	
 	public FEServer(int port) {
