@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import chu.engine.Game;
 import net.fe.Player;
 import net.fe.Session;
 import net.fe.lobbystage.LobbyStage;
@@ -21,7 +20,7 @@ import net.fe.network.stage.ServerStage;
  * @author Shawn
  *
  */
-public class Lobby extends Game implements MessageHandler {
+public class Lobby implements MessageHandler {
 
 	private Session session;
 	private int id;
@@ -45,10 +44,8 @@ public class Lobby extends Game implements MessageHandler {
 		currentStage = lobbyStage;
 	}
 
-	@Override
 	public void loop() {
 		while (true) {
-			final long time = System.nanoTime();
 			final ArrayList<Message> messages = new ArrayList<>();
 			synchronized (this.messages) {
 				try {
@@ -83,7 +80,6 @@ public class Lobby extends Game implements MessageHandler {
 			currentStage.beginStep(messages);
 			currentStage.onStep();
 			currentStage.endStep();
-			timeDelta = System.nanoTime() - time;
 		}
 	}
 	
