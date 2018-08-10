@@ -16,13 +16,11 @@ import net.fe.network.serverui.FEServerFrame;
 import net.fe.unit.UnitFactory;
 import net.fe.unit.WeaponFactory;
 
-public class FEServer implements MessageHandler {
+public class FEServer extends ServerListenerHandler {
 
 	private Server server;
 	private IDManager manager = new IDManager();
-	private TreeMap<Integer, ServerListener> unassociatedClients = new TreeMap<>();
 	private TreeMap<Integer, Lobby> lobbies = new TreeMap<>();
-	private ArrayList<Message> messages = new ArrayList<Message>();
 	private LobbyListMessage lobbyListMessage = new LobbyListMessage(new LobbyInfo[0]);
 	
 	public static void main(String[] args) {
@@ -54,7 +52,14 @@ public class FEServer implements MessageHandler {
 					
 				}
 				for(Message message : messages) {
-					processMessage(message);
+					try {
+						processMessage(message);
+					} catch (Throwable e) {
+						e.printStackTrace();
+						ServerListener listener = getListener(message.origin);
+						if(listener != null)
+							listener.sendMessage(new KickMessage(0, message.origin, "Server sided error while processing message"));
+					}
 				}
 				messages.clear();
 			}
@@ -68,29 +73,18 @@ public class FEServer implements MessageHandler {
 			//Congrats I guess. Since we don't care about the name here, it's kinda pointless.
 		}
 		if(message instanceof RequestLobbyListMessage) {
-			unassociatedClients.get(message.origin).sendMessage(lobbyListMessage);
+			getListener(message.origin).sendMessage(lobbyListMessage);
 		} else if(message instanceof JoinLobby) {
 			int id = ((JoinLobby) message).id;
 			synchronized(lobbies) {
 				if(lobbies.containsKey(id)) {
 					Lobby lobby = lobbies.get(id);
-					synchronized(lobby) {
-						lobby.addListener(unassociatedClients.get(message.origin));
-						lobby.addMessage(message);
-					}
-					unassociatedClients.remove(message.origin);
+					transferOwnership(this, getListener(message.origin), lobby);
+					lobby.addMessage(message);
 				} else {
-					unassociatedClients.get(message.origin).sendMessage(new KickMessage(0, message.origin, "No such lobby"));
+					getListener(message.origin).sendMessage(new KickMessage(0, message.origin, "No such lobby"));
 				}
 			}
-		}
-	}
-
-	@Override
-	public void addMessage(Message message) {
-		synchronized (messages) {
-			messages.add(message);
-			messages.notifyAll();
 		}
 	}
 
@@ -101,18 +95,11 @@ public class FEServer implements MessageHandler {
 
 	@Override
 	public void broadcastMessage(Message message) {
-		for(ServerListener listener : unassociatedClients.values())
-			listener.sendMessage(message);
+		super.broadcastMessage(message);
 		for(Lobby lobby : lobbies.values())
 			lobby.broadcastMessage(message);
 	}
 
-	@Override
-	public void addListener(ServerListener listener) {
-		unassociatedClients.put(listener.getId(), listener);
-		listener.setDestination(this);
-	}
-	
 	private void createLobby(int id, Session session) {
 		synchronized (lobbies) {
 			lobbies.put(id, new Lobby(id, session));

@@ -54,7 +54,7 @@ public final class ServerListener {
 	private int clientId;
 	private long token;
 	
-	private MessageHandler destination;
+	private ServerListenerHandler destination;
 	
 	/**
 	 * Instantiates a new server listener.
@@ -200,7 +200,7 @@ public final class ServerListener {
 		return token;
 	}
 
-	public void setDestination(MessageHandler destination) {
+	public void setDestination(ServerListenerHandler destination) {
 		this.destination = destination;
 	}
 

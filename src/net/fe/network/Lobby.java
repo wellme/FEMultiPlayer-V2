@@ -20,19 +20,14 @@ import net.fe.network.stage.ServerStage;
  * @author Shawn
  *
  */
-public class Lobby implements MessageHandler {
+public class Lobby extends ServerListenerHandler {
 
 	private Session session;
 	private int id;
 
-	private ArrayList<Message> messages = new ArrayList<>();
-
 	private ServerStage currentStage;
-	public ServerLobbyStage lobbyStage;
+	private ServerLobbyStage lobbyStage;
 	
-	private ArrayList<Message> broadcastedMessages = new ArrayList<>();
-	private ArrayList<ServerListener> listeners = new ArrayList<>();
-
 	public Lobby(int id, Session session) {
 		this.session = session;
 		this.id = id;
@@ -54,7 +49,6 @@ public class Lobby implements MessageHandler {
 					// No, really. Has there ever been a meaningful response to an InterruptedException?
 				}
 				messages.addAll(this.messages);
-				System.out.println(this.messages.toString() + "\t" + messages.toString());
 				//timeoutClients();
 				for (Message message : messages) {
 					if (message instanceof JoinTeam || message instanceof ReadyMessage) {
@@ -115,37 +109,6 @@ public class Lobby implements MessageHandler {
 		}
 	}
 
-	@Override
-	public void addMessage(Message message) {
-		synchronized(messages) {
-			messages.add(message);
-			messages.notifyAll();
-		}
-	}
-
-	@Override
-	public ArrayList<Message> getBroadcastedMessages() {
-		return broadcastedMessages;
-	}
-
-	@Override
-	public void broadcastMessage(Message message) {
-		broadcastedMessages.add(message);
-		System.out.println("Lobby broadcasting message " + message);
-		synchronized (listeners) {
-			for(ServerListener listener : listeners)
-				listener.sendMessage(message);
-		}
-	}
-
-	@Override
-	public void addListener(ServerListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-			listener.setDestination(this);
-		}
-	}
-	
 	public LobbyInfo getLobbyInfo() {
 		return new LobbyInfo(this);
 	}
