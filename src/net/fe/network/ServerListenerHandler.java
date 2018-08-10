@@ -1,7 +1,12 @@
 package net.fe.network;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.TreeMap;
+import java.util.Map.Entry;
+
+import net.fe.network.message.KickMessage;
+import net.fe.network.message.RejoinMessage;
 
 /**
  * An object capable of handling clients and the message sent by them.
@@ -10,6 +15,7 @@ import java.util.TreeMap;
 public abstract class ServerListenerHandler {
 	
 	private final ArrayList<Message> broadcastedMessages = new ArrayList<>();
+	private final TreeMap<Long, ServerListener> disconnectedListeners = new TreeMap<>();
 	private final TreeMap<Integer, ServerListener> listeners = new TreeMap<>();
 	protected final ArrayList<Message> messages = new ArrayList<>();
 
@@ -64,5 +70,43 @@ public abstract class ServerListenerHandler {
 	public static void transferOwnership(ServerListenerHandler source, ServerListener listener, ServerListenerHandler destination) {
 		destination.addListener(listener);
 		source.listeners.remove(listener.getId());
+	}
+	
+	public void removeListener(boolean allowReconnection, ServerListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+		if(allowReconnection) {
+			synchronized (disconnectedListeners) {
+				disconnectedListeners.put(System.currentTimeMillis(), listener);
+			}
+		}
+	}
+
+	public void timeoutClients() {
+		long minTimestamp = System.currentTimeMillis() - Server.TIMEOUT;
+		synchronized(disconnectedListeners) {
+			while(!disconnectedListeners.isEmpty() && disconnectedListeners.firstKey() <= minTimestamp) {
+				ServerListener listener = disconnectedListeners.pollFirstEntry().getValue();
+				KickMessage kick = new KickMessage(0, listener.getId(), "Timed out");
+				broadcastMessage(kick);
+				addMessage(kick);
+			}
+		}
+	}
+
+	public boolean validateRejoinRequest(RejoinMessage message) {
+		timeoutClients();
+		synchronized(disconnectedListeners) {
+			Iterator<Entry<Long, ServerListener>> iterator = disconnectedListeners.entrySet().iterator();
+			while(iterator.hasNext()) {
+				Entry<Long, ServerListener> entry = iterator.next();
+				if(entry.getValue().getId() == message.origin && entry.getValue().getToken() == message.getToken()) {
+					disconnectedListeners.remove(entry.getKey());
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

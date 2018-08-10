@@ -44,9 +44,6 @@ public final class ServerListener {
 	/** The in. */
 	private ObjectInputStream in;
 	
-	/** The main. */
-	private final Server main;
-	
 	/** The client quit. */
 	private volatile boolean clientQuit;
 	
@@ -62,11 +59,10 @@ public final class ServerListener {
 	 * @param main the main
 	 * @param socket the socket
 	 */
-	public ServerListener(Server main, Socket socket, int clientId, long token) {
+	public ServerListener(ServerListenerHandler destination, Socket socket, int clientId, long token) {
 		this.clientId = clientId;
 		this.socket = socket;
-		this.main = main;
-		this.destination = main.feserver;
+		this.destination = destination;
 		this.token = token;
 		try {
 			out = new ObjectOutputStream(socket.getOutputStream());
@@ -85,8 +81,8 @@ public final class ServerListener {
 	 * @param main the main
 	 * @param socket the socket
 	 */
-	public ServerListener(Server main, Socket socket, int clientId) {
-		this(main, socket, clientId, rng.nextLong());
+	public ServerListener(ServerListenerHandler destination, Socket socket, int clientId) {
+		this(destination, socket, clientId, rng.nextLong());
 	}
 	
 	public void start() {
@@ -125,7 +121,7 @@ public final class ServerListener {
 	public void processInput(Message message) {
 		if(message instanceof RejoinMessage) {
 			RejoinMessage rejoin = (RejoinMessage) message;
-			if(main.validateRejoinRequest(rejoin)) {
+			if(destination.validateRejoinRequest(rejoin)) {
 				this.token = rejoin.getToken();
 				this.clientId = rejoin.origin;
 				synchronized(this) {
@@ -187,7 +183,7 @@ public final class ServerListener {
 	private void quit(boolean allowReconnection) {
 		if(!clientQuit) {
 			clientQuit = true;
-			main.removeListener(allowReconnection, this);
+			destination.removeListener(allowReconnection, this);
 			close();
 		}
 	}
