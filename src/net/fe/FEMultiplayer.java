@@ -348,7 +348,8 @@ public class FEMultiplayer extends Game{
 		}
 		AL.destroy();
 		Display.destroy();
-		if(client != null && client.isOpen()) client.quit();
+		if(client != null)
+			client.quit();
 	}
 	
 	/**
