@@ -52,6 +52,7 @@ public class FEServer extends ServerListenerHandler {
 					
 				}
 				timeoutClients();
+				removeEmptyLobbies();
 				for(Message message : messages) {
 					try {
 						processMessage(message);
@@ -73,8 +74,8 @@ public class FEServer extends ServerListenerHandler {
 			createLobby(id, ((CreateLobby) message).session);
 			Message joinMessage = new JoinLobby(id, getListener(message.origin).getName());
 			joinMessage.origin = message.origin;
-			lobbies.get(id).addMessage(joinMessage);
 			transferOwnership(this, getListener(joinMessage.origin), lobbies.get(id));
+			lobbies.get(id).addMessage(joinMessage);
 		} else if(message instanceof JoinServer) {
 			getListener(message.origin).setName(((JoinServer) message).name);
 		}
@@ -117,6 +118,18 @@ public class FEServer extends ServerListenerHandler {
 	public void removeLobby(int id) {
 		synchronized(lobbies) {
 			lobbies.remove(id);
+		}
+		updateLobbyList();
+	}
+	
+	private void removeEmptyLobbies() {
+		ArrayList<Integer> purged = new ArrayList<>();
+		synchronized (lobbies) {
+			for(Lobby lobby : lobbies.values())
+				if(lobby.getListenerCount() == 0)
+					purged.add(lobby.getID());
+			for(int i = 0; i < purged.size(); i++)
+				lobbies.remove(purged.get(i));
 		}
 		updateLobbyList();
 	}

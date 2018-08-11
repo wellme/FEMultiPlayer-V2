@@ -125,4 +125,8 @@ public class Lobby extends ServerListenerHandler {
 			this.session = lobby.session;
 		}
 	}
+
+	public int getID() {
+		return id;
+	}
 }
