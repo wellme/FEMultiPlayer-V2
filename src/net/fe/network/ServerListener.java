@@ -50,6 +50,7 @@ public final class ServerListener {
 	/** The client that this is linked to. */
 	private int clientId;
 	private long token;
+	private String name;
 	
 	private ServerListenerHandler destination;
 	
@@ -198,6 +199,14 @@ public final class ServerListener {
 
 	public void setDestination(ServerListenerHandler destination) {
 		this.destination = destination;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

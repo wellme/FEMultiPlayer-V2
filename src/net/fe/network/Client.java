@@ -157,7 +157,7 @@ public class Client {
 					}
 					logger.info("CLIENT: Recieved ID "+id+" from server");
 					// Send a join server request
-					sendMessage(new JoinServer());
+					sendMessage(new JoinServer(FEMultiplayer.getLocalPlayer().getName()));
 					initialized = true;
 				} else {
 					logger.info("CLIENT: Mismatched hashes:" +

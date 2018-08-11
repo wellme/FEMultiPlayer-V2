@@ -19,6 +19,7 @@ import net.fe.Session;
 import net.fe.modifier.Modifier;
 import net.fe.network.Message;
 import net.fe.network.message.ClientInit;
+import net.fe.network.message.LobbyCreated;
 import net.fe.network.message.ReadyMessage;
 import net.fe.network.message.StartPicking;
 
@@ -46,16 +47,17 @@ public class ClientLobbyStage extends ClientStage implements LobbyStage {
 	/** The chat input. */
 	private LobbyChatBox chatInput;
 
+	private int id;
 	private Session session;
 	
-	/**
-	 * Instantiates a new client lobby stage.
-	 *
-	 * @param session the session
-	 */
 	public ClientLobbyStage(Session session) {
+		this(0, session);
+	}
+	
+	public ClientLobbyStage(int id, Session session) {
 		super("main");
 		this.session = session;
+		this.id = id;
 		chatInput = new LobbyChatBox();
 		MenuButton spectateButton = new MenuButton(409, 22, 64, 32) {
 			{
@@ -202,6 +204,8 @@ public class ClientLobbyStage extends ClientStage implements LobbyStage {
 					session.getChatlog().add(session.getPlayer(message.origin), "Ready!");
 				else
 					session.getChatlog().add(session.getPlayer(message.origin), "Not ready!");
+			} else if(message instanceof LobbyCreated) {
+				this.id = ((LobbyCreated) message).id;
 			}
 		}
 		processAddStack();

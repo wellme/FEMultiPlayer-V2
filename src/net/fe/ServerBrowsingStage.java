@@ -26,8 +26,6 @@ import org.newdawn.slick.Color;
 import chu.engine.ClientStage;
 import chu.engine.Entity;
 import chu.engine.Game;
-import chu.engine.anim.BitmapFont;
-import chu.engine.anim.Renderer;
 import chu.engine.menu.Notification;
 import net.fe.lobbystage.ClientLobbyStage;
 import net.fe.network.Lobby.LobbyInfo;
@@ -89,7 +87,7 @@ public class ServerBrowsingStage extends ClientStage {
 	}
 	
 	private void joinLobby(LobbyInfo info) {
-		FEMultiplayer.lobby = new ClientLobbyStage(info.session);
+		FEMultiplayer.lobby = new ClientLobbyStage(info.id, info.session);
 		FEMultiplayer.getClient().setSession(info.session);
 		FEMultiplayer.setCurrentStage(FEMultiplayer.lobby);
 		FEMultiplayer.getClient().sendMessage(new JoinLobby(info.id, FEMultiplayer.getLocalPlayer().getName()));
@@ -98,7 +96,10 @@ public class ServerBrowsingStage extends ClientStage {
 	
 	private void createLobby(Session session) {
 		FEMultiplayer.lobby = new ClientLobbyStage(session);
+		FEMultiplayer.getClient().setSession(session);
+		FEMultiplayer.setCurrentStage(FEMultiplayer.lobby);
 		FEMultiplayer.getClient().sendMessage(new CreateLobby(session));
+		frame.dispose();
 	}
 
 	

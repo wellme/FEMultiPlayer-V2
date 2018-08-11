@@ -69,9 +69,14 @@ public class FEServer extends ServerListenerHandler {
 	
 	private void processMessage(Message message) {
 		if(message instanceof CreateLobby) {
-			createLobby(manager.generateLobbyID(), ((CreateLobby) message).session);
+			int id = manager.generateLobbyID();
+			createLobby(id, ((CreateLobby) message).session);
+			Message joinMessage = new JoinLobby(id, getListener(message.origin).getName());
+			joinMessage.origin = message.origin;
+			lobbies.get(id).addMessage(joinMessage);
+			transferOwnership(this, getListener(joinMessage.origin), lobbies.get(id));
 		} else if(message instanceof JoinServer) {
-			//Congrats I guess. Since we don't care about the name here, it's kinda pointless.
+			getListener(message.origin).setName(((JoinServer) message).name);
 		}
 		if(message instanceof RequestLobbyListMessage) {
 			getListener(message.origin).sendMessage(lobbyListMessage);
