@@ -111,6 +111,7 @@ public class Client {
 			}
 			close();
 		}, "ClientNetworkingReader");
+		serverIn.setDaemon(true);
 	}
 	
 	/**
