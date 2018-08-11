@@ -51,6 +51,7 @@ public class FEServer extends ServerListenerHandler {
 				} catch (InterruptedException e) {
 					
 				}
+				timeoutClients();
 				for(Message message : messages) {
 					try {
 						processMessage(message);

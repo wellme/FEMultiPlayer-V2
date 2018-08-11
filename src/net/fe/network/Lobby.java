@@ -49,7 +49,7 @@ public class Lobby extends ServerListenerHandler {
 					// No, really. Has there ever been a meaningful response to an InterruptedException?
 				}
 				messages.addAll(this.messages);
-				//timeoutClients();
+				timeoutClients();
 				for (Message message : messages) {
 					if (message instanceof JoinTeam || message instanceof ReadyMessage) {
 						if (!(currentStage instanceof LobbyStage)) {
