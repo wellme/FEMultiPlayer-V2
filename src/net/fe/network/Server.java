@@ -15,7 +15,6 @@ public final class Server {
 	private static final Logger logger = Logger.getLogger("net.fe.network.Server");
 	static {
 		logger.setLevel(java.util.logging.Level.FINER);
-		logger.addHandler(new java.util.logging.ConsoleHandler());
 		try {
 			java.nio.file.Files.createDirectories(new java.io.File("logs").toPath());
 			String file = "logs/server_log_" + LocalDateTime.now().toString().replace("T", "@").replace(":", "-") + ".log";
