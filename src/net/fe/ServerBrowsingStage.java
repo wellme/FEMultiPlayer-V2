@@ -25,6 +25,10 @@ import org.newdawn.slick.Color;
 
 import chu.engine.ClientStage;
 import chu.engine.Entity;
+import chu.engine.Game;
+import chu.engine.anim.BitmapFont;
+import chu.engine.anim.Renderer;
+import chu.engine.menu.Notification;
 import net.fe.lobbystage.ClientLobbyStage;
 import net.fe.network.Lobby.LobbyInfo;
 import net.fe.network.Message;
@@ -38,10 +42,17 @@ public class ServerBrowsingStage extends ClientStage {
 	
 	private ServerBrowserFrame frame;
 	private Runnable action;
+	
+	private static final String TEXT = "Another window containing a lobby browser was opened";
+	private static final String FONT = "default_med";
+	private static final float TEXT_X = Game.getWindowWidth() / 2 - FEResources.getBitmapFont(FONT).getStringWidth(TEXT) / 2;
+	private static final float TEXT_Y = Game.getWindowHeight() / 2;
+	
 
 	public ServerBrowsingStage() {
 		super(null);
-		addEntity(new RunesBg(Color.blue));
+		addEntity(new RunesBg(Color.gray));
+		addEntity(new Notification(TEXT_X, TEXT_Y, FONT, TEXT, Float.MAX_VALUE, 1));
 		frame = new ServerBrowserFrame(this);
 		frame.setVisible(true);
 	}
