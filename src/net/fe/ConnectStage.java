@@ -7,7 +7,7 @@ import org.newdawn.slick.Color;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.MouseEvent;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.anim.AudioPlayer;
 import chu.engine.anim.BitmapFont;
 import chu.engine.anim.Renderer;
@@ -25,7 +25,7 @@ import net.fe.network.Server;
  *
  * @author Shawn
  */
-public final class ConnectStage extends Stage {
+public final class ConnectStage extends ClientStage {
 	
 	/** The Constant UNFOCUSED. */
 	private static final Color UNFOCUSED = new Color(0x58543c);

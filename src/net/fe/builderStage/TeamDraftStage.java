@@ -30,7 +30,7 @@ import org.newdawn.slick.Color;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.KeyboardEvent;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.anim.AudioPlayer;
 import chu.engine.anim.Renderer;
 import chu.engine.anim.Transform;
@@ -39,7 +39,7 @@ import chu.engine.anim.Transform;
 /**
  * The Class TeamDraftStage.
  */
-public class TeamDraftStage extends Stage {
+public class TeamDraftStage extends ClientStage {
 	
 	/** The vassal list. */
 	private UnitList vassalList;

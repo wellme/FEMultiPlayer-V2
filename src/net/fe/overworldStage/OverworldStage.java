@@ -1,28 +1,11 @@
 package net.fe.overworldStage;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import org.newdawn.slick.Color;
-import org.newdawn.slick.util.ResourceLoader;
 
 import chu.engine.Stage;
-import net.fe.FEMultiplayer;
-import net.fe.Party;
 import net.fe.Player;
 import net.fe.Session;
-import net.fe.editor.Level;
-import net.fe.editor.SpawnPoint;
-import net.fe.fightStage.AttackRecord;
-import net.fe.modifier.Modifier;
-import net.fe.network.Lobby;
 import net.fe.network.Message;
 import net.fe.network.message.CommandMessage;
 import net.fe.network.message.EndGame;
@@ -34,258 +17,73 @@ import net.fe.rng.RNG;
 import net.fe.unit.Unit;
 import net.fe.unit.UnitIdentifier;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class OverworldStage.
- */
-public class OverworldStage extends Stage {
-	
-	/** The grid. */
-	public Grid grid;
-	
-	/** The session. */
-	protected Session session;
-	
-	/** The turn order. */
-	private ArrayList<Player> turnOrder;
-	
-	/** The current player. */
-	private int currentPlayer;
-	
-	/** The turn count. */
-	private int turnCount;
-	
-	private RNG hitRNG;
-	private RNG critRNG;
-	private RNG skillRNG;
+public interface OverworldStage extends Stage {
 
-	/**
-	 * Instantiates a new overworld stage.
-	 *
-	 * @param s the s
-	 */
-	public OverworldStage(Session s) {
-		super(null);
-		this.session = s;
-		hitRNG = s.getHitRNG();
-		critRNG = s.getCritRNG();
-		skillRNG = s.getSkillRNG();
-		System.out.println(session.getObjective().getDescription());
-		turnOrder = new ArrayList<Player>();
-		for(Player p : session.getNonSpectators()) {
-			turnOrder.add(p);
-		}
-		Collections.sort(turnOrder, new Comparator<Player>() {
-			@Override
-			public int compare(Player arg0, Player arg1) {
-				return arg0.getID() - arg1.getID();
-			}
-		});
-		currentPlayer = 0;
-		turnCount = 1;
-		loadLevel(session.getMap());
-		for(Modifier m : session.getModifiers()) {
-			m.initOverworldUnits(this.getAllUnits());
-		}
-		processAddStack();
+	// Blame Java for not allowing multiple inheritance.
+	public int getCurrentPlayerIndex();
+	public void setCurrentPlayerIndex(int index);
+	public Player[] getTurnOrder();
+	public int getTurnCount();
+	public void setTurnCount(int count);
+	public Grid getGrid();
+	public Session getSession();
+	public void beforeTriggerHook(TerrainTrigger t, int x, int y);
+	public void processCommands(CommandMessage message);
+	public void checkEndGame();
+	
+	public default Player getCurrentPlayer() {
+		return getTurnOrder()[0];
 	}
 	
-	/**
-	 * Gets the player by id.
-	 *
-	 * @param id the id
-	 * @return the player by id
-	 */
-	public Player getPlayerByID(int id) {
-		for(Player p : session.getPlayers()) {
-			if(p.getID() == id) {
-				return p;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Gets the current player.
-	 *
-	 * @return the current player
-	 */
-	public Player getCurrentPlayer() {
-		return turnOrder.get(currentPlayer);
-	}
-	
-	/**
-	 * Gets the next player.
-	 *
-	 * @return the next player
-	 */
-	public Player getNextPlayer() {
-		int i = currentPlayer + 1;
-		if(i >= turnOrder.size()) i = 0;
-		return turnOrder.get(i);
+	public default Terrain getTerrain(int x, int y) {
+		return getGrid().getTerrain(x, y);
 	}
 
-	/**
-	 * Gets the terrain.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the terrain
-	 */
-	public final Terrain getTerrain(int x, int y) {
-		return grid.getTerrain(x, y);
-	}
-
-	/**
-	 * Gets the unit.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the unit
-	 */
-	public final Unit getUnit(int x, int y) {
-		return grid.getUnit(x, y);
+	public default Unit getUnit(int x, int y) {
+		return getGrid().getUnit(x, y);
 	}
 	
-	public final Unit getVisibleUnit(int x, int y) {
-		return grid.getVisibleUnit(x, y);
+
+	public default boolean addUnit(Unit u, int x, int y) {
+		return getGrid().addUnit(u, x, y);
 	}
 
-	/**
-	 * Adds the unit.
-	 *
-	 * @param u the u
-	 * @param x the x
-	 * @param y the y
-	 * @return true, if successful
-	 */
-	public final boolean addUnit(Unit u, int x, int y) {
-		if (grid.addUnit(u, x, y)) {
-			this.addEntity(u);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Removes the unit.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the unit
-	 */
-	public final Unit removeUnit(int x, int y) {
-		Unit u = grid.removeUnit(x, y);
-		if (u != null) {
-			this.removeEntity(u);
-		}
+	public default Unit removeUnit(int x, int y) {
+		Unit u = getGrid().removeUnit(x, y);
 		return u;
 	}
 	
-	/**
-	 * Removes the unit.
-	 *
-	 * @param u the u
-	 */
-	public final void removeUnit(Unit u) {
-		grid.removeUnit(u.getXCoord(), u.getYCoord());
-		this.removeEntity(u);
+	public default void removeUnit(Unit u) {
+		getGrid().removeUnit(u.getXCoord(), u.getYCoord());
 	}
 	
-	/**
-	 * Load level.
-	 *
-	 * @param levelName the level name
-	 */
-	public void loadLevel(String levelName) {
-        try {
-        	InputStream in = ResourceLoader.getResourceAsStream("levels/"+levelName+".lvl");
-            ObjectInputStream ois = new ObjectInputStream(in);
-            Level level = (Level) ois.readObject();
-            Set<SpawnPoint> spawns = new HashSet<>(level.spawns);
-            grid = new Grid(level.width, level.height, Terrain.NONE);
-            for(int i=0; i<level.tiles.length; i++) {
-            	for(int j=0; j<level.tiles[0].length; j++) {
-            		grid.setTerrain(j, i, Tile.getTerrainFromID(level.tiles[i][j]));
-            		if(Tile.getTerrainFromID(level.tiles[i][j]) == Terrain.THRONE) {
-            			int blue = 0;
-            			int red = 0;
-            			for(SpawnPoint sp : spawns) {
-                    		if(sp.team.equals(Party.TEAM_BLUE)) {
-                				blue += Math.abs(sp.x-j) + Math.abs(sp.y-i);
-                    		} else {
-                    			red += Math.abs(sp.x-j) + Math.abs(sp.y-i);
-                    		}
-                    	}
-            			if(blue < red) {
-            				System.out.println(blue + " "+ red);
-            				grid.setThronePos(Party.TEAM_BLUE, j, i);
-            			} else {
-            				System.out.println(blue + " "+ red);
-            				grid.setThronePos(Party.TEAM_RED, j, i);
-            			}
-            		}
-            	}
-            }
-            
-            // Add units
-            for(Player p : session.getPlayers()) {
-            	Color team = p.getParty().getColor();
-    			for(int i=0; i<p.getParty().size(); i++) {
-    				SpawnPoint remove = null;
-                	for(SpawnPoint sp : spawns) {
-                		if(sp.team.equals(team)) {
-            				Unit u = p.getParty().getUnit(i);
-            				addUnit(u, sp.x, sp.y);
-            				remove = sp;
-            				break;
-                		}
-                	}
-                	spawns.remove(remove);
-    			}
-            }
-            ois.close();
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-	}
+	public abstract void loadLevel(String levelName);
 
-	@Override
-	public void beginStep(List<Message> messages) {
-		for(Message message : messages) {
-			this.executeMessage(message);
+	/** Perform an action in response to receiving the message */
+	public default void executeMessage(Message message) {
+		if(message instanceof CommandMessage) {
+			processCommands((CommandMessage)message);
 		}
-	}
-	
-	/** Peroform an action in response to receiving the message */
-	protected final void executeMessage(Message message) {
-			if(message instanceof CommandMessage) {
-				processCommands((CommandMessage)message);
-			}
-			else if(message instanceof EndTurn) {
-				//Only end the turn if it is this player's turn to end. (Or, if for some reason we want to let
-				//the server end turns in the future.
-				System.out.println("" + message.origin + " " + currentPlayer);
-				if(message.origin == getCurrentPlayer().getID() || message.origin == 0){
-					((EndTurn) message).checkHp((ui) -> this.getUnit(ui));
-					doEndTurn();
-					currentPlayer++;
-					if(currentPlayer >= turnOrder.size()) {
-						currentPlayer = 0;
-					}
-					doStartTurn();
+		else if(message instanceof EndTurn) {
+			//Only end the turn if it is this player's turn to end. (Or, if for some reason we want to let
+			//the server end turns in the future.
+			System.out.println("" + message.origin + " " + getCurrentPlayerIndex());
+			if(message.origin == getCurrentPlayer().getID() || message.origin == 0){
+				((EndTurn) message).checkHp((ui) -> this.getUnit(ui));
+				doEndTurn();
+				setCurrentPlayerIndex(getCurrentPlayerIndex() + 1);
+				if(getCurrentPlayerIndex() >= getTurnOrder().length) {
+					setCurrentPlayerIndex(0);
 				}
+				doStartTurn();
 			}
-			else if(message instanceof QuitMessage || message instanceof KickMessage) {
-				this.checkEndGame();
-			}
-			else if(message instanceof EndGame) {
-				this.checkEndGame();
-			}
+		}
+		else if(message instanceof QuitMessage || message instanceof KickMessage) {
+			this.checkEndGame();
+		}
+		else if(message instanceof EndGame) {
+			this.checkEndGame();
+		}
 	}
 	
 	/**
@@ -293,11 +91,11 @@ public class OverworldStage extends Stage {
 	 * <p>
 	 * The phase to end is determined by the class's `getCurrentPlayer()`
 	 */
-	protected void doEndTurn() {
+	public default void doEndTurn() {
 		// perform terrain effects
-		for(int x = 0; x < grid.width; x++){
-			for(int y = 0; y < grid.height; y++){
-				for(TerrainTrigger t: grid.getTerrain(x, y).getTriggers()){
+		for(int x = 0; x < getGrid().width; x++){
+			for(int y = 0; y < getGrid().height; y++){
+				for(TerrainTrigger t: getGrid().getTerrain(x, y).getTriggers()){
 					if(t.attempt(this, x, y, getCurrentPlayer()) && !t.start){
 						beforeTriggerHook(t, x, y);
 						t.endOfTurn(this, x, y);
@@ -307,7 +105,7 @@ public class OverworldStage extends Stage {
 		}
 		
 		// Refresh unit's `moved` status
-		for(Player p : session.getPlayers()) {
+		for(Player p : getSession().getPlayers()) {
 			for(Unit u : p.getParty()) {
 				u.setMoved(false);
 			}
@@ -321,16 +119,16 @@ public class OverworldStage extends Stage {
 	 * <p>
 	 * The phase to start is determined by the class's `getCurrentPlayer()`
 	 */
-	protected void doStartTurn() {
+	public default void doStartTurn() {
 		// increment turn count if the starting phase is the first phase of a turn
-		if (currentPlayer == 0) {
-			turnCount++;
+		if (getCurrentPlayerIndex() == 0) {
+			setTurnCount(getTurnCount() + 1);
 		}
 		
 		// perform terrain effects
-		for(int x = 0; x < grid.width; x++){
-			for(int y = 0; y < grid.height; y++){
-				for(TerrainTrigger t: grid.getTerrain(x, y).getTriggers()){
+		for(int x = 0; x < getGrid().width; x++){
+			for(int y = 0; y < getGrid().height; y++){
+				for(TerrainTrigger t: getGrid().getTerrain(x, y).getTriggers()){
 					if(t.attempt(this, x, y, getCurrentPlayer()) && t.start){
 						beforeTriggerHook(t, x, y);
 						t.startOfTurn(this, x, y);
@@ -340,75 +138,8 @@ public class OverworldStage extends Stage {
 		}
 	}
 	
-	/**
-	 * Before trigger hook.
-	 *
-	 * @param t the t
-	 * @param x the x
-	 * @param y the y
-	 */
-	protected void beforeTriggerHook(TerrainTrigger t, int x, int y){
-		
-	}
-
-	/**
-	 * Process commands.
-	 *
-	 * @param message the message
-	 */
-	public void processCommands(CommandMessage message) {
-		//TODO: command validation
-		// After validation, update the unit position
-		// Move it instantly since this is the server stage
-		final Unit unit = (message.unit == null ? null : getUnit(message.unit));
-		
-		for(int i=0; i<message.commands.length; i++) {
-			try {
-				ArrayList<AttackRecord> record = message.commands[i].applyServer(this, unit);
-				if (record != null) {
-					if (message.attackRecords != null) {
-						throw new IllegalStateException("Two attacks in the same move");
-					} else {
-						message.attackRecords = record;
-					}
-				}
-			} catch (IllegalStateException e) {
-				
-				throw e;
-			}
-		}
-		if(unit != null) {
-			unit.setMoved(true);
-		}
-		Lobby.getServer().broadcastMessage(message);
-		checkEndGame();
-	}
-
-	/**
-	 * Check end game.
-	 */
-	public void checkEndGame() {
-		// Objective evaluation
-		int winner = session.getObjective().evaluate(this);
-		if(session.numPlayers()==1){//players have left
-			winner = session.getPlayers()[0].getID();//whoever's left wins
-		}else if (session.numPlayers()<1){
-			FEMultiplayer.disconnectGame("All players have disconnected");
-		}
-		if(winner > 0 && Lobby.getServer() != null) {
-			Lobby.getServer().broadcastMessage(new EndGame(0, winner));
-			Lobby.resetToLobby();
-		}
-	}
-
-	/**
-	 * Gets the unit.
-	 *
-	 * @param id the id
-	 * @return the unit
-	 */
-	public Unit getUnit(UnitIdentifier id) {
-		for(Player p: session.getPlayers()){
+	public default Unit getUnit(UnitIdentifier id) {
+		for(Player p: getSession().getPlayers()){
 			if(!p.isSpectator() && p.getParty().getColor().equals(id.partyColor)){
 				return p.getParty().search(id.name);
 			}
@@ -416,103 +147,37 @@ public class OverworldStage extends Stage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see chu.engine.Stage#onStep()
-	 */
-	@Override
-	public void onStep() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see chu.engine.Stage#endStep()
-	 */
-	@Override
-	public void endStep() {
-		
-	}
-
-	/**
-	 * Gets the players.
-	 *
-	 * @return the players
-	 */
-	public Player[] getPlayers() {
-		return session.getPlayers();
-	}
-	
 	/**
 	 * Returns a list of players, filtered to not include players that are spectators
 	 */
-	public Player[] getNonSpectators() {
-		return session.getNonSpectators();
+	public default Player[] getNonSpectators() {
+		return getSession().getNonSpectators();
 	}
 	
-	/**
-	 * Gets the objective.
-	 *
-	 * @return the objective
-	 */
-	public Objective getObjective(){
-		return session.getObjective();
+	public default Objective getObjective(){
+		return getSession().getObjective();
 	}
 	
-	/**
-	 * Gets the turn count.
-	 *
-	 * @return the turn count
-	 */
-	public int getTurnCount(){
-		return turnCount;
-	}
-
-	/**
-	 * Gets the all units.
-	 *
-	 * @return the all units
-	 */
-	public List<Unit> getAllUnits() {
+	public default List<Unit> getAllUnits() {
 		List<Unit> units = new ArrayList<Unit>();
-		for(Player p : session.getPlayers()) {
+		for(Player p : getSession().getPlayers()) {
 			for(int i=0; i<p.getParty().size(); i++) {
 				units.add(p.getParty().getUnit(i));
 			}
 		}
 		return units;
 	}
-	
-	public List<Unit> getVisibleUnits() {
-		List<Unit> units = getAllUnits();
-		Set<Node> fog = ((ClientOverworldStage) this).getFog().getNodes();
-		units.removeIf(unit -> fog.contains(new Node(unit.getOrigX(), unit.getOrigY())));
-		return units;
+
+	public default RNG getHitRNG() {
+		return getSession().getHitRNG();
 	}
 
-	/**
-	 *  Returns a list of players in the turn order, 
-	 *  with the first player being the current player.
-	 *
-	 * @return the turn order
-	 */
-	public Player[] getTurnOrder() {
-		Player[] t = new Player[turnOrder.size()];
-		for(int i=0; i<t.length; i++) {
-			t[i] = turnOrder.get((currentPlayer+ i) % t.length);
-		}
-		return t;
+	public default RNG getCritRNG() {
+		return getSession().getCritRNG();
 	}
 
-	public RNG getHitRNG() {
-		return hitRNG;
-	}
-
-	public RNG getCritRNG() {
-		return critRNG;
-	}
-
-	public RNG getSkillRNG() {
-		return skillRNG;
+	public default RNG getSkillRNG() {
+		return getSession().getSkillRNG();
 	}
 
 }

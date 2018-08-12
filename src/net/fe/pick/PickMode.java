@@ -3,6 +3,7 @@ package net.fe.pick;
 import java.io.Serializable;
 
 import net.fe.Session;
+import net.fe.network.Lobby;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -25,5 +26,5 @@ public interface PickMode extends Serializable {
 	 *
 	 * @param session the new up server
 	 */
-	public void setUpServer(Session session);
+	public void setUpServer(Lobby lobby, Session session);
 }

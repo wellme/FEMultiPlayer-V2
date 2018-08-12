@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.lwjgl.Sys;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
@@ -26,15 +25,14 @@ import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+import chu.engine.ClientStage;
 import chu.engine.Game;
-import chu.engine.Stage;
 import chu.engine.menu.Notification;
 import net.fe.builderStage.TeamDraftStage;
 import net.fe.fightStage.CombatCalculator;
 import net.fe.fightStage.FightStage;
 import net.fe.lobbystage.ClientLobbyStage;
 import net.fe.network.Client;
-import net.fe.network.Lobby;
 import net.fe.network.Message;
 import net.fe.network.command.Command;
 import net.fe.network.message.CommandMessage;
@@ -57,7 +55,7 @@ import net.fe.unit.WeaponFactory;
 public class FEMultiplayer extends Game{
 	
 	/** The current stage. */
-	private static Stage currentStage;
+	private static ClientStage currentStage;
 	
 	/** The client. */
 	private static Client client;
@@ -67,6 +65,7 @@ public class FEMultiplayer extends Game{
 	
 	/** The lobby. */
 	public static ClientLobbyStage lobby;
+	public static ServerBrowsingStage browse;
 	
 	/** The connecting stage. */
 	public static ConnectStage connect;
@@ -299,8 +298,8 @@ public class FEMultiplayer extends Game{
 			client = new Client(ip, port);
 			if(client.isOpen()) {
 				postRenderRunnables.add(() -> {
-					lobby = new ClientLobbyStage(client.getSession());
-					setCurrentStage(lobby);
+					browse = new ServerBrowsingStage();
+					setCurrentStage(browse);
 					client.start();
 				});
 			} else {
@@ -349,7 +348,8 @@ public class FEMultiplayer extends Game{
 		}
 		AL.destroy();
 		Display.destroy();
-		if(client != null && client.isOpen()) client.quit();
+		if(client != null)
+			client.quit();
 	}
 	
 	/**
@@ -373,7 +373,7 @@ public class FEMultiplayer extends Game{
 	 *
 	 * @param stage the new current stage
 	 */
-	public static void setCurrentStage(Stage stage) {
+	public static void setCurrentStage(ClientStage stage) {
 		currentStage = stage;
 		if(stage.soundTrack != null){
 			SoundTrack.loop(stage.soundTrack);
@@ -394,7 +394,7 @@ public class FEMultiplayer extends Game{
 	 *
 	 * @return the current stage
 	 */
-	public static Stage getCurrentStage() {
+	public static ClientStage getCurrentStage() {
 		return currentStage;
 	}
 
@@ -436,37 +436,6 @@ public class FEMultiplayer extends Game{
 		return client.getSession();
 	}
 	
-	/**
-	 * Disconnect from game. 
-	 * Allows for resetting server and client if triggered, but is not used in all situations.
-	 *
-	 * @param message the message
-	 */
-	public static void disconnectGame(String message){
-		/*
-		//wouldn't be hard to use something like this to reset to lobby rather than quit the game:
-		//at the moment this disconnect is only in a few places between stages, i.e. while waiting
-		//so it's not too bad to quit the game.
-		Player leaver = null;
-		for(Player p : session.getPlayers()) {
-			if(p.getID() == message.origin) {
-				leaver = p;
-			}
-		}
-		session.removePlayer(leaver);
-		System.out.println(leaver.getName()+" LEFT THE GAME");
-		 * */
-		if(Lobby.getServer() != null) {
-			//boot the server back to lobby
-			Lobby.resetToLobbyAndKickPlayers();
-		}else{
-			//exit the client
-			if(message!=null && !message.equals("")){
-				Sys.alert("FE:MP", message);
-			}
-			System.exit(0);
-		}
-	}
 
 	private static final class EmptyRunnable implements Runnable {
 		@Override public void run() {}

@@ -16,8 +16,9 @@ import net.fe.Party;
 import net.fe.Session;
 import net.fe.network.message.ClientInit;
 import net.fe.network.message.EndGame;
-import net.fe.network.message.JoinLobby;
+import net.fe.network.message.JoinServer;
 import net.fe.network.message.KickMessage;
+import net.fe.network.message.LobbyListMessage;
 import net.fe.network.message.QuitMessage;
 import net.fe.network.message.RejoinMessage;
 
@@ -104,11 +105,13 @@ public class Client {
 					long time = System.currentTimeMillis();
 					while(shouldReconnect && !open && System.currentTimeMillis() - time <= Server.TIMEOUT)
 						connect(ip, port);
+					e.printStackTrace();
 					logger.throwing("ClientNetworkingReader", "run", e);
 				}
 			}
 			close();
 		}, "ClientNetworkingReader");
+		serverIn.setDaemon(true);
 	}
 	
 	/**
@@ -145,22 +148,21 @@ public class Client {
 				sendMessage(new RejoinMessage(lastTimestamp, token));
 			} else {
 				ClientInit message2 = (ClientInit) message;
-				if (message2.hashes.equals(ClientInit.Hashes.pullFromStatics(message2.session.getMap()))) {
+				if (message2.hashes.equals(ClientInit.Hashes.pullFromStatics())) {
 					this.id = message2.clientID;
-					this.session = message2.session;
 					this.token = message2.token;
 					FEMultiplayer.getLocalPlayer().setClientID(message2.clientID);
 					if(id >= 2) {
 						FEMultiplayer.getLocalPlayer().getParty().setColor(Party.TEAM_RED);
 					}
 					logger.info("CLIENT: Recieved ID "+id+" from server");
-					// Send a join lobby request
-					sendMessage(new JoinLobby(id, FEMultiplayer.getLocalPlayer().getName()));
+					// Send a join server request
+					sendMessage(new JoinServer(FEMultiplayer.getLocalPlayer().getName()));
 					initialized = true;
 				} else {
 					logger.info("CLIENT: Mismatched hashes:" +
 							"\n\tServer: " + message2.hashes +
-							"\n\tClient: " + ClientInit.Hashes.pullFromStatics(message2.session.getMap()));
+							"\n\tClient: " + ClientInit.Hashes.pullFromStatics());
 					this.id = message2.clientID;
 					this.quit();
 					resetToLobby("ERROR: Server and Client versions don't match");
@@ -179,6 +181,8 @@ public class Client {
 			}
 		} else if(message instanceof EndGame) {
 			winner = ((EndGame)message).winner;
+		} else if(message instanceof LobbyListMessage) {
+			
 		}
 		
 		session.handleMessage(message);
@@ -262,5 +266,9 @@ public class Client {
 	 */
 	public Session getSession() {
 		return session;
+	}
+	
+	public void setSession(Session session) {
+		this.session = session;
 	}
 }

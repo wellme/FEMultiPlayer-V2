@@ -34,8 +34,8 @@ public class AllPick implements PickMode {
 	 * @see net.fe.pick.PickMode#setUpServer(net.fe.Session)
 	 */
 	@Override
-	public void setUpServer(Session session) {
-		Lobby.setCurrentStage(new WaitStage(session));
+	public void setUpServer(Lobby lobby, Session session) {
+		lobby.setCurrentStage(new WaitStage(lobby, session));
 	}
 	
 	/* (non-Javadoc)

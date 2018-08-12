@@ -33,13 +33,13 @@ public final class ShoveTarget extends SelectTargetContext {
 	@Override
 	public boolean validTarget(Unit u){
 		// can shove either allies or enemies, as long as the con is sufficiently high
-		return Shove.canShoveWithFog(this.stage.grid, this.unit, u);
+		return Shove.canShoveWithFog(this.stage.getGrid(), this.unit, u);
 	}
 	
 	@Override
 	public void unitSelected(Unit u) {
 		Command c;
-		if (!Shove.canShove(this.stage.grid, this.unit, u))
+		if (!Shove.canShove(this.stage.getGrid(), this.unit, u))
 			//Shove fails
 			c = new InterruptedCommand(new Node(u.getXCoord() * 2 - unit.getXCoord(), u.getYCoord() * 2 - unit.getYCoord()));
 		else

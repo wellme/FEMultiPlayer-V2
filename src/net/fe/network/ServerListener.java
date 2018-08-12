@@ -6,7 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -43,17 +44,15 @@ public final class ServerListener {
 	/** The in. */
 	private ObjectInputStream in;
 	
-	/** The main. */
-	private final Server main;
-	
 	/** The client quit. */
 	private volatile boolean clientQuit;
 	
 	/** The client that this is linked to. */
 	private int clientId;
 	private long token;
+	private String name;
 	
-	private MessageDestination destination;
+	private ServerListenerHandler destination;
 	
 	/**
 	 * Instantiates a new server listener.
@@ -61,18 +60,17 @@ public final class ServerListener {
 	 * @param main the main
 	 * @param socket the socket
 	 */
-	public ServerListener(Server main, Socket socket, int clientId, long token) {
+	public ServerListener(ServerListenerHandler destination, Socket socket, int clientId, long token) {
 		this.clientId = clientId;
 		this.socket = socket;
-		this.main = main;
-		this.destination = main;
+		this.destination = destination;
 		this.token = token;
 		try {
 			out = new ObjectOutputStream(socket.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(socket.getInputStream());
 			logger.fine("LISTENER: I/O streams initialized");
-			sendMessage(new ClientInit(0, clientId, Lobby.getSession(), token));
+			sendMessage(new ClientInit(0, clientId, token));
 		} catch (IOException e) {
 			logger.throwing("ServerListener", "<init>", e);
 		}
@@ -84,8 +82,8 @@ public final class ServerListener {
 	 * @param main the main
 	 * @param socket the socket
 	 */
-	public ServerListener(Server main, Socket socket, int clientId) {
-		this(main, socket, clientId, rng.nextLong());
+	public ServerListener(ServerListenerHandler destination, Socket socket, int clientId) {
+		this(destination, socket, clientId, rng.nextLong());
 	}
 	
 	public void start() {
@@ -124,18 +122,15 @@ public final class ServerListener {
 	public void processInput(Message message) {
 		if(message instanceof RejoinMessage) {
 			RejoinMessage rejoin = (RejoinMessage) message;
-			if(main.validateRejoinRequest(rejoin)) {
+			if(destination.validateRejoinRequest(rejoin)) {
 				this.token = rejoin.getToken();
 				this.clientId = rejoin.origin;
 				synchronized(this) {
-					Message[] messages;
-					synchronized(main.messagesLock) {
-						messages = main.getBroadcastedMessages();
-					}
+					ArrayList<Message> messages = destination.getBroadcastedMessages();
 					rejoin.setTimestamp(rejoin.getLastTimestamp());
-					int index = Arrays.binarySearch(messages, rejoin, (a, b) -> (int) Math.signum(a.getTimestamp() - b.getTimestamp()));
-					for(int i = index + 1; i < messages.length; i++)
-						sendMessage(messages[i]);
+					int index = Collections.binarySearch(messages, rejoin, (a, b) -> (int) Math.signum(a.getTimestamp() - b.getTimestamp()));
+					for(int i = index + 1; i < messages.size(); i++)
+						sendMessage(messages.get(i));
 				}
 			} else {
 				sendMessage(new KickMessage(0, rejoin.origin, "Reconnection failed: Timed out"));
@@ -189,7 +184,7 @@ public final class ServerListener {
 	private void quit(boolean allowReconnection) {
 		if(!clientQuit) {
 			clientQuit = true;
-			main.removeListener(allowReconnection, this);
+			destination.removeListener(allowReconnection, this);
 			close();
 		}
 	}
@@ -200,6 +195,18 @@ public final class ServerListener {
 
 	public long getToken() {
 		return token;
+	}
+
+	public void setDestination(ServerListenerHandler destination) {
+		this.destination = destination;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

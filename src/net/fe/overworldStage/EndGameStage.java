@@ -18,7 +18,7 @@ import org.newdawn.slick.Color;
 import chu.engine.Entity;
 import chu.engine.Game;
 import chu.engine.KeyboardEvent;
-import chu.engine.Stage;
+import chu.engine.ClientStage;
 import chu.engine.anim.Renderer;
 
 import net.fe.network.Message;
@@ -28,7 +28,7 @@ import net.fe.network.message.ReadyMessage;
 /**
  * The Class EndGameStage.
  */
-public class EndGameStage extends Stage {
+public class EndGameStage extends ClientStage {
 	
 	/** The session. */
 	private final Session session;

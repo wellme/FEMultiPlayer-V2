@@ -1,30 +1,27 @@
 package net.fe.lobbystage;
 
 import java.util.List;
-import java.util.Set;
-
-import net.fe.FEMultiplayer;
-import net.fe.FEResources;
-import net.fe.Party;
-import net.fe.Player;
-import net.fe.Session;
-import net.fe.ConnectStage;
-import net.fe.modifier.Modifier;
-import net.fe.network.Lobby;
-import net.fe.network.Message;
-import net.fe.network.message.QuitMessage;
-import net.fe.network.message.ReadyMessage;
-import net.fe.network.message.StartPicking;
 
 import org.newdawn.slick.Color;
 
+import chu.engine.ClientStage;
 import chu.engine.Entity;
-import chu.engine.Game;
 import chu.engine.anim.AudioPlayer;
 import chu.engine.anim.Renderer;
 import chu.engine.anim.ShaderArgs;
 import chu.engine.anim.Transform;
 import chu.engine.menu.MenuButton;
+import net.fe.FEMultiplayer;
+import net.fe.FEResources;
+import net.fe.Party;
+import net.fe.Player;
+import net.fe.Session;
+import net.fe.modifier.Modifier;
+import net.fe.network.Message;
+import net.fe.network.message.ClientInit;
+import net.fe.network.message.LobbyCreated;
+import net.fe.network.message.ReadyMessage;
+import net.fe.network.message.StartPicking;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -32,7 +29,8 @@ import chu.engine.menu.MenuButton;
  * @author Shawn
  *
  */
-public class ClientLobbyStage extends LobbyStage {
+public class ClientLobbyStage extends ClientStage implements LobbyStage {
+	
 	
 	/** The Constant BORDER_DARK. */
 	public static final Color BORDER_DARK = new Color(0x483828);
@@ -48,14 +46,18 @@ public class ClientLobbyStage extends LobbyStage {
 	
 	/** The chat input. */
 	private LobbyChatBox chatInput;
+
+	private int id;
+	private Session session;
 	
-	/**
-	 * Instantiates a new client lobby stage.
-	 *
-	 * @param session the session
-	 */
 	public ClientLobbyStage(Session session) {
-		super(session);
+		this(0, session);
+	}
+	
+	public ClientLobbyStage(int id, Session session) {
+		super("main");
+		this.session = session;
+		this.id = id;
 		chatInput = new LobbyChatBox();
 		MenuButton spectateButton = new MenuButton(409, 22, 64, 32) {
 			{
@@ -176,10 +178,11 @@ public class ClientLobbyStage extends LobbyStage {
 	 */
 	@Override
 	public void beginStep(List<Message> messages) {
-		super.beginStep(messages);
 		for(Entity e : entities) {
 			e.beginStep();
 		}
+		if(messages.size() != 0)
+		System.out.println("ClientLobbyStage recieving messages: " + messages);
 		for(Message message : messages) {
 			if(message instanceof StartPicking) {
 				// Set up global list of players
@@ -190,6 +193,19 @@ public class ClientLobbyStage extends LobbyStage {
 						p.getParty().clear();
 				}
 				session.getPickMode().setUpClient(session);
+			} else if(message instanceof ClientInit) {		// Only clients will get this (Actually, shouldn't happen anymore)
+				ClientInit init = (ClientInit) message;
+				//session = init.session; // TODO change this probably
+			}
+			else if(message instanceof ReadyMessage) {
+				boolean ready = !session.getPlayer(message.origin).ready;
+				session.getPlayer(message.origin).ready = ready;
+				if(ready)
+					session.getChatlog().add(session.getPlayer(message.origin), "Ready!");
+				else
+					session.getChatlog().add(session.getPlayer(message.origin), "Not ready!");
+			} else if(message instanceof LobbyCreated) {
+				this.id = ((LobbyCreated) message).id;
 			}
 		}
 		processAddStack();
@@ -201,7 +217,6 @@ public class ClientLobbyStage extends LobbyStage {
 	 */
 	@Override
 	public void onStep() {
-		super.onStep();
 		for(Entity e : entities) {
 			e.onStep();
 		}
@@ -285,4 +300,10 @@ public class ClientLobbyStage extends LobbyStage {
 			Renderer.drawString("default_med", chats.get(i), x+2, y+2+i*16, 0.8f);
 		}
 	}
+
+	@Override
+	public Session getSession() {
+		return session;
+	}
+	
 }

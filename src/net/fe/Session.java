@@ -18,7 +18,7 @@ import net.fe.overworldStage.ClientOverworldStage.FogType;
 import net.fe.overworldStage.ClientOverworldStage.SpectatorFogOption;
 import net.fe.overworldStage.objective.Objective;
 import net.fe.overworldStage.objective.Rout;
-import net.fe.pick.Draft;
+import net.fe.pick.AllPick;
 import net.fe.pick.PickMode;
 import net.fe.rng.RNG;
 import net.fe.rng.SimpleRNG;
@@ -73,7 +73,7 @@ public final class Session implements Serializable {
 	 * Instantiates a new session with default values.
 	 */
 	public Session() {
-		this(new Rout(), "test", 8, new HashSet<>(), new Draft(),
+		this(new Rout(), "test", 8, new HashSet<>(), new AllPick(),
 				new TrueHitRNG(), new SimpleRNG(), new SimpleRNG(),
 				FogType.NONE, SpectatorFogOption.REVEAL_ALL, 3, 8, false, true);
 	}
@@ -250,8 +250,8 @@ public final class Session implements Serializable {
 	 */
 	public void handleMessage(Message message) {
 		if(message instanceof JoinLobby) {
-			JoinLobby join = (JoinLobby)message;
-			this.addPlayer(join.origin, new Player(join.nickname, join.origin));
+			JoinLobby join = (JoinLobby) message;
+			this.addPlayer(join.origin, new Player(join.name, join.origin));
 		} else if(message instanceof QuitMessage) {
 			QuitMessage quit = (QuitMessage)message;
 			Player player = this.getPlayer(quit.origin);

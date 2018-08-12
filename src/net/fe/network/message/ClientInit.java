@@ -1,8 +1,6 @@
 package net.fe.network.message;
 
-import net.fe.Session;
 import net.fe.network.Message;
-import org.newdawn.slick.util.ResourceLoader;
 
 /**
  * The first message sent to a client by the server. Contains information that
@@ -17,9 +15,6 @@ public final class ClientInit extends Message {
 	public final int clientID;
 	public final long token;
 	
-	/** Session data */
-	public final Session session;
-	
 	/** Hashes for early version checking */
 	public final Hashes hashes;
 	
@@ -30,12 +25,11 @@ public final class ClientInit extends Message {
 	 * @param clientID the client id
 	 * @param s the s
 	 */
-	public ClientInit(int origin, int clientID, Session s, long token) {
+	public ClientInit(int origin, int clientID, long token) {
 		super(origin);
 		this.clientID = clientID;
-		this.session = s;
 		this.token = token;
-		this.hashes = Hashes.pullFromStatics(session.getMap());
+		this.hashes = Hashes.pullFromStatics();
 	}
 	
 	/* (non-Javadoc)
@@ -53,38 +47,22 @@ public final class ClientInit extends Message {
 		public final int items;
 		/** Intended to be a hash of all avaliable units */
 		public final int units;
-		/** Intended to be a hash of the chosen map */
-		public final int map;
 		
 		/** Create a Hashes with the explicitly defined set of hashes */
-		public Hashes(String version, int items, int units, int map) {
+		public Hashes(String version, int items, int units) {
 			this.version = version;
 			this.items = items;
 			this.units = units;
-			this.map = map;
 		}
 		
 		/** Create a Hashes where values are taken from various
 		 * global-static sources.
 		 */
-		public static Hashes pullFromStatics(String levelName) {
-			int mapHash = 0;
-			try (
-				java.io.InputStream in = ResourceLoader.getResourceAsStream("levels/"+levelName+".lvl");
-				java.io.ObjectInputStream ois = new java.io.ObjectInputStream(in)
-			) {
-				mapHash = java.util.Objects.hashCode(ois.readObject());
-			} catch (java.io.IOException e) {
-				mapHash = 0;
-			} catch (ClassNotFoundException e) {
-				mapHash = 0;
-			}
-			
+		public static Hashes pullFromStatics() {
 			return new Hashes(
 				"??.??.??",
 				net.fe.unit.Item.getAllItems().hashCode(),
-				net.fe.unit.UnitFactory.getAllUnits().hashCode(),
-				mapHash
+				net.fe.unit.UnitFactory.getAllUnits().hashCode()
 			);
 		}
 		
@@ -96,7 +74,6 @@ public final class ClientInit extends Message {
 			if (other != null && other instanceof Hashes) {
 				return this.units == ((Hashes) other).units &&
 					this.items ==  ((Hashes) other).items &&
-					this.map ==  ((Hashes) other).map &&
 					this.version.equals(((Hashes) other).version);
 			} else {
 				return false;
@@ -104,7 +81,7 @@ public final class ClientInit extends Message {
 		}
 		
 		public String toString() {
-			return "Hashes[units:" + units + "; items:" + items + "; map:" + map + "; version:" + version + "]"; 
+			return "Hashes[units:" + units + "; items:" + items + "; version:" + version + "]"; 
 		}
 	}
 }
