@@ -109,7 +109,7 @@ public class FEServer extends ServerListenerHandler {
 	private void createLobby(int id, Session session) {
 		synchronized (lobbies) {
 			lobbies.put(id, new Lobby(id, session));
-			new Thread(lobbies.get(id)::loop).start();
+			new Thread(lobbies.get(id)::loop, "Lobby " + id).start();
 		}
 		updateLobbyList();
 	}
