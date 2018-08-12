@@ -53,6 +53,7 @@ public class ServerBrowsingStage extends ClientStage {
 		addEntity(new Notification(TEXT_X, TEXT_Y, FONT, TEXT, Float.MAX_VALUE, 1));
 		frame = new ServerBrowserFrame(this);
 		frame.setVisible(true);
+		FEMultiplayer.getClient().sendMessage(new RequestLobbyListMessage());
 	}
 
 	@Override
