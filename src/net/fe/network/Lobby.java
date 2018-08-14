@@ -43,10 +43,12 @@ public class Lobby extends ServerListenerHandler {
 		while (true) {
 			final ArrayList<Message> messages = new ArrayList<>();
 			synchronized (this.messages) {
-				try {
-					this.messages.wait(10000);
-				} catch (InterruptedException e) {
-					// No, really. Has there ever been a meaningful response to an InterruptedException?
+				if(this.messages.isEmpty()) {
+					try {
+						this.messages.wait(10000);
+					} catch (InterruptedException e) {
+						// No, really. Has there ever been a meaningful response to an InterruptedException?
+					}
 				}
 				messages.addAll(this.messages);
 				timeoutClients();

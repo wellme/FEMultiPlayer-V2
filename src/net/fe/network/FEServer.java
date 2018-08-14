@@ -46,10 +46,12 @@ public class FEServer extends ServerListenerHandler {
 	private void loop() {
 		while(true) {
 			synchronized (messages) {
-				try {
-					messages.wait(1000l);
-				} catch (InterruptedException e) {
-					
+				if(messages.isEmpty()) {
+					try {
+						messages.wait(1000l);
+					} catch (InterruptedException e) {
+						
+					}
 				}
 				timeoutClients();
 				removeEmptyLobbies();
