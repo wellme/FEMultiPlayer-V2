@@ -41,6 +41,7 @@ public class FEServer extends ServerListenerHandler {
 	public void start() {
 		init();
 		new Thread(this::loop).start();
+		new Thread(new ConsoleCommandHandler(this)::run, "Console input").start();
 	}
 	
 	private void loop() {
@@ -131,4 +132,8 @@ public class FEServer extends ServerListenerHandler {
 		}
 	}
 
+	public int lobbyCount() {
+		return lobbies.size();
+	}
+	
 }
