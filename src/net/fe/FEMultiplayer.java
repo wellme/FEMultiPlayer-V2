@@ -28,6 +28,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import chu.engine.ClientStage;
 import chu.engine.Game;
 import chu.engine.menu.Notification;
+import net.fe.browser.ServerBrowsingStage;
 import net.fe.builderStage.TeamDraftStage;
 import net.fe.fightStage.CombatCalculator;
 import net.fe.fightStage.FightStage;
