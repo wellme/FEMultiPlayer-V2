@@ -8,9 +8,11 @@ public class JoinLobby extends Message {
 	
 	public final int id;
 	public final String name;
+	public final String password;
 	
-	public JoinLobby(int id, String name) {
+	public JoinLobby(int id, String name, String password) {
 		this.id = id;
 		this.name = name;
+		this.password = password;
 	}
 }

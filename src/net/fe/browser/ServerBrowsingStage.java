@@ -1,25 +1,6 @@
 package net.fe.browser;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 import org.newdawn.slick.Color;
 
@@ -38,7 +19,6 @@ import net.fe.network.message.CreateLobby;
 import net.fe.network.message.JoinLobby;
 import net.fe.network.message.LobbyListMessage;
 import net.fe.network.message.RequestLobbyListMessage;
-import net.fe.network.serverui.SessionPanel;
 
 public class ServerBrowsingStage extends ClientStage {
 	
@@ -91,19 +71,19 @@ public class ServerBrowsingStage extends ClientStage {
 		}
 	}
 	
-	public void joinLobby(LobbyInfo info) {
+	public void joinLobby(LobbyInfo info, String password) {
 		FEMultiplayer.lobby = new ClientLobbyStage(info.id, info.session);
 		FEMultiplayer.getClient().setSession(info.session);
 		FEMultiplayer.setCurrentStage(FEMultiplayer.lobby);
-		FEMultiplayer.getClient().sendMessage(new JoinLobby(info.id, FEMultiplayer.getLocalPlayer().getName()));
+		FEMultiplayer.getClient().sendMessage(new JoinLobby(info.id, FEMultiplayer.getLocalPlayer().getName(), password));
 		frame.dispose();
 	}
 	
-	public void createLobby(Session session) {
+	public void createLobby(Session session, String name, String password) {
 		FEMultiplayer.lobby = new ClientLobbyStage(session);
 		FEMultiplayer.getClient().setSession(session);
 		FEMultiplayer.setCurrentStage(FEMultiplayer.lobby);
-		FEMultiplayer.getClient().sendMessage(new CreateLobby(session));
+		FEMultiplayer.getClient().sendMessage(new CreateLobby(session, name, password));
 		frame.dispose();
 	}
 

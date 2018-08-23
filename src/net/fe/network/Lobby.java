@@ -8,6 +8,7 @@ import net.fe.Player;
 import net.fe.Session;
 import net.fe.lobbystage.LobbyStage;
 import net.fe.network.message.CommandMessage;
+import net.fe.network.message.JoinLobby;
 import net.fe.network.message.JoinTeam;
 import net.fe.network.message.KickMessage;
 import net.fe.network.message.PartyMessage;
@@ -24,13 +25,17 @@ public class Lobby extends ServerListenerHandler {
 
 	private Session session;
 	private int id;
+	private String name;
+	private String password;
 
 	private ServerStage currentStage;
 	private ServerLobbyStage lobbyStage;
 	
-	public Lobby(int id, Session session) {
+	public Lobby(int id, Session session, String name, String password) {
 		this.session = session;
 		this.id = id;
+		this.name = name;
+		this.password = password;
 		init();
 	}
 
@@ -114,6 +119,12 @@ public class Lobby extends ServerListenerHandler {
 	public LobbyInfo getLobbyInfo() {
 		return new LobbyInfo(this);
 	}
+	
+	public boolean validateJoinRequest(JoinLobby message) {
+		if(password == null)
+			return true;
+		return password.equals(message.password);
+	}
 
 	public static class LobbyInfo implements Serializable {
 		
@@ -121,10 +132,14 @@ public class Lobby extends ServerListenerHandler {
 		
 		public final int id;
 		public final Session session;
+		public final String name;
+		public final boolean hasPassword;
 		
 		private LobbyInfo(Lobby lobby) {
 			this.id = lobby.id;
 			this.session = lobby.session;
+			this.name = lobby.name;
+			hasPassword = lobby.password != null;
 		}
 	}
 

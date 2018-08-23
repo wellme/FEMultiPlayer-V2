@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -31,13 +32,13 @@ public class ServerBrowsingFrame extends JFrame {
 	private JTextField txtSearch;
 	private JTable table;
 	
-	private LobbyCreationFrame lobbyCreation = new LobbyCreationFrame(this);
-	private ServerBrowsingStage stage;
-	
+	private LobbyCreationFrame lobbyCreation;
 	private LobbyInfo[] lobbies;
 	
 	public ServerBrowsingFrame(ServerBrowsingStage stage) {
-		this.setStage(stage);
+		
+		lobbyCreation = new LobbyCreationFrame(stage);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Server browser");
 		
@@ -102,8 +103,17 @@ public class ServerBrowsingFrame extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2)
-					stage.setAction(() -> stage.joinLobby(getLobbyInfo(((IntModulo)table.getModel().getValueAt(table.getSelectedRow(), 0)).i)));
+				if(e.getClickCount() == 2) {
+					LobbyInfo info = getLobbyInfo(((IntModulo)table.getModel().getValueAt(table.getSelectedRow(), 0)).i);
+					String password;
+					if(info.hasPassword) {
+						password = JOptionPane.showInputDialog("Enter password");
+						if(password == null)
+							return;
+					} else
+						password = null;
+					stage.setAction(() -> stage.joinLobby(info, password));
+				}
 			}
 		});
 		scrollPane.setViewportView(table);
@@ -117,7 +127,7 @@ public class ServerBrowsingFrame extends JFrame {
 			Object[] line = new Object[6];
 			objects[i] = line;
 			line[0] = new IntModulo(lobbies[i].id);
-			line[1] = "Unimplemented";
+			line[1] = (lobbies[i].hasPassword ? "\uD83D\uDD12" : "") + lobbies[i].name;
 			line[2] = lobbies[i].session.getNonSpectators().length + "/2";
 			line[3] = lobbies[i].session.getMap();
 			line[4] = lobbies[i].session.getObjective();
@@ -140,14 +150,6 @@ public class ServerBrowsingFrame extends JFrame {
 			if(lobbies[i].id == id)
 				return lobbies[i];
 		return null;
-	}
-	
-	public ServerBrowsingStage getStage() {
-		return stage;
-	}
-
-	public void setStage(ServerBrowsingStage stage) {
-		this.stage = stage;
 	}
 
 	private static class IntModulo {

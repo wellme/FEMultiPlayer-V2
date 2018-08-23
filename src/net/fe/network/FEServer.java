@@ -71,27 +71,33 @@ public class FEServer extends ServerListenerHandler {
 	}
 	
 	private void processMessage(Message message) {
+		ServerListener listener = getListener(message.origin);
 		if(message instanceof CreateLobby) {
 			int id = manager.generateLobbyID();
-			createLobby(id, ((CreateLobby) message).session);
-			Message joinMessage = new JoinLobby(id, getListener(message.origin).getName());
+			CreateLobby createLobby = (CreateLobby) message;
+			createLobby(id, createLobby.session, createLobby.name, createLobby.password);
+			Message joinMessage = new JoinLobby(id, listener.getName(), createLobby.password);
 			joinMessage.origin = message.origin;
 			transferOwnership(this, getListener(joinMessage.origin), lobbies.get(id));
 			lobbies.get(id).addMessage(joinMessage);
 		} else if(message instanceof JoinServer) {
-			getListener(message.origin).setName(((JoinServer) message).name);
+			listener.setName(((JoinServer) message).name);
 		}
 		if(message instanceof RequestLobbyListMessage) {
-			getListener(message.origin).sendMessage(lobbyListMessage);
+			listener.sendMessage(lobbyListMessage);
 		} else if(message instanceof JoinLobby) {
-			int id = ((JoinLobby) message).id;
+			JoinLobby join = (JoinLobby) message;
 			synchronized(lobbies) {
-				if(lobbies.containsKey(id)) {
-					Lobby lobby = lobbies.get(id);
-					transferOwnership(this, getListener(message.origin), lobby);
-					lobby.addMessage(message);
+				if(lobbies.containsKey(join.id)) {
+					Lobby lobby = lobbies.get(join.id);
+					if(lobby.validateJoinRequest(join)) {
+						transferOwnership(this, listener, lobby);
+						lobby.addMessage(message);
+					} else {
+						listener.sendMessage(new KickMessage(0, message.origin, "Invalid password"));
+					}
 				} else {
-					getListener(message.origin).sendMessage(new KickMessage(0, message.origin, "No such lobby"));
+					listener.sendMessage(new KickMessage(0, message.origin, "No such lobby"));
 				}
 			}
 		}
@@ -109,9 +115,9 @@ public class FEServer extends ServerListenerHandler {
 			lobby.broadcastMessage(message);
 	}
 
-	private void createLobby(int id, Session session) {
+	private void createLobby(int id, Session session, String name, String password) {
 		synchronized (lobbies) {
-			lobbies.put(id, new Lobby(id, session));
+			lobbies.put(id, new Lobby(id, session, name, password));
 			new Thread(lobbies.get(id)::loop, "Lobby " + id).start();
 		}
 		updateLobbyList();
