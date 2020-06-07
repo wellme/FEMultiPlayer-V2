@@ -76,12 +76,14 @@ public final class Server {
 	 *
 	 * @param port the port
 	 */
-	public void start(int port) {
+	public void start(int port, boolean upnp) {
 		try {
-			try {
-				UPnP.openPortTCP(port);
-			} catch (Exception e2) {
-				e2.printStackTrace();
+			if(upnp) {
+				try {
+					UPnP.openPortTCP(port);
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
 			}
 			serverSocket = new ServerSocket(port);
 			logger.info("SERVER: Waiting for connections...");

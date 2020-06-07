@@ -51,7 +51,7 @@ public class FEServerFrame extends JFrame {
 
 		//Does this even need it's own thread?
 		new Thread(() -> {
-			FEServer feserver = new FEServer(mainPanel.getSession(), mainPanel.getPort());
+			FEServer feserver = new FEServer(mainPanel.getSession(), mainPanel.getPort(), mainPanel.useUpnp());
 			try {
 				feserver.init();
 				feserver.loop();

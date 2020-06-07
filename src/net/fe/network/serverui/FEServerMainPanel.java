@@ -56,6 +56,7 @@ import net.fe.rng.TrueHitRNG;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.JCheckBox;
+import javax.swing.SwingConstants;
 
 /**
  * The initial panel displayed to the server's host.
@@ -126,6 +127,7 @@ public class FEServerMainPanel extends JPanel {
 	private JCheckBox chckbxShowOutOf;
 	private JPanel panel;
 	private JCheckBox chckbxAllowRedoingMovement;
+	private JCheckBox chckbxUseUpnp;
 	
 	/**
 	 * Initializes the panel.
@@ -271,6 +273,9 @@ public class FEServerMainPanel extends JPanel {
 		spnPort.setToolTipText("Don't change this unless you know what you're doing!");
 		spnPort.setModel(new SpinnerNumberModel(FEServer.DEFAULT_PORT, 0, 65565, 1));
 		pnlPort.add(spnPort);
+		
+		chckbxUseUpnp = new JCheckBox("Use UPnP");
+		pnlPort.add(chckbxUseUpnp);
 		
 		pnlRNG = new JPanel();
 		mainPanel.add(pnlRNG);
@@ -454,6 +459,10 @@ public class FEServerMainPanel extends JPanel {
 	 */
 	public int getPort() {
 		return (Integer) spnPort.getValue();
+	}
+	
+	public boolean useUpnp() {
+		return chckbxUseUpnp.isSelected();
 	}
 
 	/**
