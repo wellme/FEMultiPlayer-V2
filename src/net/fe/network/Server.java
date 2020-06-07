@@ -6,6 +6,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
+
+import com.dosse.upnp.UPnP;
+
 import java.time.LocalDateTime;
 
 import net.fe.Session;
@@ -75,6 +78,11 @@ public final class Server {
 	 */
 	public void start(int port) {
 		try {
+			try {
+				UPnP.openPortTCP(port);
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
 			serverSocket = new ServerSocket(port);
 			logger.info("SERVER: Waiting for connections...");
 			while(!closeRequested) {

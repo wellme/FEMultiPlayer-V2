@@ -20,5 +20,6 @@
 	<classpathentry exported="true" kind="lib" path="lwjgl-2.9.0/jar/jogg-0.0.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lwjgl-2.9.0/jar/jorbis-0.0.15.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lwjgl-2.9.0/jar/WaifUPnP.jar" sourcepath="lwjgl-2.9.0/jar/WaifUPnP-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
